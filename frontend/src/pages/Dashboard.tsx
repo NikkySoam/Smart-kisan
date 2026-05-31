@@ -1,6 +1,67 @@
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import API from "../api/axios";
+
+interface Stats {
+  totalFarmers: number;
+
+  totalEntries: number;
+
+  totalHours: number;
+
+  totalEarnings: number;
+
+  waterRate: number;
+}
+
 const Dashboard = () => {
+  const token =
+    localStorage.getItem("token");
+
+  const [stats, setStats] =
+    useState<Stats>({
+      totalFarmers: 0,
+
+      totalEntries: 0,
+
+      totalHours: 0,
+
+      totalEarnings: 0,
+
+      waterRate: 0,
+    });
+
+  // FETCH STATS
+
+  const fetchStats = async () => {
+    try {
+      const res = await API.get(
+        "/dashboard/stats",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setStats(res.data.data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
   return (
     <div className="p-4 sm:p-8">
+
+      {/* HEADER */}
 
       <div className="mb-8">
 
@@ -14,17 +75,19 @@ const Dashboard = () => {
 
       </div>
 
-      {/* CARDS */}
+      {/* STATS CARDS */}
 
       <div
         className="
           grid
           grid-cols-1
           sm:grid-cols-2
-          lg:grid-cols-4
+          lg:grid-cols-5
           gap-6
         "
       >
+
+        {/* FARMERS */}
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
@@ -33,10 +96,30 @@ const Dashboard = () => {
           </h2>
 
           <p className="text-4xl font-bold text-green-700 mt-4">
-            12
+            {
+              stats.totalFarmers
+            }
           </p>
 
         </div>
+
+        {/* ENTRIES */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Water Entries
+          </h2>
+
+          <p className="text-4xl font-bold text-green-700 mt-4">
+            {
+              stats.totalEntries
+            }
+          </p>
+
+        </div>
+
+        {/* HOURS */}
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
@@ -45,22 +128,31 @@ const Dashboard = () => {
           </h2>
 
           <p className="text-4xl font-bold text-green-700 mt-4">
-            120
+            {
+              stats.totalHours
+            }
           </p>
 
         </div>
+
+        {/* EARNINGS */}
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
           <h2 className="text-gray-500">
-            Total Earnings
+            Earnings
           </h2>
 
           <p className="text-4xl font-bold text-green-700 mt-4">
-            ₹18K
+            ₹
+            {
+              stats.totalEarnings
+            }
           </p>
 
         </div>
+
+        {/* WATER RATE */}
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
@@ -69,7 +161,10 @@ const Dashboard = () => {
           </h2>
 
           <p className="text-4xl font-bold text-green-700 mt-4">
-            ₹150
+            ₹
+            {
+              stats.waterRate
+            }
           </p>
 
         </div>
@@ -81,4 +176,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

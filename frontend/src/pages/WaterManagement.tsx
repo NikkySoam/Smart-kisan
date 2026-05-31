@@ -27,9 +27,7 @@ interface WaterEntry {
   };
 
   hours: number;
-
   totalAmount: number;
-
   date: string;
 }
 
@@ -52,6 +50,19 @@ const WaterManagement = () => {
       farmer: "",
       hours: "",
       date: "",
+    });
+
+    const [editModal, setEditModal] =
+    useState(false);
+
+    const [selectedEntry, setSelectedEntry] =
+    useState<any>(null);
+
+    const [editFormData, setEditFormData] =
+    useState({
+        farmer: "",
+        hours: "",
+        date: "",
     });
 
   // FETCH WATER ENTRIES
@@ -152,6 +163,86 @@ const WaterManagement = () => {
       );
     }
   };
+
+
+  const deleteEntryHandler =
+        async (id: string) => {
+            const confirmDelete =
+            window.confirm(
+                "Delete this entry?"
+            );
+
+            if (!confirmDelete) return;
+
+            try {
+            await API.delete(
+                `/water/${id}`,
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                }
+            );
+
+            toast.success(
+                "Entry Deleted"
+            );
+
+            fetchEntries();
+
+            } catch (error) {
+            toast.error(
+                "Failed to delete entry"
+            );
+            }
+        };
+
+    
+    const openEditModal = (
+    entry: any
+    ) => {
+    setSelectedEntry(entry);
+
+    setEditFormData({
+        farmer: entry.farmer._id,
+        hours: entry.hours,
+        date: entry.date.split("T")[0],
+    });
+
+    setEditModal(true);
+    };
+
+    const updateEntryHandler =
+    async (
+        e: React.FormEvent
+    ) => {
+        e.preventDefault();
+
+        try {
+        await API.put(
+            `/water/${selectedEntry._id}`,
+            editFormData,
+            {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            }
+        );
+
+        toast.success(
+            "Entry Updated"
+        );
+
+        setEditModal(false);
+
+        fetchEntries();
+
+        } catch (error) {
+        toast.error(
+            "Failed to update entry"
+        );
+        }
+    };
 
   return (
     <div
@@ -302,6 +393,7 @@ const WaterManagement = () => {
                   rounded-xl
                   p-3
                   font-semibold
+                  cursor-pointer
                 "
               >
                 Add Entry
@@ -350,8 +442,12 @@ const WaterManagement = () => {
                       Hours
                     </th>
 
-                    <th className="p-3 text-left rounded-r-xl">
+                    <th className="p-3 text-left ">
                       Total Amount
+                    </th>
+
+                    <th className="p-3 text-left rounded-r-xl">
+                        Actions
                     </th>
 
                   </tr>
@@ -398,6 +494,44 @@ const WaterManagement = () => {
                           {
                             item.totalAmount
                           }
+                        </td>
+
+                        <td className="p-4">
+                        <button
+                            onClick={() =>
+                                openEditModal(item)
+                            }
+                            className="
+                                bg-yellow-500
+                                hover:bg-yellow-600
+                                text-black
+                                px-4
+                                py-2
+                                rounded-lg
+                                mr-2
+                                cursor-pointer
+                            "
+                            >
+                            Edit
+                        </button>
+                        <button
+                            onClick={() =>
+                            deleteEntryHandler(
+                                item._id
+                            )
+                            }
+                            className="
+                            bg-red-600
+                            hover:bg-red-700
+                            text-white
+                            px-4
+                            py-2
+                            rounded-lg
+                            cursor-pointer
+                            "
+                        >
+                            Delete
+                        </button>
                         </td>
 
                       </tr>
@@ -517,6 +651,194 @@ const WaterManagement = () => {
             </div>
 
           </div>
+
+
+          <div
+            className={`
+                fixed
+                inset-0
+                flex
+                justify-center
+                items-center
+                z-50
+                p-4
+                backdrop-blur-sm
+                transition-all
+                duration-500
+                ease-in-out
+
+                ${
+                editModal
+                    ? "bg-black/50 opacity-100 visible"
+                    : "bg-black/0 opacity-0 invisible"
+                }
+            `}
+            >
+
+            <div
+                className={`
+                bg-white
+                rounded-3xl
+                p-6
+                w-full
+                max-w-lg
+                shadow-2xl
+                transition-all
+                duration-500
+                ease-in-out
+
+                ${
+                    editModal
+                    ? "scale-100 translate-y-0 rotate-0"
+                    : "scale-75 translate-y-10 rotate-1"
+                }
+                `}
+            >
+
+                <h2 className="text-3xl font-bold text-green-800 mb-6">
+                Edit Water Entry
+                </h2>
+
+                <form
+                onSubmit={
+                    updateEntryHandler
+                }
+                className="space-y-4"
+                >
+
+                <select
+                    value={
+                    editFormData.farmer
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        farmer:
+                        e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    outline-none
+                    focus:ring-2
+                    focus:ring-green-500
+                    transition
+                    "
+                >
+
+                    {farmers.map(
+                    (farmer) => (
+                        <option
+                        key={farmer._id}
+                        value={
+                            farmer._id
+                        }
+                        >
+                        {farmer.name}
+                        </option>
+                    )
+                    )}
+
+                </select>
+
+                <input
+                    type="number"
+                    value={
+                    editFormData.hours
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        hours:
+                        e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    outline-none
+                    focus:ring-2
+                    focus:ring-green-500
+                    transition
+                    "
+                />
+
+                <input
+                    type="date"
+                    value={
+                    editFormData.date
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        date:
+                        e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    outline-none
+                    focus:ring-2
+                    focus:ring-green-500
+                    transition
+                    "
+                />
+
+                <div className="flex gap-4">
+
+                    <button
+                    type="submit"
+                    className="
+                        flex-1
+                        bg-green-700
+                        hover:bg-green-800
+                        hover:scale-105
+                        transition
+                        duration-300
+                        text-white
+                        p-4
+                        rounded-2xl
+                        font-semibold
+                    "
+                    >
+                    Update
+                    </button>
+
+                    <button
+                    type="button"
+                    onClick={() =>
+                        setEditModal(false)
+                    }
+                    className="
+                        flex-1
+                        bg-gray-300
+                        hover:bg-gray-400
+                        hover:scale-105
+                        transition
+                        duration-300
+                        p-4
+                        rounded-2xl
+                        font-semibold
+                    "
+                    >
+                    Cancel
+                    </button>
+
+                </div>
+
+                </form>
+
+            </div>
+
+            </div>
 
         </div>
 

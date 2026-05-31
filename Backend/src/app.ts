@@ -17,11 +17,15 @@ app.use(morgan("dev"));
 import authRoutes from "./routes/authRoutes";
 import farmerRoutes from "./routes/farmerRoutes";
 import waterRoutes from "./routes/waterRoutes";
+import dashboardRoutes from "./routes/dashboardRoutes";
+import settingsRoutes from "./routes/settingsRoutes";
 
 
 app.use("/api/auth", authRoutes);
 app.use("/api/farmers", farmerRoutes);
 app.use("/api/water", waterRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/settings",settingsRoutes);
 
 app.get("/", (req, res) => {
   res.json({

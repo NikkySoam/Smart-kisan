@@ -22,6 +22,7 @@ import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 import AuthRedirect from "./routes/AuthRedirect";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -95,6 +96,12 @@ function App() {
             element={
               <WaterManagement />
             }
+          />
+
+            {/* SETTINGS */}
+          <Route
+            path="/settings"
+            element={<Settings />}
           />
 
         </Route>

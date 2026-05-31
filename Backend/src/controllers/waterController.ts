@@ -207,3 +207,68 @@ export const deleteWaterEntry =
       });
     }
   };
+
+  // UPDATE WATER ENTRY
+
+export const updateWaterEntry =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+      const { id } = req.params;
+
+      const {
+        farmer,
+        hours,
+        date,
+      } = req.body;
+
+      const entry =
+        await Water.findById(id);
+
+      if (!entry) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Water entry not found",
+        });
+      }
+
+      // RECALCULATE TOTAL
+
+      const totalAmount =
+        Number(hours) *
+        Number(req.user.waterRate);
+
+      const updatedEntry =
+        await Water.findByIdAndUpdate(
+          id,
+          {
+            farmer,
+            hours,
+            date,
+            totalAmount,
+          },
+          {
+            new: true,
+          }
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Water entry updated successfully",
+        data: updatedEntry,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update water entry",
+      });
+    }
+  };

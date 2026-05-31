@@ -11,6 +11,7 @@ import {
   FaUsers,
   FaSignOutAlt,
   FaBars,
+  FaCog
 } from "react-icons/fa";
 
 import { useState } from "react";
@@ -197,6 +198,31 @@ const MainLayout = () => {
             Water Management
           </Link>
 
+          <Link
+            to="/settings"
+            onClick={() =>
+                setOpen(false)
+            }
+            className={`
+                flex
+                items-center
+                gap-3
+                p-4
+                rounded-2xl
+                transition-all
+
+                ${
+                isActive("/settings")
+                    ? "bg-white text-green-900 font-semibold shadow"
+                    : "hover:bg-green-800"
+                }
+            `}
+            >
+            <FaCog />
+
+            Settings
+            </Link>
+
         </nav>
 
         {/* LOGOUT */}
@@ -213,6 +239,7 @@ const MainLayout = () => {
             p-4
             rounded-2xl
             transition-all
+            cursor-pointer
           "
         >
           <FaSignOutAlt />

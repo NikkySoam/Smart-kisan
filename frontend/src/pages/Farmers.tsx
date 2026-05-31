@@ -32,6 +32,19 @@ const Farmers = () => {
       village: "",
     });
 
+    const [editModal, setEditModal] =
+        useState(false);
+
+        const [selectedFarmer, setSelectedFarmer] =
+        useState<any>(null);
+
+        const [editFormData, setEditFormData] =
+        useState({
+            name: "",
+            phone: "",
+            village: "",
+        });
+
   // FETCH FARMERS
 
   const fetchFarmers = async () => {
@@ -110,6 +123,87 @@ const Farmers = () => {
     }
   };
 
+  const deleteFarmerHandler =
+    async (id: string) => {
+        const confirmDelete =
+        window.confirm(
+            "Delete this farmer?"
+        );
+
+        if (!confirmDelete) return;
+
+        try {
+        await API.delete(
+            `/farmers/${id}`,
+            {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            }
+        );
+
+        toast.success(
+            "Farmer Deleted"
+        );
+
+        fetchFarmers();
+
+        } catch (error) {
+        toast.error(
+            "Failed to delete farmer"
+        );
+        }
+    };
+
+
+
+    const openEditModal = (
+        farmer: Farmer
+        ) => {
+        setSelectedFarmer(farmer);
+
+        setEditFormData({
+            name: farmer.name,
+            phone: farmer.phone || "",
+            village: farmer.village || "",
+        });
+
+        setEditModal(true);
+        };
+
+
+    const updateFarmerHandler =
+        async (
+            e: React.FormEvent
+        ) => {
+            e.preventDefault();
+
+            try {
+            await API.put(
+                `/farmers/${selectedFarmer._id}`,
+                editFormData,
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                }
+            );
+
+            toast.success(
+                "Farmer Updated"
+            );
+
+            setEditModal(false);
+
+            fetchFarmers();
+
+            } catch (error) {
+            toast.error(
+                "Failed to update farmer"
+            );
+            }
+        };
+
   return (
     <div
       className="
@@ -159,6 +253,7 @@ const Farmers = () => {
                 rounded-2xl
                 font-semibold
                 shadow-lg
+                cursor-pointer
               "
             >
               {showForm
@@ -261,6 +356,7 @@ const Farmers = () => {
                       rounded-xl
                       p-3
                       font-semibold
+                      cursor-pointer
                     "
                   >
                     Add Farmer
@@ -318,7 +414,7 @@ const Farmers = () => {
 
                 <button
                   className="
-                    mt-5
+                    mt-4
                     w-full
                     bg-yellow-500
                     hover:bg-yellow-600
@@ -326,9 +422,50 @@ const Farmers = () => {
                     font-semibold
                     p-3
                     rounded-xl
+                    cursor-pointer
                   "
                 >
                   View Details
+                </button>
+
+                <button
+                onClick={() =>
+                    openEditModal(farmer)
+                }
+                className="
+                    mt-2
+                    w-full
+                    bg-yellow-500
+                    hover:bg-yellow-600
+                    text-black
+                    font-semibold
+                    p-3
+                    rounded-xl
+                    cursor-pointer
+                "
+                >
+                Edit Farmer
+                </button>
+
+                <button
+                    onClick={() =>
+                        deleteFarmerHandler(
+                        farmer._id
+                        )
+                    }
+                    className="
+                        mt-2
+                        w-full
+                        bg-red-600
+                        hover:bg-red-700
+                        text-white
+                        font-semibold
+                        p-3
+                        rounded-xl
+                        cursor-pointer
+                    "
+                    >
+                    Delete Farmer
                 </button>
 
               </div>
@@ -336,6 +473,163 @@ const Farmers = () => {
             ))}
 
           </div>
+
+
+          <div
+            className={`
+                fixed
+                inset-0
+                bg-black/50
+                flex
+                justify-center
+                items-center
+                z-50
+                p-4
+                transition-all
+                duration-300
+                ease-in-out
+
+                ${
+                editModal
+                    ? "opacity-100 visible"
+                    : "opacity-0 invisible"
+                }
+            `}
+            >
+
+            <div
+                className={`
+                bg-white
+                rounded-3xl
+                p-6
+                w-full
+                max-w-lg
+                transition-all
+                duration-300
+                ease-in-out
+
+                ${
+                    editModal
+                    ? "scale-100 translate-y-0"
+                    : "scale-90 translate-y-10"
+                }
+                `}
+            >
+
+                <h2 className="text-3xl font-bold text-green-800 mb-6">
+                Edit Farmer
+                </h2>
+
+                <form
+                onSubmit={
+                    updateFarmerHandler
+                }
+                className="space-y-4"
+                >
+
+                <input
+                    type="text"
+                    value={
+                    editFormData.name
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        name: e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    "
+                    placeholder="Farmer Name"
+                />
+
+                <input
+                    type="text"
+                    value={
+                    editFormData.phone
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        phone:
+                        e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    "
+                    placeholder="Phone"
+                />
+
+                <input
+                    type="text"
+                    value={
+                    editFormData.village
+                    }
+                    onChange={(e) =>
+                    setEditFormData({
+                        ...editFormData,
+                        village:
+                        e.target.value,
+                    })
+                    }
+                    className="
+                    w-full
+                    border
+                    p-4
+                    rounded-2xl
+                    "
+                    placeholder="Village"
+                />
+
+                <div className="flex gap-4">
+
+                    <button
+                    type="submit"
+                    className="
+                        flex-1
+                        bg-green-700
+                        hover:bg-green-800
+                        text-white
+                        p-4
+                        rounded-2xl
+                    "
+                    >
+                    Update
+                    </button>
+
+                    <button
+                    type="button"
+                    onClick={() =>
+                        setEditModal(false)
+                    }
+                    className="
+                        flex-1
+                        bg-gray-300
+                        hover:bg-gray-400
+                        p-4
+                        rounded-2xl
+                    "
+                    >
+                    Cancel
+                    </button>
+
+                </div>
+
+                </form>
+
+            </div>
+
+            </div> 
+
+
 
         </div>
 

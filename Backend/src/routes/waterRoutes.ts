@@ -5,6 +5,7 @@ import {
   getWaterEntries,
   getFarmerWaterHistory,
   deleteWaterEntry,
+  updateWaterEntry
 } from "../controllers/waterController";
 
 import protect from "../middleware/authMiddleware";
@@ -46,6 +47,13 @@ router.delete(
   protect,
   deleteWaterEntry
 );
+
+router.put(
+  "/:id",
+  protect,
+  updateWaterEntry
+);
+
 
 
 export default router;
