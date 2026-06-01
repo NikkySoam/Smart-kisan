@@ -5,6 +5,7 @@ import User from "../models/User";
 import { AuthRequest } from "../middleware/authMiddleware";
 
 
+
 // UPDATE WATER RATE
 
 export const updateWaterRate =
@@ -76,9 +77,13 @@ export const getSettings =
         success: true,
 
         data: {
-          waterRate:
-            user?.waterRate || 0,
-        },
+            name: user?.name || "",
+            phone: user?.phone || "",
+            waterRate:
+                user?.waterRate || 0,
+            city:
+                user?.city || "Meerut",
+            },
       });
 
     } catch (error) {
@@ -91,3 +96,53 @@ export const getSettings =
       });
     }
   };
+
+
+  // UPDATE PROFILE + WATER RATE
+
+    export const updateProfile =
+    async (
+        req: AuthRequest,
+        res: Response
+    ) => {
+        try {
+        const {
+            name,
+            phone,
+            waterRate,
+            city,
+        } = req.body;
+
+        // UPDATE USER
+
+        const updatedUser =
+            await User.findByIdAndUpdate(
+            req.user._id,
+            {
+                name,
+                phone,
+                waterRate,
+                city,
+            },
+            {
+                new: true,
+            }
+            );
+
+        res.status(200).json({
+            success: true,
+            message:
+            "Profile updated successfully",
+            data: updatedUser,
+        });
+
+        } catch (error) {
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            message:
+            "Failed to update profile",
+        });
+        }
+    };

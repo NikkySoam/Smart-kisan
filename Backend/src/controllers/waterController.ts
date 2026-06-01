@@ -23,7 +23,10 @@ export const addWaterEntry = async (
     // CHECK FARMER EXISTS
 
     const farmerExists =
-      await Farmer.findById(farmer);
+        await Farmer.findOne({
+            _id: farmer,
+            user: req.user._id,
+        });
 
     if (!farmerExists) {
       return res.status(404).json({
@@ -118,6 +121,21 @@ export const getFarmerWaterHistory =
     try {
       const { farmerId } = req.params;
 
+      // CHECK FARMER OWNERSHIP
+
+        const farmerExists =
+        await Farmer.findOne({
+            _id: farmerId,
+            user: req.user._id,
+        });
+
+        if (!farmerExists) {
+        return res.status(404).json({
+            success: false,
+            message: "Farmer not found",
+        });
+        }
+
       const entries = await Water.find({
         farmer: farmerId,
         user: req.user._id,
@@ -179,7 +197,10 @@ export const deleteWaterEntry =
       const { id } = req.params;
 
       const entry =
-        await Water.findById(id);
+        await Water.findOne({
+            _id: id,
+            user: req.user._id,
+        });
 
       if (!entry) {
         return res.status(404).json({
@@ -225,7 +246,10 @@ export const updateWaterEntry =
       } = req.body;
 
       const entry =
-        await Water.findById(id);
+        await Water.findOne({
+            _id: id,
+            user: req.user._id,
+        });
 
       if (!entry) {
         return res.status(404).json({

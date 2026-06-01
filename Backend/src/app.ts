@@ -19,6 +19,8 @@ import farmerRoutes from "./routes/farmerRoutes";
 import waterRoutes from "./routes/waterRoutes";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import settingsRoutes from "./routes/settingsRoutes";
+import reportRoutes from "./routes/reportRoutes";
+
 
 
 app.use("/api/auth", authRoutes);
@@ -26,6 +28,7 @@ app.use("/api/farmers", farmerRoutes);
 app.use("/api/water", waterRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/settings",settingsRoutes);
+app.use("/api/reports", reportRoutes);
 
 app.get("/", (req, res) => {
   res.json({

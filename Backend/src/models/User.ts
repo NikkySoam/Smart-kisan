@@ -8,6 +8,7 @@ export interface User extends Document {
   phone: string;
   pin: string;
   waterRate: number;
+  city: string
 }
 
 const userSchema = new Schema<User>(
@@ -22,7 +23,7 @@ const userSchema = new Schema<User>(
       required: true,
       unique: true,
     },
-    
+
     pin: {
       type: String,
       required: true,
@@ -31,6 +32,11 @@ const userSchema = new Schema<User>(
     waterRate: {
       type: Number,
       default: 150,
+    },
+
+    city: {
+    type: String,
+    default: "Gurgaon",
     },
   },
   {

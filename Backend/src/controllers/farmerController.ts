@@ -92,7 +92,10 @@ export const updateFarmer =
       } = req.body;
 
       const farmer =
-        await Farmer.findById(id);
+        await Farmer.findOne({
+            _id: id,
+            user: req.user._id,
+        });
 
       if (!farmer) {
         return res.status(404).json({
@@ -146,7 +149,10 @@ export const deleteFarmer =
       const { id } = req.params;
 
       const farmer =
-        await Farmer.findById(id);
+        await Farmer.findOne({
+            _id: id,
+            user: req.user._id,
+        });
 
       if (!farmer) {
         return res.status(404).json({

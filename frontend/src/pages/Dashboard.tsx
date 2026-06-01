@@ -3,6 +3,8 @@ import {
   useState,
 } from "react";
 
+import WeatherCard from "../components/WeatherCard";
+
 import API from "../api/axios";
 
 interface Stats {
@@ -168,6 +170,13 @@ const Dashboard = () => {
           </p>
 
         </div>
+
+      </div>
+
+
+      <div className="mt-8">
+
+        <WeatherCard />
 
       </div>
 

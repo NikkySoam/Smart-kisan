@@ -11,7 +11,8 @@ import {
   FaUsers,
   FaSignOutAlt,
   FaBars,
-  FaCog
+  FaCog,
+  FaChartBar
 } from "react-icons/fa";
 
 import { useState } from "react";
@@ -55,7 +56,7 @@ const MainLayout = () => {
           lg:hidden
           fixed
           top-4
-          left-4
+          right-4
           z-50
           bg-green-700
           text-white
@@ -198,6 +199,7 @@ const MainLayout = () => {
             Water Management
           </Link>
 
+                {/* SETTINGS */}
           <Link
             to="/settings"
             onClick={() =>
@@ -221,6 +223,32 @@ const MainLayout = () => {
             <FaCog />
 
             Settings
+            </Link>
+
+                {/* REPORTS */}
+            <Link
+            to="/reports"
+            onClick={() =>
+                setOpen(false)
+            }
+            className={`
+                flex
+                items-center
+                gap-3
+                p-4
+                rounded-2xl
+                transition-all
+
+                ${
+                isActive("/reports")
+                    ? "bg-white text-green-900 font-semibold shadow"
+                    : "hover:bg-green-800"
+                }
+            `}
+            >
+            <FaChartBar />
+
+            Reports
             </Link>
 
         </nav>

@@ -8,21 +8,16 @@ import {
 import { Toaster } from "react-hot-toast";
 
 import Login from "./pages/Login";
-
 import Register from "./pages/Register";
-
 import Dashboard from "./pages/Dashboard";
-
 import Farmers from "./pages/Farmers";
-
 import WaterManagement from "./pages/WaterManagement";
-
 import MainLayout from "./layouts/MainLayout";
-
 import ProtectedRoute from "./routes/ProtectedRoute";
-
 import AuthRedirect from "./routes/AuthRedirect";
 import Settings from "./pages/Settings";
+import Reports from "./pages/Reports";
+import FarmerDetails from "./pages/FarmerDetails";
 
 function App() {
   return (
@@ -102,6 +97,16 @@ function App() {
           <Route
             path="/settings"
             element={<Settings />}
+          />
+
+          <Route
+            path="/reports"
+            element={<Reports />}
+          />
+
+          <Route
+            path="/farmers/:id"
+            element={<FarmerDetails />}
           />
 
         </Route>

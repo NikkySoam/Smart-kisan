@@ -2,9 +2,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
-
 import toast from "react-hot-toast";
 
 interface Farmer {
@@ -15,6 +15,8 @@ interface Farmer {
 }
 
 const Farmers = () => {
+
+  const navigate = useNavigate();
 
   const token =
     localStorage.getItem("token");
@@ -249,11 +251,14 @@ const Farmers = () => {
                 hover:bg-green-800
                 text-white
                 px-6
-                py-3
+                py-1
+                md:py-3
+                sm:py-2
                 rounded-2xl
                 font-semibold
                 shadow-lg
                 cursor-pointer
+
               "
             >
               {showForm
@@ -412,9 +417,14 @@ const Farmers = () => {
                   📍 {farmer.village || "No Village"}
                 </p>
 
-                <button
-                  className="
-                    mt-4
+               <button
+                onClick={() =>
+                    navigate(
+                    `/farmers/${farmer._id}`
+                    )
+                }
+                className="
+                    mt-5
                     w-full
                     bg-yellow-500
                     hover:bg-yellow-600
@@ -423,9 +433,9 @@ const Farmers = () => {
                     p-3
                     rounded-xl
                     cursor-pointer
-                  "
+                "
                 >
-                  View Details
+                View Details
                 </button>
 
                 <button

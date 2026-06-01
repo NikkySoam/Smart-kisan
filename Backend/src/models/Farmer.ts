@@ -38,6 +38,11 @@ const farmerSchema =
     }
   );
 
+  farmerSchema.index({
+  name: 1,
+  user: 1,
+});
+
 export default mongoose.model<IFarmer>(
   "Farmer",
   farmerSchema
