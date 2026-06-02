@@ -21,6 +21,8 @@ import FarmerDetails from "./pages/FarmerDetails";
 import FieldWater from "./pages/FieldWater";
 import Fields from "./pages/Fields";
 import Fertilizers from "./pages/Fertilizers";
+import Labour from "./pages/Labour";
+import Equipment from "./pages/Equipment";
 
 function App() {
   return (
@@ -130,6 +132,18 @@ function App() {
           <Route
             path="/fertilizers/:fieldId"
             element={<Fertilizers />}
+          />
+
+            {/* LABOUR COST IN OWN FIELD */}
+          <Route
+            path="/labour/:fieldId"
+            element={<Labour />}
+          />
+
+            {/* EQUIPMENT OR OTHER COST IN OWN FIELD */}
+          <Route
+            path="/equipment/:fieldId"
+            element={<Equipment />}
           />
 
         </Route>

@@ -12,6 +12,8 @@ import Labour from "../models/Labour";
 
 import Equipment from "../models/Equipment";
 
+import User from "../models/User";
+
 
 // ADD FIELD
 
@@ -141,13 +143,25 @@ export const getFieldDetails =
 
       // TOTALS
 
-      const waterTotal =
-        water.reduce(
-          (acc, item) =>
-            acc + item.hours,
-          0
+      // USER WATER RATE
+
+        const user =
+        await User.findById(
+            req.user._id
         );
 
+        const waterHours =
+        water.reduce(
+            (acc, item) =>
+            acc + item.hours,
+            0
+        );
+
+        const waterTotal =
+        waterHours *
+        (user?.waterRate || 0);
+
+            // FERTILIZER TOTAL
       const fertilizerTotal =
         fertilizers.reduce(
           (acc, item) =>
@@ -155,6 +169,7 @@ export const getFieldDetails =
           0
         );
 
+            // LABOUR TOTAL
       const labourTotal =
         labour.reduce(
           (acc, item) =>
@@ -162,6 +177,7 @@ export const getFieldDetails =
           0
         );
 
+        // EQUIPMENT TOTAL
       const equipmentTotal =
         equipment.reduce(
           (acc, item) =>
@@ -169,19 +185,24 @@ export const getFieldDetails =
           0
         );
 
+        const totalExpense =
+            waterTotal +
+            fertilizerTotal +
+            labourTotal +
+            equipmentTotal;
+
       res.status(200).json({
         success: true,
 
         field,
 
         totals: {
-          water: waterTotal,
-          fertilizer:
-            fertilizerTotal,
-          labour: labourTotal,
-          equipment:
-            equipmentTotal,
-        },
+            water: waterTotal,
+            fertilizer:fertilizerTotal,
+            labour: labourTotal,
+            equipment: equipmentTotal,
+            totalExpense,
+            },
       });
 
     } catch (error) {

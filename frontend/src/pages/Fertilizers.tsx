@@ -505,6 +505,7 @@ const Fertilizers = () => {
                     p-4
                     rounded-2xl
                     font-semibold
+                    cursor-pointer
                   "
                 >
                   Cancel
@@ -520,6 +521,7 @@ const Fertilizers = () => {
                     p-4
                     rounded-2xl
                     font-semibold
+                    cursor-pointer
                   "
                 >
                   Add

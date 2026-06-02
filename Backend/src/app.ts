@@ -23,6 +23,8 @@ import reportRoutes from "./routes/reportRoutes";
 import fertilizerRoutes from "./routes/fertilizerRoutes";
 import fieldRoutes from "./routes/fieldRoutes";
 import fieldWaterRoutes from "./routes/fieldWaterRoutes";
+import labourRoutes from "./routes/labourRoutes";
+import equipmentRoutes from "./routes/equipmentRoutes";
 
 
 
@@ -36,6 +38,8 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/fertilizers",fertilizerRoutes);
 app.use("/api/fields",fieldRoutes);
 app.use("/api/field-water",fieldWaterRoutes);
+app.use("/api/labour",labourRoutes);
+app.use("/api/equipment",equipmentRoutes);
 
 app.get("/", (req, res) => {
   res.json({

@@ -140,3 +140,103 @@ export const getFieldWaterByField =
       });
     }
   };
+
+
+  // UPDATE WATER ENTRY
+
+export const updateFieldWater =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const {
+        hours,
+        date,
+      } = req.body;
+
+      const entry =
+        await FieldWater.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!entry) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Entry not found",
+        });
+      }
+
+      entry.hours = hours;
+      entry.date = date;
+
+      await entry.save();
+
+      res.status(200).json({
+        success: true,
+        data: entry,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update entry",
+      });
+    }
+  };
+
+
+
+// DELETE WATER ENTRY
+
+export const deleteFieldWater =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const entry =
+        await FieldWater.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!entry) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Entry not found",
+        });
+      }
+
+      await entry.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Entry deleted",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete entry",
+      });
+    }
+  };

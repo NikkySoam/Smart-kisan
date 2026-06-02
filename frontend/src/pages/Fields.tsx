@@ -31,14 +31,24 @@ interface Field {
   crop: string;
 }
 
+interface Analytics {
+  water: number;
+
+  fertilizer: number;
+
+  labour: number;
+
+  equipment: number;
+
+  totalExpense: number;
+}
+
 const fieldImages = [
   "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop",
 
   "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1974&auto=format&fit=crop",
 
   "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1974&auto=format&fit=crop",
-
-  "https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=1974&auto=format&fit=crop",
 
   "https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?q=80&w=1974&auto=format&fit=crop",
 ];
@@ -51,6 +61,11 @@ const Fields = () => {
 
   const [fields, setFields] =
     useState<Field[]>([]);
+
+  const [analytics, setAnalytics] =
+    useState<
+      Record<string, Analytics>
+    >({});
 
   const [loading, setLoading] =
     useState(true);
@@ -71,6 +86,7 @@ const Fields = () => {
   const fetchFields =
     async () => {
       try {
+
         const res = await API.get(
           "/fields",
           {
@@ -81,6 +97,37 @@ const Fields = () => {
         );
 
         setFields(res.data.data);
+
+        // FETCH ANALYTICS
+
+        const analyticsData:
+          Record<
+            string,
+            Analytics
+          > = {};
+
+        for (const field of res.data
+          .data) {
+
+          const details =
+            await API.get(
+              `/fields/${field._id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+          analyticsData[
+            field._id
+          ] =
+            details.data.totals;
+        }
+
+        setAnalytics(
+          analyticsData
+        );
 
       } catch (error) {
         console.log(error);
@@ -113,6 +160,7 @@ const Fields = () => {
     e.preventDefault();
 
     try {
+
       await API.post(
         "/fields",
         formData,
@@ -174,12 +222,23 @@ const Fields = () => {
 
         <div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
-            Fields
+          <h1
+            className="
+              text-4xl
+              sm:text-5xl
+              font-bold
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              bg-clip-text
+              text-transparent
+            "
+          >
+            Apna Khet
           </h1>
 
-          <p className="text-gray-600 mt-2">
-            Manage all farming fields
+          <p className="text-gray-500 mt-2">
+            Manage all your fields
             and expenses
           </p>
 
@@ -192,8 +251,11 @@ const Fields = () => {
             setShowModal(true)
           }
           className="
-            bg-linear-to-r from-green-600 to-green-800 
-            hover:from-green-700 hover:to-green-900
+            bg-linear-to-r
+            from-green-500
+            to-green-800
+            hover:from-green-600
+            hover:to-green-900
             text-white
             px-6
             py-4
@@ -204,6 +266,7 @@ const Fields = () => {
             font-semibold
             shadow-lg
             cursor-pointer
+            transition-all
           "
         >
 
@@ -215,7 +278,7 @@ const Fields = () => {
 
       </div>
 
-      {/* FIELD GRID */}
+      {/* GRID */}
 
       <div
         className="
@@ -223,7 +286,7 @@ const Fields = () => {
           grid-cols-1
           md:grid-cols-2
           xl:grid-cols-3
-          gap-8
+          gap-5
         "
       >
 
@@ -238,7 +301,9 @@ const Fields = () => {
                 overflow-hidden
                 shadow-lg
                 hover:shadow-2xl
+                hover:scale-[1.02]
                 transition-all
+                duration-300
               "
             >
 
@@ -306,7 +371,7 @@ const Fields = () => {
 
               <div className="p-6">
 
-                {/* TITLE */}
+                {/* TOP */}
 
                 <div
                   className="
@@ -317,26 +382,36 @@ const Fields = () => {
                   "
                 >
 
-                  <h3 className="text-md font-bold">
-                    Cost Distribution
+                  <h3
+                    className="
+                      text-xl
+                      font-bold
+                      bg-linear-to-r
+                      from-green-500
+                      to-green-800
+                      bg-clip-text
+                      text-transparent
+                    "
+                  >
+                    Cost Modules
                   </h3>
 
                   <div
                     className="
                       bg-green-100
-                      text-green-800
-                      px-3
-                      py-1
+                      text-green-900
+                      px-4
+                      py-2
                       rounded-xl
                       font-bold
                     "
                   >
-                    {field.area} meter sq.
+                    {field.area} m&sup2;
                   </div>
 
                 </div>
 
-                {/* MODULE GRID */}
+                {/* MODULES */}
 
                 <div
                   className="
@@ -464,6 +539,88 @@ const Fields = () => {
 
                 </div>
 
+                {/* TOTAL EXPENSE */}
+
+                <div
+                  className="
+                    mt-6
+                    rounded-3xl
+                    bg-linear-to-r
+                    from-green-500
+                    to-green-800
+                    p-4
+                    text-white
+                    shadow-lg
+                  "
+                >
+
+                  <p className="text-gray-100">
+                    Total Expense
+                  </p>
+
+                  <h2 className="text-4xl font-bold mt-3">
+
+                    ₹
+                    {
+                      analytics[
+                        field._id
+                      ]?.totalExpense || 0
+                    }
+
+                  </h2>
+
+                  {/* BREAKDOWN */}
+
+                  <div
+                    className="
+                      mt-5
+                      grid
+                      grid-cols-2
+                      gap-3
+                      text-sm
+                    "
+                  >
+
+                    <div>
+                      Water: ₹
+                      {
+                        analytics[
+                          field._id
+                        ]?.water || 0
+                      }
+                    </div>
+
+                    <div>
+                      Fertilizer: ₹
+                      {
+                        analytics[
+                          field._id
+                        ]?.fertilizer || 0
+                      }
+                    </div>
+
+                    <div>
+                      Labour: ₹
+                      {
+                        analytics[
+                          field._id
+                        ]?.labour || 0
+                      }
+                    </div>
+
+                    <div>
+                      Equipment: ₹
+                      {
+                        analytics[
+                          field._id
+                        ]?.equipment || 0
+                      }
+                    </div>
+
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
@@ -503,7 +660,17 @@ const Fields = () => {
 
             <div className="mb-8">
 
-              <h2 className="text-3xl font-bold text-green-900">
+              <h2
+                className="
+                  text-3xl
+                  font-bold
+                  bg-linear-to-r
+                  from-green-500
+                  to-green-800
+                  bg-clip-text
+                  text-transparent
+                "
+              >
                 Add New Field
               </h2>
 
@@ -535,6 +702,7 @@ const Fields = () => {
                 className="
                   w-full
                   border
+                  border-gray-300
                   p-4
                   rounded-2xl
                   outline-none
@@ -550,10 +718,11 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Area (meter sq.)"
+                placeholder="Area (Acre)"
                 className="
                   w-full
                   border
+                  border-gray-300
                   p-4
                   rounded-2xl
                   outline-none
@@ -573,6 +742,7 @@ const Fields = () => {
                 className="
                   w-full
                   border
+                  border-gray-300
                   p-4
                   rounded-2xl
                   outline-none
@@ -592,6 +762,7 @@ const Fields = () => {
                 className="
                   w-full
                   border
+                  border-gray-300
                   p-4
                   rounded-2xl
                   outline-none
@@ -600,13 +771,7 @@ const Fields = () => {
 
               {/* BUTTONS */}
 
-              <div
-                className="
-                  flex
-                  gap-4
-                  pt-4
-                "
-              >
+              <div className="flex gap-4 pt-2">
 
                 <button
                   type="button"
@@ -623,6 +788,8 @@ const Fields = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    hover:bg-gray-100
+                    transition-all
                   "
                 >
                   Cancel
@@ -632,13 +799,17 @@ const Fields = () => {
                   type="submit"
                   className="
                     flex-1
-                    bg-green-700
-                    hover:bg-green-800
+                    bg-linear-to-r
+                    from-green-500
+                    to-green-800
+                    hover:from-green-600
+                    hover:to-green-900
                     text-white
                     p-4
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    transition-all
                   "
                 >
                   Add Field
