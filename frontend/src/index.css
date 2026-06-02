@@ -5,3 +5,12 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

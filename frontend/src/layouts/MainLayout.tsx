@@ -12,7 +12,8 @@ import {
   FaSignOutAlt,
   FaBars,
   FaCog,
-  FaChartBar
+  FaChartBar,
+  FaSeedling,
 } from "react-icons/fa";
 
 import { useState } from "react";
@@ -40,11 +41,89 @@ const MainLayout = () => {
   const isActive = (
     path: string
   ) => {
+    if (path === "/farmers") {
+      return location.pathname.startsWith(
+        "/farmers"
+      );
+    }
+
+    if (path === "/fields") {
+      return [
+        "/fields",
+        "/field-water",
+        "/fertilizers",
+        "/labour",
+        "/equipment",
+      ].some((fieldPath) =>
+        location.pathname.startsWith(
+          fieldPath
+        )
+      );
+    }
+
     return location.pathname === path;
   };
 
+  const navGroups = [
+    {
+      title: "Main",
+      links: [
+        {
+          label: "Dashboard",
+          path: "/dashboard",
+          icon: <FaHome />,
+        },
+      ],
+    },
+    {
+      title: "Tubewell Water",
+      links: [
+        {
+          label: "Management",
+          path: "/water-management",
+          icon: <FaTint />,
+        },
+        {
+          label: "Farmers",
+          path: "/farmers",
+          icon: <FaUsers />,
+        },
+        {
+          label: "Water Entry",
+          path: "/water",
+          icon: <FaTint />,
+        },
+        {
+          label: "Reports",
+          path: "/reports",
+          icon: <FaChartBar />,
+        },
+      ],
+    },
+    {
+      title: "Apna Khet",
+      links: [
+        {
+          label: "Fields",
+          path: "/fields",
+          icon: <FaSeedling />,
+        },
+      ],
+    },
+    {
+      title: "Account",
+      links: [
+        {
+          label: "Settings",
+          path: "/settings",
+          icon: <FaCog />,
+        },
+      ],
+    },
+  ];
+
   return (
-    <div className="h-screen overflow-hidden flex bg-green-50">
+    <div className="h-screen overflow-hidden flex bg-emerald-50">
 
       {/* MOBILE BUTTON */}
 
@@ -78,9 +157,9 @@ const MainLayout = () => {
           z-40
           h-screen
           w-[260px]
-          bg-green-700
+          bg-green-800
           text-white
-          p-6
+          p-4
           flex
           flex-col
           transition-transform
@@ -96,7 +175,7 @@ const MainLayout = () => {
 
         {/* LOGO */}
 
-        <div className="mb-10">
+        <div className="mb-8">
 
           <h1 className="text-3xl font-bold">
             Smart Kisan
@@ -110,146 +189,75 @@ const MainLayout = () => {
 
         {/* NAVIGATION */}
 
-        <nav className="flex flex-col gap-3 flex-1">
+        <nav
+          className="
+            flex
+            flex-col
+            gap-5
+            flex-1
+            overflow-y-auto
+            no-scrollbar
+            bg-green-700
+            p-4
+            mb-2
+            rounded-2xl
+          "
+        >
 
-          {/* DASHBOARD */}
+          {navGroups.map(
+            (group) => (
+              <div key={group.title}>
 
-          <Link
-            to="/dashboard"
-            onClick={() =>
-              setOpen(false)
-            }
-            className={`
-              flex
-              items-center
-              gap-3
-              p-4
-              rounded-2xl
-              transition-all
+                <p
+                  className="
+                    text-xs
+                    uppercase
+                    tracking-wider
+                    text-green-200
+                    mb-2
+                    px-2
+                  "
+                >
+                  {group.title}
+                </p>
 
-              ${
-                isActive(
-                  "/dashboard"
-                )
-                  ? "bg-white text-green-900 font-semibold shadow"
-                  : "hover:bg-green-800"
-              }
-            `}
-          >
-            <FaHome />
+                <div className="flex flex-col gap-2">
 
-            Dashboard
-          </Link>
+                  {group.links.map(
+                    (link) => (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() =>
+                          setOpen(false)
+                        }
+                        className={`
+                          flex
+                          items-center
+                          gap-3
+                          p-4
+                          rounded-2xl
+                          transition-all
 
-          {/* FARMERS */}
+                          ${
+                            isActive(link.path)
+                              ? "bg-white text-green-900 font-semibold shadow"
+                              : "hover:bg-green-800"
+                          }
+                        `}
+                      >
+                        {link.icon}
 
-          <Link
-            to="/farmers"
-            onClick={() =>
-              setOpen(false)
-            }
-            className={`
-              flex
-              items-center
-              gap-3
-              p-4
-              rounded-2xl
-              transition-all
+                        {link.label}
+                      </Link>
+                    )
+                  )}
 
-              ${
-                isActive(
-                  "/farmers"
-                )
-                  ? "bg-white text-green-900 font-semibold shadow"
-                  : "hover:bg-green-800"
-              }
-            `}
-          >
-            <FaUsers />
+                </div>
 
-            Farmers
-          </Link>
-
-          {/* WATER */}
-
-          <Link
-            to="/water"
-            onClick={() =>
-              setOpen(false)
-            }
-            className={`
-              flex
-              items-center
-              gap-3
-              p-4
-              rounded-2xl
-              transition-all
-
-              ${
-                isActive(
-                  "/water"
-                )
-                  ? "bg-white text-green-900 font-semibold shadow"
-                  : "hover:bg-green-800"
-              }
-            `}
-          >
-            <FaTint />
-
-            Water Entry
-          </Link>
-
-                {/* SETTINGS */}
-          <Link
-            to="/settings"
-            onClick={() =>
-                setOpen(false)
-            }
-            className={`
-                flex
-                items-center
-                gap-3
-                p-4
-                rounded-2xl
-                transition-all
-
-                ${
-                isActive("/settings")
-                    ? "bg-white text-green-900 font-semibold shadow"
-                    : "hover:bg-green-800"
-                }
-            `}
-            >
-            <FaCog />
-
-            Settings
-            </Link>
-
-                {/* REPORTS */}
-            <Link
-            to="/reports"
-            onClick={() =>
-                setOpen(false)
-            }
-            className={`
-                flex
-                items-center
-                gap-3
-                p-4
-                rounded-2xl
-                transition-all
-
-                ${
-                isActive("/reports")
-                    ? "bg-white text-green-900 font-semibold shadow"
-                    : "hover:bg-green-800"
-                }
-            `}
-            >
-            <FaChartBar />
-
-            Reports
-            </Link>
+              </div>
+            )
+          )}
 
         </nav>
 
@@ -302,6 +310,7 @@ const MainLayout = () => {
           lg:ml-[260px]
           h-screen
           overflow-y-auto
+          bg-green-50
         "
       >
         <Outlet />
