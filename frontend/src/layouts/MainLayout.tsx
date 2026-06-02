@@ -58,7 +58,7 @@ const MainLayout = () => {
           top-4
           right-4
           z-50
-          bg-green-700
+          bg-linear-to-tr from-green-500 to-green-800
           text-white
           p-3
           rounded-xl
@@ -78,7 +78,7 @@ const MainLayout = () => {
           z-40
           h-screen
           w-[260px]
-          bg-green-900
+          bg-green-700
           text-white
           p-6
           flex

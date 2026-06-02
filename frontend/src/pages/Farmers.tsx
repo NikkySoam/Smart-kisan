@@ -247,8 +247,8 @@ const Farmers = () => {
                 setShowForm(!showForm)
               }
               className="
-                bg-green-700
-                hover:bg-green-800
+                bg-linear-to-r from-green-500 to-green-800 
+                hover:from-green-600 hover:to-green-900
                 text-white
                 px-6
                 py-1

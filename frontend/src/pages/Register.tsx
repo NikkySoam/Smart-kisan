@@ -168,7 +168,7 @@ const Register = () => {
             />
           </div>
 
-          <button className="w-full bg-green-700 hover:bg-green-800 transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base">
+          <button className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base">
             Register
           </button>
         </form>

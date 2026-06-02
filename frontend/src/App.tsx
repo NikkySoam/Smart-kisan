@@ -18,6 +18,9 @@ import AuthRedirect from "./routes/AuthRedirect";
 import Settings from "./pages/Settings";
 import Reports from "./pages/Reports";
 import FarmerDetails from "./pages/FarmerDetails";
+import FieldWater from "./pages/FieldWater";
+import Fields from "./pages/Fields";
+import Fertilizers from "./pages/Fertilizers";
 
 function App() {
   return (
@@ -77,14 +80,14 @@ function App() {
             element={<Dashboard />}
           />
 
-          {/* FARMERS */}
+          {/* TUBEWELL FARMERS */}
 
           <Route
             path="/farmers"
             element={<Farmers />}
           />
 
-          {/* WATER */}
+          {/* TUBEWELL WATER */}
 
           <Route
             path="/water"
@@ -93,20 +96,40 @@ function App() {
             }
           />
 
-            {/* SETTINGS */}
+            {/* USER SETTINGS */}
           <Route
             path="/settings"
             element={<Settings />}
           />
 
+          {/* REPORTS OF TUBEWELL WATER */}
           <Route
             path="/reports"
             element={<Reports />}
           />
 
+          {/* FARMERS DETAILS WHICH USE TUBEWELL */}
           <Route
             path="/farmers/:id"
             element={<FarmerDetails />}
+          />
+
+          {/* WATER IN OWN FIELD */}
+          <Route
+            path="/field-water/:fieldId"
+            element={<FieldWater />}
+          />
+
+            {/* ALL FIELDS OF USER */}
+          <Route
+            path="/fields"
+            element={<Fields />}
+          />
+
+            {/* FERTILIZER IN OWN FIELD */}
+          <Route
+            path="/fertilizers/:fieldId"
+            element={<Fertilizers />}
           />
 
         </Route>

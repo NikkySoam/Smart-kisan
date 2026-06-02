@@ -110,7 +110,7 @@ const Settings = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold text-green-900">
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
           Settings
         </h1>
 
@@ -137,7 +137,7 @@ const Settings = () => {
 
         <div
           className="
-            bg-green-800
+            bg-linear-to-r from-green-500 to-green-800 
             p-6
             sm:p-8
             text-white
@@ -199,7 +199,7 @@ const Settings = () => {
 
             <div>
 
-              <h2 className="text-2xl font-bold text-green-800 mb-5">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-5">
                 Profile Settings
               </h2>
 
@@ -296,7 +296,7 @@ const Settings = () => {
 
             <div className="flex flex-col gap-2">
 
-              <h2 className="text-2xl font-bold text-green-800 mb-5">
+              <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-5">
                 Settings
               </h2>
 
@@ -394,8 +394,8 @@ const Settings = () => {
               type="submit"
               disabled={loading}
               className="
-                bg-green-700
-                hover:bg-green-800
+                bg-linear-to-r from-green-500 to-green-800 
+                hover:from-green-600 hover:to-green-900
                 disabled:bg-green-400
                 text-white
                 px-8

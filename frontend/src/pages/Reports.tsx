@@ -127,7 +127,7 @@ const Reports = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold text-green-900">
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
           Monthly Reports
         </h1>
 
@@ -265,7 +265,7 @@ const Reports = () => {
             Total Entries
           </h2>
 
-          <p className="text-4xl font-bold text-green-700 mt-4">
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
               stats.totalEntries
             }
@@ -279,7 +279,7 @@ const Reports = () => {
             Total Hours
           </h2>
 
-          <p className="text-4xl font-bold text-green-700 mt-4">
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
               stats.totalHours
             }
@@ -293,7 +293,7 @@ const Reports = () => {
             Earnings
           </h2>
 
-          <p className="text-4xl font-bold text-green-700 mt-4">
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹
             {
               stats.totalEarnings
@@ -320,7 +320,7 @@ const Reports = () => {
 
           <thead>
 
-            <tr className="bg-green-700 text-white">
+            <tr className="bg-linear-to-r from-green-500 to-green-800 text-white">
 
               <th className="p-4 text-left rounded-l-xl">
                 Farmer

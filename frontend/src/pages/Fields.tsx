@@ -1,0 +1,660 @@
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import API from "../api/axios";
+
+import toast from "react-hot-toast";
+
+import {
+  FaTint,
+  FaSeedling,
+  FaTools,
+  FaTractor,
+  FaPlus,
+} from "react-icons/fa";
+
+interface Field {
+  _id: string;
+
+  name: string;
+
+  area: number;
+
+  location: string;
+
+  crop: string;
+}
+
+const fieldImages = [
+  "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop",
+
+  "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1974&auto=format&fit=crop",
+
+  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1974&auto=format&fit=crop",
+
+  "https://images.unsplash.com/photo-1472396961693-142e6e269027?q=80&w=1974&auto=format&fit=crop",
+
+  "https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?q=80&w=1974&auto=format&fit=crop",
+];
+
+const Fields = () => {
+  const navigate = useNavigate();
+
+  const token =
+    localStorage.getItem("token");
+
+  const [fields, setFields] =
+    useState<Field[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [showModal, setShowModal] =
+    useState(false);
+
+  const [formData, setFormData] =
+    useState({
+      name: "",
+      area: "",
+      location: "",
+      crop: "",
+    });
+
+  // FETCH FIELDS
+
+  const fetchFields =
+    async () => {
+      try {
+        const res = await API.get(
+          "/fields",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setFields(res.data.data);
+
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  useEffect(() => {
+    fetchFields();
+  }, []);
+
+  // HANDLE CHANGE
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]:
+        e.target.value,
+    });
+  };
+
+  // ADD FIELD
+
+  const handleSubmit = async (
+    e: React.FormEvent
+  ) => {
+    e.preventDefault();
+
+    try {
+      await API.post(
+        "/fields",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(
+        "Field Added Successfully"
+      );
+
+      setShowModal(false);
+
+      setFormData({
+        name: "",
+        area: "",
+        location: "",
+        crop: "",
+      });
+
+      fetchFields();
+
+    } catch (error) {
+      toast.error(
+        "Failed to add field"
+      );
+    }
+  };
+
+  // LOADING
+
+  if (loading) {
+    return (
+      <div className="p-8">
+        Loading...
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 sm:p-8">
+
+      {/* HEADER */}
+
+      <div
+        className="
+          flex
+          flex-col
+          sm:flex-row
+          justify-between
+          sm:items-center
+          gap-4
+          mb-10
+        "
+      >
+
+        <div>
+
+          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
+            Fields
+          </h1>
+
+          <p className="text-gray-600 mt-2">
+            Manage all farming fields
+            and expenses
+          </p>
+
+        </div>
+
+        {/* ADD BUTTON */}
+
+        <button
+          onClick={() =>
+            setShowModal(true)
+          }
+          className="
+            bg-linear-to-r from-green-600 to-green-800 
+            hover:from-green-700 hover:to-green-900
+            text-white
+            px-6
+            py-4
+            rounded-2xl
+            flex
+            items-center
+            gap-3
+            font-semibold
+            shadow-lg
+            cursor-pointer
+          "
+        >
+
+          <FaPlus />
+
+          Add New Field
+
+        </button>
+
+      </div>
+
+      {/* FIELD GRID */}
+
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-2
+          xl:grid-cols-3
+          gap-8
+        "
+      >
+
+        {fields.map(
+          (field, index) => (
+
+            <div
+              key={field._id}
+              className="
+                bg-white
+                rounded-3xl
+                overflow-hidden
+                shadow-lg
+                hover:shadow-2xl
+                transition-all
+              "
+            >
+
+              {/* IMAGE */}
+
+              <div
+                className="
+                  h-56
+                  relative
+                  bg-cover
+                  bg-center
+                "
+                style={{
+                  backgroundImage: `url(${
+                    fieldImages[
+                      index %
+                        fieldImages.length
+                    ]
+                  })`,
+                }}
+              >
+
+                {/* OVERLAY */}
+
+                <div
+                  className="
+                    absolute
+                    inset-0
+                    bg-black/40
+                  "
+                ></div>
+
+                {/* CONTENT */}
+
+                <div
+                  className="
+                    relative
+                    z-10
+                    p-6
+                    text-white
+                    h-full
+                    flex
+                    flex-col
+                    justify-end
+                  "
+                >
+
+                  <h2 className="text-4xl font-bold">
+                    {field.name}
+                  </h2>
+
+                  <p className="mt-2 text-lg">
+                    {field.crop}
+                  </p>
+
+                  <p className="mt-1 text-sm text-gray-200">
+                    {field.location}
+                  </p>
+
+                </div>
+
+              </div>
+
+              {/* BODY */}
+
+              <div className="p-6">
+
+                {/* TITLE */}
+
+                <div
+                  className="
+                    flex
+                    justify-between
+                    items-center
+                    mb-6
+                  "
+                >
+
+                  <h3 className="text-md font-bold">
+                    Cost Distribution
+                  </h3>
+
+                  <div
+                    className="
+                      bg-green-100
+                      text-green-800
+                      px-3
+                      py-1
+                      rounded-xl
+                      font-bold
+                    "
+                  >
+                    {field.area} meter sq.
+                  </div>
+
+                </div>
+
+                {/* MODULE GRID */}
+
+                <div
+                  className="
+                    grid
+                    grid-cols-2
+                    gap-4
+                  "
+                >
+
+                  {/* WATER */}
+
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/field-water/${field._id}`
+                      )
+                    }
+                    className="
+                      bg-blue-50
+                      hover:bg-blue-100
+                      border
+                      border-blue-100
+                      rounded-2xl
+                      p-5
+                      text-left
+                      transition-all
+                      cursor-pointer
+                    "
+                  >
+
+                    <FaTint className="text-blue-600 text-2xl mb-4" />
+
+                    <p className="font-semibold text-blue-900">
+                      Water
+                    </p>
+
+                  </button>
+
+                  {/* FERTILIZER */}
+
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/fertilizers/${field._id}`
+                      )
+                    }
+                    className="
+                      bg-green-50
+                      hover:bg-green-100
+                      border
+                      border-green-100
+                      rounded-2xl
+                      p-5
+                      text-left
+                      transition-all
+                      cursor-pointer
+                    "
+                  >
+
+                    <FaSeedling className="text-green-600 text-2xl mb-4" />
+
+                    <p className="font-semibold text-green-900">
+                      Fertilizer
+                    </p>
+
+                  </button>
+
+                  {/* LABOUR */}
+
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/labour/${field._id}`
+                      )
+                    }
+                    className="
+                      bg-yellow-50
+                      hover:bg-yellow-100
+                      border
+                      border-yellow-100
+                      rounded-2xl
+                      p-5
+                      text-left
+                      transition-all
+                      cursor-pointer
+                    "
+                  >
+
+                    <FaTools className="text-yellow-600 text-2xl mb-4" />
+
+                    <p className="font-semibold text-yellow-900">
+                      Labour
+                    </p>
+
+                  </button>
+
+                  {/* EQUIPMENT */}
+
+                  <button
+                    onClick={() =>
+                      navigate(
+                        `/equipment/${field._id}`
+                      )
+                    }
+                    className="
+                      bg-gray-100
+                      hover:bg-gray-200
+                      border
+                      border-gray-200
+                      rounded-2xl
+                      p-5
+                      text-left
+                      transition-all
+                      cursor-pointer
+                    "
+                  >
+
+                    <FaTractor className="text-gray-700 text-2xl mb-4" />
+
+                    <p className="font-semibold text-gray-900">
+                      Equipment
+                    </p>
+
+                  </button>
+
+                </div>
+
+              </div>
+
+            </div>
+          )
+        )}
+
+      </div>
+
+      {/* MODAL */}
+
+      {showModal && (
+
+        <div
+          className="
+            fixed
+            inset-0
+            bg-black/50
+            z-50
+            flex
+            justify-center
+            items-center
+            p-4
+          "
+        >
+
+          <div
+            className="
+              bg-white
+              rounded-3xl
+              w-full
+              max-w-2xl
+              p-8
+            "
+          >
+
+            {/* HEADER */}
+
+            <div className="mb-8">
+
+              <h2 className="text-3xl font-bold text-green-900">
+                Add New Field
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                Create farming field
+              </p>
+
+            </div>
+
+            {/* FORM */}
+
+            <form
+              onSubmit={
+                handleSubmit
+              }
+              className="space-y-5"
+            >
+
+              <input
+                type="text"
+                name="name"
+                value={
+                  formData.name
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Field Name"
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-2xl
+                  outline-none
+                "
+              />
+
+              <input
+                type="number"
+                name="area"
+                value={
+                  formData.area
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Area (meter sq.)"
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-2xl
+                  outline-none
+                "
+              />
+
+              <input
+                type="text"
+                name="location"
+                value={
+                  formData.location
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Location"
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-2xl
+                  outline-none
+                "
+              />
+
+              <input
+                type="text"
+                name="crop"
+                value={
+                  formData.crop
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Current Crop"
+                className="
+                  w-full
+                  border
+                  p-4
+                  rounded-2xl
+                  outline-none
+                "
+              />
+
+              {/* BUTTONS */}
+
+              <div
+                className="
+                  flex
+                  gap-4
+                  pt-4
+                "
+              >
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowModal(
+                      false
+                    )
+                  }
+                  className="
+                    flex-1
+                    border
+                    border-gray-300
+                    p-4
+                    rounded-2xl
+                    font-semibold
+                    cursor-pointer
+                  "
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="
+                    flex-1
+                    bg-green-700
+                    hover:bg-green-800
+                    text-white
+                    p-4
+                    rounded-2xl
+                    font-semibold
+                    cursor-pointer
+                  "
+                >
+                  Add Field
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  );
+};
+
+export default Fields;

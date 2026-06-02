@@ -9,6 +9,7 @@ import {
 
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import generateBill from "../utils/generateBill";
 
 interface Entry {
   _id: string;
@@ -45,6 +46,9 @@ const FarmerDetails = () => {
       totalAmount: 0,
     });
 
+  const [waterRate, setWaterRate] =
+  useState(0);
+
   // FETCH DATA
 
   const fetchFarmerDetails =
@@ -68,6 +72,22 @@ const FarmerDetails = () => {
           totalAmount:
             res.data.totalAmount,
         });
+
+        // FETCH WATER RATE
+        const settingsRes =
+            await API.get(
+                "/settings",
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                }
+            );
+
+            setWaterRate(
+            settingsRes.data.data
+                .waterRate
+            );
 
       } catch (error) {
         console.log(error);
@@ -105,7 +125,7 @@ const FarmerDetails = () => {
 
       <div className="mb-8 flex justify-between items-center">
         <div>
-        <h1 className="text-3xl sm:text-5xl font-bold text-green-900">
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
           {farmerName}
         </h1>
 
@@ -120,8 +140,8 @@ const FarmerDetails = () => {
                     )
                 }
                 className="
-                    bg-green-700
-                    hover:bg-green-800
+                    bg-linear-to-r from-green-500 to-green-800 
+                    hover:from-green-600 hover:to-green-900
                     text-white
                     px-6
                     py-1
@@ -158,7 +178,7 @@ const FarmerDetails = () => {
             Total Water Hours
           </h2>
 
-          <p className="text-4xl font-bold text-green-700 mt-4">
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
               stats.totalHours
             }
@@ -174,7 +194,7 @@ const FarmerDetails = () => {
             Total Earnings
           </h2>
 
-          <p className="text-4xl font-bold text-green-700 mt-4">
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹
             {
               stats.totalAmount
@@ -184,6 +204,44 @@ const FarmerDetails = () => {
         </div>
 
       </div>
+
+
+            {/* GENERATE BILL */}
+
+      <div className="mb-6">
+
+        <button
+            onClick={() =>
+            generateBill({
+                farmerName,
+
+                entries,
+
+                totalHours:
+                stats.totalHours,
+
+                totalAmount:
+                stats.totalAmount,
+
+                waterRate,
+            })
+            }
+            className="
+            bg-linear-to-r from-green-500 to-green-800 
+            hover:from-green-600 hover:to-green-900
+            text-white
+            px-6
+            py-3
+            rounded-2xl
+            font-semibold
+            transition-all
+            cursor-pointer
+            "
+        >
+            Preview PDF Bill
+        </button>
+
+        </div>
 
       {/* HISTORY TABLE */}
 
@@ -197,7 +255,7 @@ const FarmerDetails = () => {
         "
       >
 
-        <h2 className="text-2xl font-bold text-green-800 mb-6">
+        <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-6">
           Water History
         </h2>
 
@@ -205,7 +263,7 @@ const FarmerDetails = () => {
 
           <thead>
 
-            <tr className="bg-green-700 text-white">
+            <tr className="bg-linear-to-r from-green-500 to-green-800 text-white">
 
               <th className="p-4 text-left rounded-l-xl">
                 Date
@@ -246,7 +304,7 @@ const FarmerDetails = () => {
                     className="
                       p-4
                       font-bold
-                      text-green-700
+                      bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent
                     "
                   >
                     ₹

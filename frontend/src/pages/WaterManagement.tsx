@@ -385,8 +385,8 @@ const WaterManagement = () => {
 
               <button
                 className="
-                  bg-green-700
-                  hover:bg-green-800
+                  bg-linear-to-r from-green-500 to-green-800 
+                  hover:from-green-600 hover:to-green-900
                   transition-all
                   duration-300
                   text-white
@@ -428,7 +428,7 @@ const WaterManagement = () => {
 
                 <thead>
 
-                  <tr className="bg-green-700 text-white">
+                  <tr className="bg-linear-to-r from-green-500 to-green-800  text-white">
 
                     <th className="p-3 text-left rounded-l-xl">
                       Farmer
@@ -502,8 +502,8 @@ const WaterManagement = () => {
                                 openEditModal(item)
                             }
                             className="
-                                bg-yellow-500
-                                hover:bg-yellow-600
+                                bg-linear-to-r from-yellow-500 to-yellow-600 
+                                hover:from-yellow-600 hover:to-yellow-700
                                 text-black
                                 px-4
                                 py-2
@@ -798,8 +798,8 @@ const WaterManagement = () => {
                     type="submit"
                     className="
                         flex-1
-                        bg-green-700
-                        hover:bg-green-800
+                        bg-linear-to-r from-green-500 to-green-800 
+                        hover:from-green-600 hover:to-green-900
                         hover:scale-105
                         transition
                         duration-300
@@ -807,6 +807,7 @@ const WaterManagement = () => {
                         p-4
                         rounded-2xl
                         font-semibold
+                        cursor-pointer
                     "
                     >
                     Update
@@ -827,6 +828,7 @@ const WaterManagement = () => {
                         p-4
                         rounded-2xl
                         font-semibold
+                        cursor-pointer
                     "
                     >
                     Cancel
