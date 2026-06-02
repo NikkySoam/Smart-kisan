@@ -109,3 +109,108 @@ export const getEquipmentByField =
       });
     }
   };
+
+
+// UPDATE EQUIPMENT
+
+export const updateEquipment =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const {
+        equipmentName,
+        amount,
+        date,
+      } = req.body;
+
+      const equipment =
+        await Equipment.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!equipment) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Equipment not found",
+        });
+      }
+
+      equipment.equipmentName =
+        equipmentName;
+      equipment.amount =
+        amount;
+      equipment.date =
+        date;
+
+      await equipment.save();
+
+      res.status(200).json({
+        success: true,
+        data: equipment,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update equipment",
+      });
+    }
+  };
+
+
+
+// DELETE EQUIPMENT
+
+export const deleteEquipment =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const equipment =
+        await Equipment.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!equipment) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Equipment not found",
+        });
+      }
+
+      await equipment.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Equipment deleted",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete equipment",
+      });
+    }
+  };

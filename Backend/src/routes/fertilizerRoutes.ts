@@ -5,7 +5,9 @@ import protect from "../middleware/authMiddleware";
 import {
   addFertilizer,
   getFertilizers,
-  getFertilizersByField
+  getFertilizersByField,
+  updateFertilizer,
+  deleteFertilizer
 } from "../controllers/fertilizerController";
 
 const router = express.Router();
@@ -26,6 +28,18 @@ router.get(
   "/field/:fieldId",
   protect,
   getFertilizersByField
+);
+
+router.put(
+  "/:id",
+  protect,
+  updateFertilizer
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteFertilizer
 );
 
 export default router;

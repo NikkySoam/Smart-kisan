@@ -215,3 +215,108 @@ export const getFieldDetails =
       });
     }
   };
+
+
+  // UPDATE FIELD
+
+export const updateField =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const {
+        name,
+        area,
+        location,
+        crop,
+      } = req.body;
+
+      const field =
+        await Field.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!field) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Field not found",
+        });
+      }
+
+      field.name = name;
+      field.area = area;
+      field.location =
+        location;
+      field.crop = crop;
+
+      await field.save();
+
+      res.status(200).json({
+        success: true,
+        data: field,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update field",
+      });
+    }
+  };
+
+
+
+// DELETE FIELD
+
+export const deleteField =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const field =
+        await Field.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!field) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Field not found",
+        });
+      }
+
+      await field.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Field deleted successfully",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete field",
+      });
+    }
+  };

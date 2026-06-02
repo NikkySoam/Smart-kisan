@@ -1,0 +1,314 @@
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import API from "../../api/axios";
+
+import {
+  FaUsers,
+  FaTint,
+  FaChartBar,
+  FaArrowRight,
+} from "react-icons/fa";
+
+interface Stats {
+  totalFarmers: number;
+
+  totalEntries: number;
+
+  totalHours: number;
+
+  totalEarnings: number;
+
+  waterRate: number;
+}
+
+
+
+const WaterManagement = () => {
+  const navigate =
+    useNavigate();
+
+  const token =
+    localStorage.getItem("token");
+
+  const [stats, setStats] =
+    useState<Stats>({
+      totalFarmers: 0,
+
+      totalEntries: 0,
+
+      totalHours: 0,
+
+      totalEarnings: 0,
+
+      waterRate: 0,
+    });
+
+  // FETCH STATS
+
+  const fetchStats = async () => {
+    try {
+      const res = await API.get(
+        "/dashboard/stats",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setStats(res.data.data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const cards = [
+    {
+      title: "Farmers",
+      description:
+        "Manage tubewell farmers",
+      path: "/farmers",
+      icon: <FaUsers />,
+    },
+    {
+      title: "Water Entries",
+      description:
+        "Add and manage water usage",
+      path: "/water",
+      icon: <FaTint />,
+    },
+    {
+      title: "Reports",
+      description:
+        "View monthly water reports",
+      path: "/reports",
+      icon: <FaChartBar />,
+    },
+  ];
+
+  return (
+    <div className="p-4 sm:p-8">
+
+      {/* HEADER */}
+
+      <div className="mb-10">
+
+        <h1
+          className="
+            text-4xl
+            sm:text-5xl
+            font-bold
+            bg-linear-to-r
+            from-green-500
+            to-green-800
+            bg-clip-text
+            text-transparent
+          "
+        >
+          Water Management
+        </h1>
+
+        <p className="text-gray-500 mt-2">
+          Tubewell business dashboard
+        </p>
+
+      </div>
+
+      {/* ACTION CARDS */}
+
+      <div
+        className="
+          grid
+          grid-cols-1
+          md:grid-cols-3
+          gap-6
+          mb-10
+        "
+      >
+
+        {cards.map(
+          (card) => (
+            <button
+              key={card.path}
+              onClick={() =>
+                navigate(card.path)
+              }
+              className="
+                bg-white
+                rounded-3xl
+                p-6
+                shadow
+                hover:shadow-xl
+                hover:-translate-y-1
+                transition-all
+                text-left
+                cursor-pointer
+                border
+                border-green-100
+              "
+            >
+
+              <div
+                className="
+                  flex
+                  items-start
+                  justify-between
+                  gap-4
+                "
+              >
+
+                <div
+                  className="
+                    w-16
+                    h-16
+                    rounded-2xl
+                    bg-green-100
+                    text-green-700
+                    flex
+                    items-center
+                    justify-center
+                    text-3xl
+                  "
+                >
+                  {card.icon}
+                </div>
+
+                <FaArrowRight className="text-green-700 mt-2" />
+
+              </div>
+
+              <h2
+                className="
+                  text-2xl
+                  font-bold
+                  text-green-900
+                  mt-6
+                "
+              >
+                {card.title}
+              </h2>
+
+              <p className="text-gray-500 mt-2">
+                {card.description}
+              </p>
+
+            </button>
+          )
+        )}
+
+      </div>
+
+      {/* STATS */}
+
+      
+      <div
+          className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          lg:grid-cols-5
+          gap-6
+        "
+      >
+
+        {/* FARMERS */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Total Farmers
+          </h2>
+
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
+            {
+              stats.totalFarmers
+            }
+          </p>
+
+        </div>
+
+        {/* ENTRIES */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Water Entries
+          </h2>
+
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
+            {
+              stats.totalEntries
+            }
+          </p>
+
+        </div>
+
+        {/* HOURS */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Total Hours
+          </h2>
+
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
+            {
+              stats.totalHours
+            }
+          </p>
+
+        </div>
+
+        {/* EARNINGS */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Earnings
+          </h2>
+
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
+            ₹
+            {
+              stats.totalEarnings
+            }
+          </p>
+
+        </div>
+
+        {/* WATER RATE */}
+
+        <div className="bg-white rounded-3xl p-6 shadow">
+
+          <h2 className="text-gray-500">
+            Water Rate
+          </h2>
+
+          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
+            ₹
+            {
+              stats.waterRate
+            }
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+  );
+};
+
+export default WaterManagement;

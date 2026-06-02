@@ -7,9 +7,9 @@ import {
   useParams,
 } from "react-router-dom";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 import { useNavigate } from "react-router-dom";
-import generateBill from "../utils/generateBill";
+import generateBill from "../../utils/generateBill";
 
 interface Entry {
   _id: string;

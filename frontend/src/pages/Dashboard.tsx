@@ -1,72 +1,14 @@
-import {
-  useEffect,
-  useState,
-} from "react";
 
 import WeatherCard from "../components/WeatherCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 
-import { FaLeaf } from "react-icons/fa";
+import { FaLeaf,FaTint } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
-
-import API from "../api/axios";
-
-interface Stats {
-  totalFarmers: number;
-
-  totalEntries: number;
-
-  totalHours: number;
-
-  totalEarnings: number;
-
-  waterRate: number;
-}
 
 const Dashboard = () => {
 
   const navigate = useNavigate();
-
-  const token =
-    localStorage.getItem("token");
-
-  const [stats, setStats] =
-    useState<Stats>({
-      totalFarmers: 0,
-
-      totalEntries: 0,
-
-      totalHours: 0,
-
-      totalEarnings: 0,
-
-      waterRate: 0,
-    });
-
-  // FETCH STATS
-
-  const fetchStats = async () => {
-    try {
-      const res = await API.get(
-        "/dashboard/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setStats(res.data.data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-  }, []);
 
   return (
     <div className="p-4 sm:p-8">
@@ -92,93 +34,10 @@ const Dashboard = () => {
           grid
           grid-cols-1
           sm:grid-cols-2
-          lg:grid-cols-5
+          lg:grid-cols-3
           gap-6
         "
       >
-
-        {/* FARMERS */}
-
-        <div className="bg-white rounded-3xl p-6 shadow">
-
-          <h2 className="text-gray-500">
-            Total Farmers
-          </h2>
-
-          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
-            {
-              stats.totalFarmers
-            }
-          </p>
-
-        </div>
-
-        {/* ENTRIES */}
-
-        <div className="bg-white rounded-3xl p-6 shadow">
-
-          <h2 className="text-gray-500">
-            Water Entries
-          </h2>
-
-          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
-            {
-              stats.totalEntries
-            }
-          </p>
-
-        </div>
-
-        {/* HOURS */}
-
-        <div className="bg-white rounded-3xl p-6 shadow">
-
-          <h2 className="text-gray-500">
-            Total Hours
-          </h2>
-
-          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
-            {
-              stats.totalHours
-            }
-          </p>
-
-        </div>
-
-        {/* EARNINGS */}
-
-        <div className="bg-white rounded-3xl p-6 shadow">
-
-          <h2 className="text-gray-500">
-            Earnings
-          </h2>
-
-          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
-            ₹
-            {
-              stats.totalEarnings
-            }
-          </p>
-
-        </div>
-
-        {/* WATER RATE */}
-
-        <div className="bg-white rounded-3xl p-6 shadow">
-
-          <h2 className="text-gray-500">
-            Water Rate
-          </h2>
-
-          <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
-            ₹
-            {
-              stats.waterRate
-            }
-          </p>
-
-        </div>
-
 
         {/* APNA KHET */}
 
@@ -263,6 +122,97 @@ const Dashboard = () => {
                 Manage your fields,
                 fertilizer, water,
                 labour and equipment
+            </p>
+
+            </div>
+
+        </div>
+
+        </div>
+
+        {/* WATER MANAGEMENT */}
+
+        <div
+        onClick={() =>
+            navigate("/water-management")
+        }
+        className="
+            relative
+            overflow-hidden
+            rounded-3xl
+            shadow-lg
+            cursor-pointer
+            group
+            min-h-[260px]
+            bg-cover
+            bg-center
+            hover:scale-[1.02]
+            transition-all
+        "
+        style={{
+            backgroundImage:
+            "url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1974&auto=format&fit=crop)",
+        }}
+        >
+
+        {/* OVERLAY */}
+
+        <div
+            className="
+            absolute
+            inset-0
+            bg-black/45
+            group-hover:bg-black/35
+            transition-all
+            "
+        ></div>
+
+        {/* CONTENT */}
+
+        <div
+            className="
+            relative
+            z-10
+            h-full
+            p-6
+            flex
+            flex-col
+            justify-between
+            text-white
+            "
+        >
+
+            {/* ICON */}
+
+            <div
+            className="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur-md
+                flex
+                items-center
+                justify-center
+            "
+            >
+
+            <FaTint className="text-3xl" />
+
+            </div>
+
+            {/* TEXT */}
+
+            <div>
+
+            <h2 className="text-4xl font-bold">
+                Tubewell Water
+            </h2>
+
+            <p className="mt-3 text-gray-200">
+                Manage farmers,
+                water hours and
+                total income
             </p>
 
             </div>

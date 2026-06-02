@@ -7,21 +7,23 @@ import {
   useParams,
 } from "react-router-dom";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
+
+
 import {
-  FaTools,
+  FaTint,
   FaPlus,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 
-interface LabourEntry {
+interface Entry {
   _id: string;
 
-  amount: number;
-
-  workType: string;
+  hours: number;
 
   date: string;
 
@@ -30,7 +32,7 @@ interface LabourEntry {
   };
 }
 
-const Labour = () => {
+const FieldWater = () => {
   const { fieldId } =
     useParams();
 
@@ -38,32 +40,37 @@ const Labour = () => {
     localStorage.getItem("token");
 
   const [entries, setEntries] =
-    useState<LabourEntry[]>([]);
+    useState<Entry[]>([]);
 
-  const [totalAmount, setTotalAmount] =
+  const [totalHours, setTotalHours] =
     useState(0);
-
-  const [loading, setLoading] =
-    useState(true);
 
   const [showModal, setShowModal] =
     useState(false);
 
+  const [loading, setLoading] =
+    useState(true);
+
   const [formData, setFormData] =
     useState({
-      amount: "",
-      workType: "",
+      hours: "",
       date: "",
     });
 
-  // FETCH LABOUR
+  const [editId, setEditId] =
+  useState("");
+
+  const [isEditing, setIsEditing] =
+  useState(false);
+
+  // FETCH ENTRIES
 
   const fetchEntries =
     async () => {
       try {
 
         const res = await API.get(
-          `/labour/field/${fieldId}`,
+          `/field-water/field/${fieldId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -73,8 +80,8 @@ const Labour = () => {
 
         setEntries(res.data.data);
 
-        setTotalAmount(
-          res.data.totalAmount
+        setTotalHours(
+          res.data.totalHours
         );
 
       } catch (error) {
@@ -102,46 +109,119 @@ const Labour = () => {
 
   // ADD ENTRY
 
-  const handleSubmit = async (
+    const handleSubmit = async (
     e: React.FormEvent
-  ) => {
+    ) => {
     e.preventDefault();
 
     try {
 
-      await API.post(
-        "/labour",
-        {
-          ...formData,
-          field: fieldId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // EDIT
+
+        if (isEditing) {
+
+        await API.put(
+            `/field-water/${editId}`,
+            formData,
+            {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            }
+        );
+
+        toast.success(
+            "Entry Updated"
+        );
+
+        } else {
+
+        // CREATE
+
+        await API.post(
+            "/field-water",
+            {
+            ...formData,
+            field: fieldId,
+            },
+            {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            }
+        );
+
+        toast.success(
+            "Entry Added"
+        );
         }
-      );
 
-      toast.success(
-        "Labour Added Successfully"
-      );
+        setShowModal(false);
 
-      setShowModal(false);
+        setIsEditing(false);
 
-      setFormData({
-        amount: "",
-        workType: "",
+        setEditId("");
+
+        setFormData({
+        hours: "",
         date: "",
-      });
+        });
 
-      fetchEntries();
+        fetchEntries();
 
     } catch (error) {
-      toast.error(
-        "Failed to add labour"
-      );
+        toast.error(
+        "Operation Failed"
+        );
     }
-  };
+    };
+
+
+    const handleDelete = async (
+    id: string
+    ) => {
+    try {
+
+        await API.delete(
+        `/field-water/${id}`,
+        {
+            headers: {
+            Authorization: `Bearer ${token}`,
+            },
+        }
+        );
+
+        toast.success(
+        "Entry Deleted"
+        );
+
+        fetchEntries();
+
+    } catch (error) {
+        toast.error(
+        "Delete Failed"
+        );
+    }
+    };
+
+    const handleEdit = (
+    entry: Entry
+    ) => {
+
+    setIsEditing(true);
+
+    setEditId(entry._id);
+
+    setFormData({
+        hours:
+        entry.hours.toString(),
+
+        date:
+        entry.date.split("T")[0],
+    });
+
+    setShowModal(true);
+    };
 
   // LOADING
 
@@ -176,39 +256,23 @@ const Labour = () => {
 
         <div>
 
-          <h1
-            className="
-              text-4xl
-              sm:text-5xl
-              font-bold
-              bg-linear-to-r
-              from-green-500
-              to-green-800
-              bg-clip-text
-              text-transparent
-            "
-          >
-            {fieldName} Labour
+          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            {fieldName} Water
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage labour expenses
+          <p className="text-gray-600 mt-2">
+            Manage field water usage
           </p>
 
         </div>
-
-        {/* BUTTON */}
 
         <button
           onClick={() =>
             setShowModal(true)
           }
           className="
-            bg-linear-to-r
-            from-green-500
-            to-green-800
-            hover:from-green-600
-            hover:to-green-900
+            bg-linear-to-r from-blue-500 to-purple-600
+            hover:from-blue-600 hover:to-purple-700
             text-white
             px-6
             py-4
@@ -218,19 +282,18 @@ const Labour = () => {
             gap-3
             font-semibold
             cursor-pointer
-            transition-all
           "
         >
 
           <FaPlus />
 
-          Add Labour
+          Add Water Entry
 
         </button>
 
       </div>
 
-      {/* TOTAL CARD */}
+      {/* STATS */}
 
       <div
         className="
@@ -239,52 +302,35 @@ const Labour = () => {
           shadow-lg
           p-8
           mb-8
-          hover:shadow-2xl
-          transition-all
         "
       >
 
         <div className="flex items-center gap-5">
-
-          {/* ICON */}
 
           <div
             className="
               w-20
               h-20
               rounded-full
-              bg-green-100
+              bg-blue-100
               flex
               items-center
               justify-center
             "
           >
 
-            <FaTools className="text-4xl text-green-700" />
+            <FaTint className="text-blue-500 text-4xl" />
 
           </div>
-
-          {/* CONTENT */}
 
           <div>
 
             <p className="text-gray-500">
-              Total Labour Cost
+              Total Water Hours
             </p>
 
-            <h2
-              className="
-                text-5xl
-                font-bold
-                bg-linear-to-r
-                from-green-500
-                to-green-800
-                bg-clip-text
-                text-transparent
-                mt-2
-              "
-            >
-              ₹{totalAmount}
+            <h2 className="text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              {totalHours}
             </h2>
 
           </div>
@@ -293,7 +339,7 @@ const Labour = () => {
 
       </div>
 
-      {/* HISTORY */}
+      {/* TABLE */}
 
       <div
         className="
@@ -304,27 +350,13 @@ const Labour = () => {
         "
       >
 
-        {/* HEADER */}
-
         <div className="p-6 border-b">
 
-          <h2
-            className="
-              text-2xl
-              font-bold
-              bg-linear-to-r
-              from-green-500
-              to-green-800
-              bg-clip-text
-              text-transparent
-            "
-          >
-            Labour History
+          <h2 className="text-2xl font-bold">
+            Water History
           </h2>
 
         </div>
-
-        {/* TABLE */}
 
         <div className="overflow-x-auto">
 
@@ -332,9 +364,7 @@ const Labour = () => {
 
             <thead
               className="
-                bg-linear-to-r
-                from-green-500
-                to-green-800
+                bg-linear-to-r from-blue-500 to-purple-600 
                 text-white
               "
             >
@@ -342,15 +372,15 @@ const Labour = () => {
               <tr>
 
                 <th className="p-5 text-left">
-                  Work Type
-                </th>
-
-                <th className="p-5 text-left">
-                  Amount
-                </th>
-
-                <th className="p-5 text-left">
                   Date
+                </th>
+
+                <th className="p-5 text-left">
+                  Hours
+                </th>
+
+                <th className="p-5 text-left">
+                Actions
                 </th>
 
               </tr>
@@ -364,46 +394,68 @@ const Labour = () => {
 
                   <tr
                     key={entry._id}
-                    className="
-                      border-b
-                      hover:bg-green-50
-                      transition-all
-                    "
+                    className="border-b"
                   >
-
-                    {/* WORK TYPE */}
-
-                    <td className="p-5 font-semibold">
-
-                      {entry.workType}
-
-                    </td>
-
-                    {/* AMOUNT */}
-
-                    <td
-                      className="
-                        p-5
-                        font-bold
-                        bg-linear-to-r
-                        from-green-500
-                        to-green-800
-                        bg-clip-text
-                        text-transparent
-                      "
-                    >
-
-                      ₹{entry.amount}
-
-                    </td>
-
-                    {/* DATE */}
 
                     <td className="p-5">
 
                       {new Date(
                         entry.date
                       ).toLocaleDateString()}
+
+                    </td>
+
+                    <td className="p-5 font-semibold">
+
+                      {entry.hours} Hours
+
+                    </td>
+
+                    <td className="p-5">
+
+                    <div className="flex gap-3">
+
+                        {/* EDIT */}
+
+                        <button
+                        onClick={() =>
+                            handleEdit(entry)
+                        }
+                        className="
+                            bg-blue-100
+                            hover:bg-blue-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                        "
+                        >
+
+                        <FaEdit className="text-blue-700" />
+
+                        </button>
+
+                        {/* DELETE */}
+
+                        <button
+                        onClick={() =>
+                            handleDelete(entry._id)
+                        }
+                        className="
+                            bg-red-100
+                            hover:bg-red-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                        "
+                        >
+
+                        <FaTrash className="text-red-700" />
+
+                        </button>
+
+                    </div>
 
                     </td>
 
@@ -446,31 +498,11 @@ const Labour = () => {
             "
           >
 
-            {/* HEADER */}
-
-            <div className="mb-8">
-
-              <h2
-                className="
-                  text-3xl
-                  font-bold
-                  bg-linear-to-r
-                  from-green-500
-                  to-green-800
-                  bg-clip-text
-                  text-transparent
-                "
-              >
-                Add Labour Entry
-              </h2>
-
-              <p className="text-gray-500 mt-2">
-                Add labour expense details
-              </p>
-
-            </div>
-
-            {/* FORM */}
+            <h2 className="text-3xl font-bold mb-6">
+              {isEditing
+                ? "Edit Water Entry"
+                : "Add Water Entry"}
+            </h2>
 
             <form
               onSubmit={
@@ -479,53 +511,23 @@ const Labour = () => {
               className="space-y-5"
             >
 
-              {/* WORK TYPE */}
-
-              <input
-                type="text"
-                name="workType"
-                value={
-                  formData.workType
-                }
-                onChange={
-                  handleChange
-                }
-                placeholder="Work Type"
-                className="
-                  w-full
-                  border
-                  border-gray-300
-                  p-4
-                  rounded-2xl
-                  outline-none
-                  focus:border-green-700
-                "
-              />
-
-              {/* AMOUNT */}
-
               <input
                 type="number"
-                name="amount"
+                name="hours"
                 value={
-                  formData.amount
+                  formData.hours
                 }
                 onChange={
                   handleChange
                 }
-                placeholder="Amount"
+                placeholder="Water Hours"
                 className="
                   w-full
                   border
-                  border-gray-300
                   p-4
                   rounded-2xl
-                  outline-none
-                  focus:border-green-700
                 "
               />
-
-              {/* DATE */}
 
               <input
                 type="date"
@@ -539,62 +541,50 @@ const Labour = () => {
                 className="
                   w-full
                   border
-                  border-gray-300
                   p-4
                   rounded-2xl
-                  outline-none
-                  focus:border-green-700
                 "
               />
 
-              {/* BUTTONS */}
-
-              <div className="flex gap-4 pt-2">
-
-                {/* CANCEL */}
+              <div className="flex gap-4">
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowModal(
-                      false
-                    )
+                  onClick={() =>{
+                      setShowModal(false);
+                      setIsEditing(false);
+                      setFormData({
+                        hours: "",
+                        date: "",
+                        });
+                    }
                   }
                   className="
                     flex-1
                     border
-                    border-gray-300
                     p-4
                     rounded-2xl
                     font-semibold
                     cursor-pointer
-                    hover:bg-gray-100
-                    transition-all
                   "
                 >
                   Cancel
                 </button>
 
-                {/* SUBMIT */}
-
                 <button
                   type="submit"
                   className="
                     flex-1
-                    bg-linear-to-r
-                    from-green-500
-                    to-green-800
-                    hover:from-green-600
-                    hover:to-green-900
+                    bg-linear-to-r from-blue-500 to-purple-600
+                    hover:from-blue-600 hover:to-purple-700
                     text-white
                     p-4
                     rounded-2xl
                     font-semibold
                     cursor-pointer
-                    transition-all
                   "
                 >
-                  Add Labour
+                  {isEditing ? "Update Entry" : "Add Entry"}
                 </button>
 
               </div>
@@ -610,4 +600,4 @@ const Labour = () => {
   );
 };
 
-export default Labour;
+export default FieldWater;

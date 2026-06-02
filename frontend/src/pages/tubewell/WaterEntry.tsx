@@ -3,7 +3,7 @@ import {
   useState,
 } from "react";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
@@ -31,7 +31,7 @@ interface WaterEntry {
   date: string;
 }
 
-const WaterManagement = () => {
+const WaterEntry = () => {
   // TOKEN
 
   const token =
@@ -850,4 +850,4 @@ const WaterManagement = () => {
   );
 };
 
-export default WaterManagement;
+export default WaterEntry;

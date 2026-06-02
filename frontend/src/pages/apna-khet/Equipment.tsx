@@ -7,13 +7,15 @@ import {
   useParams,
 } from "react-router-dom";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
 import {
   FaTractor,
   FaPlus,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 
 interface EquipmentEntry {
@@ -55,6 +57,12 @@ const Equipment = () => {
       amount: "",
       date: "",
     });
+
+  const [editId, setEditId] =
+    useState("");
+
+  const [isEditing, setIsEditing] =
+    useState(false);
 
   // FETCH DATA
 
@@ -100,7 +108,7 @@ const Equipment = () => {
     });
   };
 
-  // ADD ENTRY
+  // ADD / EDIT ENTRY
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -109,24 +117,44 @@ const Equipment = () => {
 
     try {
 
-      await API.post(
-        "/equipment",
-        {
-          ...formData,
-          field: fieldId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (isEditing) {
+        await API.put(
+          `/equipment/${editId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      toast.success(
-        "Equipment Added"
-      );
+        toast.success(
+          "Equipment Updated"
+        );
+      } else {
+        await API.post(
+          "/equipment",
+          {
+            ...formData,
+            field: fieldId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast.success(
+          "Equipment Added"
+        );
+      }
 
       setShowModal(false);
+
+      setIsEditing(false);
+
+      setEditId("");
 
       setFormData({
         equipmentName: "",
@@ -138,9 +166,54 @@ const Equipment = () => {
 
     } catch (error) {
       toast.error(
-        "Failed to add equipment"
+        "Operation Failed"
       );
     }
+  };
+
+  const handleDelete = async (
+    id: string
+  ) => {
+    try {
+      await API.delete(
+        `/equipment/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(
+        "Equipment Deleted"
+      );
+
+      fetchEntries();
+
+    } catch (error) {
+      toast.error(
+        "Delete Failed"
+      );
+    }
+  };
+
+  const handleEdit = (
+    entry: EquipmentEntry
+  ) => {
+    setIsEditing(true);
+
+    setEditId(entry._id);
+
+    setFormData({
+      equipmentName:
+        entry.equipmentName,
+      amount:
+        entry.amount.toString(),
+      date:
+        entry.date.split("T")[0],
+    });
+
+    setShowModal(true);
   };
 
   // LOADING
@@ -341,6 +414,10 @@ const Equipment = () => {
                   Date
                 </th>
 
+                <th className="p-5 text-left">
+                  Actions
+                </th>
+
               </tr>
 
             </thead>
@@ -385,6 +462,44 @@ const Equipment = () => {
                         entry.date
                       ).toLocaleDateString()}
 
+                    </td>
+
+                    <td className="p-5">
+                      <div className="flex gap-3">
+
+                        <button
+                          onClick={() =>
+                            handleEdit(entry)
+                          }
+                          className="
+                            bg-blue-100
+                            hover:bg-blue-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                          "
+                        >
+                          <FaEdit className="text-blue-700" />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleDelete(entry._id)
+                          }
+                          className="
+                            bg-red-100
+                            hover:bg-red-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                          "
+                        >
+                          <FaTrash className="text-red-700" />
+                        </button>
+
+                      </div>
                     </td>
 
                   </tr>
@@ -441,7 +556,9 @@ const Equipment = () => {
             text-transparent
           "
         >
-          Add Equipment Entry
+          {isEditing
+            ? "Edit Equipment Entry"
+            : "Add Equipment Entry"}
         </h2>
 
         <p className="text-gray-500 mt-2">
@@ -521,9 +638,16 @@ const Equipment = () => {
 
           <button
             type="button"
-            onClick={() =>
-              setShowModal(false)
-            }
+            onClick={() => {
+              setShowModal(false);
+              setIsEditing(false);
+              setEditId("");
+              setFormData({
+                equipmentName: "",
+                amount: "",
+                date: "",
+              });
+            }}
             className="
               flex-1
               border
@@ -558,7 +682,9 @@ const Equipment = () => {
               transition-all
             "
           >
-            Add Equipment
+            {isEditing
+              ? "Update Equipment"
+              : "Add Equipment"}
           </button>
 
         </div>

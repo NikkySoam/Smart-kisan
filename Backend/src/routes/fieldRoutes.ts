@@ -5,7 +5,9 @@ import protect from "../middleware/authMiddleware";
 import {
   addField,
   getFields,
-  getFieldDetails
+  getFieldDetails,
+  updateField,
+  deleteField
 } from "../controllers/fieldController";
 
 const router = express.Router();
@@ -26,6 +28,18 @@ router.get(
   "/:id",
   protect,
   getFieldDetails
+);
+
+router.put(
+  "/:id",
+  protect,
+  updateField
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteField
 );
 
 export default router;

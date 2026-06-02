@@ -5,6 +5,8 @@ import protect from "../middleware/authMiddleware";
 import {
   addEquipment,
   getEquipmentByField,
+  updateEquipment,
+  deleteEquipment,
 } from "../controllers/equipmentController";
 
 const router = express.Router();
@@ -19,6 +21,18 @@ router.get(
   "/field/:fieldId",
   protect,
   getEquipmentByField
+);
+
+router.put(
+  "/:id",
+  protect,
+  updateEquipment
+);
+
+router.delete(
+  "/:id",
+  protect,
+  deleteEquipment
 );
 
 export default router;

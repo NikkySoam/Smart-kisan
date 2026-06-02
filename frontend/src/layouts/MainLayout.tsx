@@ -196,7 +196,7 @@ const MainLayout = () => {
           >
             <FaTint />
 
-            Water Management
+            Water Entry
           </Link>
 
                 {/* SETTINGS */}

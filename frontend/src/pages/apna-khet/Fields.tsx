@@ -7,7 +7,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
@@ -17,6 +17,8 @@ import {
   FaTools,
   FaTractor,
   FaPlus,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 
 interface Field {
@@ -70,8 +72,17 @@ const Fields = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [search, setSearch] =
+  useState("");
+
   const [showModal, setShowModal] =
     useState(false);
+
+  const [isEditing, setIsEditing] =
+  useState(false);
+
+    const [editId, setEditId] =
+    useState("");
 
   const [formData, setFormData] =
     useState({
@@ -155,11 +166,33 @@ const Fields = () => {
   // ADD FIELD
 
   const handleSubmit = async (
-    e: React.FormEvent
-  ) => {
-    e.preventDefault();
+  e: React.FormEvent
+) => {
+  e.preventDefault();
 
-    try {
+  try {
+
+    // EDIT
+
+    if (isEditing) {
+
+      await API.put(
+        `/fields/${editId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(
+        "Field Updated"
+      );
+
+    } else {
+
+      // CREATE
 
       await API.post(
         "/fields",
@@ -174,24 +207,80 @@ const Fields = () => {
       toast.success(
         "Field Added Successfully"
       );
-
-      setShowModal(false);
-
-      setFormData({
-        name: "",
-        area: "",
-        location: "",
-        crop: "",
-      });
-
-      fetchFields();
-
-    } catch (error) {
-      toast.error(
-        "Failed to add field"
-      );
     }
-  };
+
+    setShowModal(false);
+
+    setIsEditing(false);
+
+    setEditId("");
+
+    setFormData({
+      name: "",
+      area: "",
+      location: "",
+      crop: "",
+    });
+
+    fetchFields();
+
+  } catch (error) {
+    toast.error(
+      "Operation Failed"
+    );
+  }
+};
+
+    const handleDelete = async (
+  id: string
+) => {
+  try {
+
+    await API.delete(
+      `/fields/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    toast.success(
+      "Field Deleted"
+    );
+
+    fetchFields();
+
+  } catch (error) {
+    toast.error(
+      "Delete Failed"
+    );
+  }
+};
+
+
+    const handleEdit = (
+  field: Field
+) => {
+
+  setIsEditing(true);
+
+  setEditId(field._id);
+
+  setFormData({
+    name: field.name,
+
+    area:
+      field.area.toString(),
+
+    location:
+      field.location,
+
+    crop: field.crop,
+  });
+
+  setShowModal(true);
+};
 
   // LOADING
 
@@ -202,6 +291,25 @@ const Fields = () => {
       </div>
     );
   }
+
+  const filteredFields =
+  fields.filter((field) =>
+    field.name
+      .toLowerCase()
+      .includes(
+        search.toLowerCase()
+      ) ||
+    field.crop
+      .toLowerCase()
+      .includes(
+        search.toLowerCase()
+      ) ||
+    field.location
+      .toLowerCase()
+      .includes(
+        search.toLowerCase()
+      )
+  );
 
   return (
     <div className="p-4 sm:p-8">
@@ -278,6 +386,34 @@ const Fields = () => {
 
       </div>
 
+      {/* SEARCH */}
+
+        <div className="mb-8">
+
+        <input
+            type="text"
+            placeholder="Search fields, crops, location..."
+            value={search}
+            onChange={(e) =>
+            setSearch(
+                e.target.value
+            )
+            }
+            className="
+            w-full
+            bg-white
+            border
+            border-gray-300
+            p-5
+            rounded-3xl
+            outline-none
+            shadow-sm
+            focus:border-green-700
+            "
+        />
+
+        </div>
+
       {/* GRID */}
 
       <div
@@ -290,7 +426,7 @@ const Fields = () => {
         "
       >
 
-        {fields.map(
+        {filteredFields.map(
           (field, index) => (
 
             <div
@@ -621,6 +757,70 @@ const Fields = () => {
 
                 </div>
 
+                {/* ACTIONS */}
+
+            <div className="flex gap-4 mt-5">
+
+            {/* EDIT */}
+
+            <button
+                onClick={() =>
+                handleEdit(field)
+                }
+                className="
+                flex-1
+                bg-blue-100
+                hover:bg-blue-200
+                text-blue-700
+                p-4
+                rounded-2xl
+                flex
+                justify-center
+                items-center
+                gap-2
+                font-semibold
+                cursor-pointer
+                transition-all
+                "
+            >
+
+                <FaEdit />
+
+                Edit
+
+            </button>
+
+            {/* DELETE */}
+
+            <button
+                onClick={() =>
+                handleDelete(field._id)
+                }
+                className="
+                flex-1
+                bg-red-100
+                hover:bg-red-200
+                text-red-700
+                p-4
+                rounded-2xl
+                flex
+                justify-center
+                items-center
+                gap-2
+                font-semibold
+                cursor-pointer
+                transition-all
+                "
+            >
+
+                <FaTrash />
+
+                Delete
+
+            </button>
+
+            </div>
+
               </div>
 
             </div>
@@ -671,7 +871,9 @@ const Fields = () => {
                   text-transparent
                 "
               >
-                Add New Field
+                {isEditing
+                    ? "Edit Field"
+                    : "Add New Field"}
               </h2>
 
               <p className="text-gray-500 mt-2">
@@ -775,10 +977,16 @@ const Fields = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowModal(
-                      false
-                    )
+                  onClick={() =>{
+                    setShowModal(false);
+                    setIsEditing(false);
+                    setFormData({
+                        name: "",
+                        area: "",
+                        location: "",
+                        crop: "",
+                        });
+                    }
                   }
                   className="
                     flex-1
@@ -812,7 +1020,9 @@ const Fields = () => {
                     transition-all
                   "
                 >
-                  Add Field
+                  {isEditing
+                    ? "Update Field"
+                    : "Add Field"}
                 </button>
 
               </div>

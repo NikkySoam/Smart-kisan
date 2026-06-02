@@ -7,13 +7,15 @@ import {
   useParams,
 } from "react-router-dom";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
 import {
   FaSeedling,
   FaPlus,
+  FaEdit,
+  FaTrash,
 } from "react-icons/fa";
 
 interface Fertilizer {
@@ -61,6 +63,12 @@ const Fertilizers = () => {
       cost: "",
       date: "",
     });
+
+  const [editId, setEditId] =
+    useState("");
+
+  const [isEditing, setIsEditing] =
+    useState(false);
 
   // FETCH DATA
 
@@ -127,7 +135,7 @@ const Fertilizers = () => {
     });
   };
 
-  // ADD ENTRY
+  // ADD / EDIT ENTRY
 
   const handleSubmit = async (
     e: React.FormEvent
@@ -136,24 +144,44 @@ const Fertilizers = () => {
 
     try {
 
-      await API.post(
-        "/fertilizers",
-        {
-          ...formData,
-          field: fieldId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (isEditing) {
+        await API.put(
+          `/fertilizers/${editId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      toast.success(
-        "Fertilizer Added"
-      );
+        toast.success(
+          "Fertilizer Updated"
+        );
+      } else {
+        await API.post(
+          "/fertilizers",
+          {
+            ...formData,
+            field: fieldId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        toast.success(
+          "Fertilizer Added"
+        );
+      }
 
       setShowModal(false);
+
+      setIsEditing(false);
+
+      setEditId("");
 
       setFormData({
         fertilizerName: "",
@@ -166,9 +194,56 @@ const Fertilizers = () => {
 
     } catch (error) {
       toast.error(
-        "Failed to add fertilizer"
+        "Operation Failed"
       );
     }
+  };
+
+  const handleDelete = async (
+    id: string
+  ) => {
+    try {
+      await API.delete(
+        `/fertilizers/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(
+        "Fertilizer Deleted"
+      );
+
+      fetchEntries();
+
+    } catch (error) {
+      toast.error(
+        "Delete Failed"
+      );
+    }
+  };
+
+  const handleEdit = (
+    entry: Fertilizer
+  ) => {
+    setIsEditing(true);
+
+    setEditId(entry._id);
+
+    setFormData({
+      fertilizerName:
+        entry.fertilizerName,
+      quantity:
+        entry.quantity.toString(),
+      cost:
+        entry.cost.toString(),
+      date:
+        entry.date.split("T")[0],
+    });
+
+    setShowModal(true);
   };
 
   // LOADING
@@ -333,6 +408,10 @@ const Fertilizers = () => {
                   Date
                 </th>
 
+                <th className="p-5 text-left">
+                  Actions
+                </th>
+
               </tr>
 
             </thead>
@@ -367,6 +446,44 @@ const Fertilizers = () => {
                         entry.date
                       ).toLocaleDateString()}
 
+                    </td>
+
+                    <td className="p-5">
+                      <div className="flex gap-3">
+
+                        <button
+                          onClick={() =>
+                            handleEdit(entry)
+                          }
+                          className="
+                            bg-blue-100
+                            hover:bg-blue-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                          "
+                        >
+                          <FaEdit className="text-blue-700" />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleDelete(entry._id)
+                          }
+                          className="
+                            bg-red-100
+                            hover:bg-red-200
+                            p-3
+                            rounded-xl
+                            cursor-pointer
+                            transition-all
+                          "
+                        >
+                          <FaTrash className="text-red-700" />
+                        </button>
+
+                      </div>
                     </td>
 
                   </tr>
@@ -409,7 +526,9 @@ const Fertilizers = () => {
           >
 
             <h2 className="text-3xl font-bold mb-6">
-              Add Fertilizer
+              {isEditing
+                ? "Edit Fertilizer"
+                : "Add Fertilizer"}
             </h2>
 
             <form
@@ -494,11 +613,17 @@ const Fertilizers = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowModal(
-                      false
-                    )
-                  }
+                  onClick={() => {
+                    setShowModal(false);
+                    setIsEditing(false);
+                    setEditId("");
+                    setFormData({
+                      fertilizerName: "",
+                      quantity: "",
+                      cost: "",
+                      date: "",
+                    });
+                  }}
                   className="
                     flex-1
                     border
@@ -524,7 +649,7 @@ const Fertilizers = () => {
                     cursor-pointer
                   "
                 >
-                  Add
+                  {isEditing ? "Update" : "Add"}
                 </button>
 
               </div>

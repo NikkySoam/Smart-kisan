@@ -109,3 +109,105 @@ export const getLabourByField =
       });
     }
   };
+
+
+// UPDATE LABOUR
+
+export const updateLabour =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const {
+        amount,
+        workType,
+        date,
+      } = req.body;
+
+      const labour =
+        await Labour.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!labour) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Labour entry not found",
+        });
+      }
+
+      labour.amount = amount;
+      labour.workType = workType;
+      labour.date = date;
+
+      await labour.save();
+
+      res.status(200).json({
+        success: true,
+        data: labour,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update labour",
+      });
+    }
+  };
+
+
+
+// DELETE LABOUR
+
+export const deleteLabour =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const labour =
+        await Labour.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!labour) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Labour entry not found",
+        });
+      }
+
+      await labour.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Labour entry deleted",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete labour",
+      });
+    }
+  };

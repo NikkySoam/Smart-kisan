@@ -10,19 +10,20 @@ import { Toaster } from "react-hot-toast";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-import Farmers from "./pages/Farmers";
-import WaterManagement from "./pages/WaterManagement";
+import Farmers from "./pages/tubewell/Farmers";
+import WaterEntry from "./pages/tubewell/WaterEntry";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthRedirect from "./routes/AuthRedirect";
 import Settings from "./pages/Settings";
-import Reports from "./pages/Reports";
-import FarmerDetails from "./pages/FarmerDetails";
-import FieldWater from "./pages/FieldWater";
-import Fields from "./pages/Fields";
-import Fertilizers from "./pages/Fertilizers";
-import Labour from "./pages/Labour";
-import Equipment from "./pages/Equipment";
+import Reports from "./pages/tubewell/Reports";
+import FarmerDetails from "./pages/tubewell/FarmerDetails";
+import FieldWater from "./pages/apna-khet/FieldWater";
+import Fields from "./pages/apna-khet/Fields";
+import Fertilizers from "./pages/apna-khet/Fertilizers";
+import Labour from "./pages/apna-khet/Labour";
+import Equipment from "./pages/apna-khet/Equipment";
+import WaterManagement from "./pages/tubewell/WaterManagement";
 
 function App() {
   return (
@@ -89,12 +90,12 @@ function App() {
             element={<Farmers />}
           />
 
-          {/* TUBEWELL WATER */}
+          {/* TUBEWELL WATER ENTRY */}
 
           <Route
             path="/water"
             element={
-              <WaterManagement />
+              <WaterEntry />
             }
           />
 
@@ -144,6 +145,12 @@ function App() {
           <Route
             path="/equipment/:fieldId"
             element={<Equipment />}
+          />
+
+            {/* WATER MANAGEMENT */}
+          <Route
+            path="/water-management"
+            element={<WaterManagement />}
           />
 
         </Route>

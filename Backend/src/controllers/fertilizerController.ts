@@ -145,3 +145,111 @@ export const getFertilizersByField =
       });
     }
   };
+
+
+// UPDATE FERTILIZER
+
+export const updateFertilizer =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const {
+        fertilizerName,
+        quantity,
+        cost,
+        date,
+      } = req.body;
+
+      const fertilizer =
+        await Fertilizer.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!fertilizer) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Fertilizer not found",
+        });
+      }
+
+      fertilizer.fertilizerName =
+        fertilizerName;
+      fertilizer.quantity =
+        quantity;
+      fertilizer.cost =
+        cost;
+      fertilizer.date =
+        date;
+
+      await fertilizer.save();
+
+      res.status(200).json({
+        success: true,
+        data: fertilizer,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update fertilizer",
+      });
+    }
+  };
+
+
+
+// DELETE FERTILIZER
+
+export const deleteFertilizer =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+
+      const { id } =
+        req.params;
+
+      const fertilizer =
+        await Fertilizer.findOne({
+          _id: id,
+          user: req.user._id,
+        });
+
+      if (!fertilizer) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Fertilizer not found",
+        });
+      }
+
+      await fertilizer.deleteOne();
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Fertilizer deleted",
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to delete fertilizer",
+      });
+    }
+  };

@@ -3,7 +3,7 @@ import {
   useState,
 } from "react";
 
-import API from "../api/axios";
+import API from "../../api/axios";
 
 interface Farmer {
   _id: string;
