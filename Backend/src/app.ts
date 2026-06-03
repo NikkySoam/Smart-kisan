@@ -25,6 +25,8 @@ import fieldRoutes from "./routes/fieldRoutes";
 import fieldWaterRoutes from "./routes/fieldWaterRoutes";
 import labourRoutes from "./routes/labourRoutes";
 import equipmentRoutes from "./routes/equipmentRoutes";
+import notificationRoutes from "./routes/notificationRoutes";
+import reminderRoutes from "./routes/reminderRoutes";
 
 
 
@@ -40,6 +42,8 @@ app.use("/api/fields",fieldRoutes);
 app.use("/api/field-water",fieldWaterRoutes);
 app.use("/api/labour",labourRoutes);
 app.use("/api/equipment",equipmentRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/reminders",reminderRoutes);
 
 app.get("/", (req, res) => {
   res.json({

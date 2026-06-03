@@ -5,7 +5,8 @@ import protect from "../middleware/authMiddleware";
 import {
   updateWaterRate,
   getSettings,
-  updateProfile
+  updateProfile,
+  updateCity
 } from "../controllers/settingsController";
 
 const router = express.Router();
@@ -26,6 +27,12 @@ router.put(
   "/update-profile",
   protect,
   updateProfile
+);
+
+router.put(
+  "/city",
+  protect,
+  updateCity
 );
 
 export default router;

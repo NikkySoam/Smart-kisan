@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 
 import { useState } from "react";
+import Navbar from "../components/Navbar";
 
 const MainLayout = () => {
   const navigate = useNavigate();
@@ -175,13 +176,9 @@ const MainLayout = () => {
 
         {/* LOGO */}
 
-        <div className="mb-8">
+        <div className="my-4">
 
-          <h1 className="text-3xl font-bold">
-            Smart Kisan
-          </h1>
-
-          <p className="text-green-200 mt-2 text-sm">
+          <p className="text-green-100 mt-2 text-md">
             Farmer Management
           </p>
 
@@ -309,11 +306,16 @@ const MainLayout = () => {
           flex-1
           lg:ml-[260px]
           h-screen
-          overflow-y-auto
           bg-green-50
+          flex
+          flex-col
         "
       >
-        <Outlet />
+        <Navbar />
+
+        <div className="flex-1 overflow-y-auto">
+          <Outlet />
+        </div>
       </main>
 
     </div>

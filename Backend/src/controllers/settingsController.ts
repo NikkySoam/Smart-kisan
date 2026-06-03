@@ -98,7 +98,7 @@ export const getSettings =
   };
 
 
-  // UPDATE PROFILE + WATER RATE
+  // UPDATE PROFILE
 
     export const updateProfile =
     async (
@@ -109,8 +109,6 @@ export const getSettings =
         const {
             name,
             phone,
-            waterRate,
-            city,
         } = req.body;
 
         // UPDATE USER
@@ -121,8 +119,6 @@ export const getSettings =
             {
                 name,
                 phone,
-                waterRate,
-                city,
             },
             {
                 new: true,
@@ -146,3 +142,53 @@ export const getSettings =
         });
         }
     };
+
+
+
+// UPDATE CITY
+
+export const updateCity =
+  async (
+    req: AuthRequest,
+    res: Response
+  ) => {
+    try {
+      const { city } =
+        req.body;
+
+      if (!city) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "City is required",
+        });
+      }
+
+      const user =
+        await User.findByIdAndUpdate(
+          req.user._id,
+          {
+            city,
+          },
+          {
+            new: true,
+          }
+        );
+
+      res.status(200).json({
+        success: true,
+        message:
+          "City updated successfully",
+        data: user,
+      });
+
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Failed to update city",
+      });
+    }
+  };
