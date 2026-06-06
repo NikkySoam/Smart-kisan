@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Link,
   Outlet,
@@ -20,6 +21,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 
 const MainLayout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -67,55 +69,55 @@ const MainLayout = () => {
 
   const navGroups = [
     {
-      title: "Main",
+      title: t("main"),
       links: [
         {
-          label: "Dashboard",
+          label: t("dashboard"),
           path: "/dashboard",
           icon: <FaHome />,
         },
       ],
     },
     {
-      title: "Tubewell Water",
+      title: t("tubewellWaterGroup"),
       links: [
         {
-          label: "Management",
+          label: t("management"),
           path: "/water-management",
           icon: <FaTint />,
         },
         {
-          label: "Farmers",
+          label: t("farmers"),
           path: "/farmers",
           icon: <FaUsers />,
         },
         {
-          label: "Water Entry",
+          label: t("waterEntry"),
           path: "/water",
           icon: <FaTint />,
         },
         {
-          label: "Reports",
+          label: t("reports"),
           path: "/reports",
           icon: <FaChartBar />,
         },
       ],
     },
     {
-      title: "Apna Khet",
+      title: t("apnaKhet"),
       links: [
         {
-          label: "Fields",
+          label: t("fields"),
           path: "/fields",
           icon: <FaSeedling />,
         },
       ],
     },
     {
-      title: "Account",
+      title: t("account"),
       links: [
         {
-          label: "Settings",
+          label: t("settings"),
           path: "/settings",
           icon: <FaCog />,
         },
@@ -178,9 +180,7 @@ const MainLayout = () => {
 
         <div className="my-4">
 
-          <p className="text-green-100 mt-2 text-md">
-            Farmer Management
-          </p>
+          <p className="text-green-100 mt-2 text-md">{t("farmerManagement")}</p>
 
         </div>
 
@@ -275,10 +275,7 @@ const MainLayout = () => {
             cursor-pointer
           "
         >
-          <FaSignOutAlt />
-
-          Logout
-        </button>
+          <FaSignOutAlt />{t("logout")}</button>
 
       </aside>
 

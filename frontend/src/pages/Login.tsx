@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
 import API from "../api/axios";
@@ -10,6 +11,7 @@ import {
 } from "react-router-dom";
 
 const Login = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [formData, setFormData] =
@@ -43,14 +45,14 @@ const Login = () => {
         res.data.token
       );
 
-      toast.success("Login Successful");
+      toast.success(t("loginSuccessful"));
 
       navigate("/dashboard");
 
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          "Login Failed"
+          t("loginFailed")
       );
     }
   };
@@ -91,13 +93,9 @@ const Login = () => {
         "
       >
         <div className="text-center mb-5">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">
-            Smart Kisan
-          </h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white py-2">{t("appName")}</h1>
 
-          <p className="text-gray-200 mt-2 text-sm sm:text-base">
-            Login to continue
-          </p>
+          <p className="text-gray-200 mt-2 text-sm sm:text-base">{t("loginToContinue")}</p>
         </div>
 
         <form
@@ -105,14 +103,12 @@ const Login = () => {
           className="space-y-4"
         >
           <div>
-            <label className="text-white text-sm block mb-2">
-              Phone Number
-            </label>
+            <label className="text-white text-sm block mb-2">{t("phoneNumber")}</label>
 
             <input
               type="text"
               name="phone"
-              placeholder="Enter phone number"
+              placeholder={t("enterPhoneNumber")}
               className="
                 w-full
                 p-2.5
@@ -127,14 +123,12 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">
-              PIN
-            </label>
+            <label className="text-white text-sm block mb-2">{t("pin")}</label>
 
             <input
               type="password"
               name="pin"
-              placeholder="Enter PIN"
+              placeholder={t("enterPin")}
               className="
                 w-full
                 p-2.5
@@ -160,10 +154,9 @@ const Login = () => {
               p-2.5
               rounded-xl
               text-base
+              cursor-pointer
             "
-          >
-            Login
-          </button>
+          >{t("login")}</button>
         </form>
 
         <p className="text-center text-gray-200 mt-5 text-sm sm:text-base">
@@ -172,9 +165,7 @@ const Login = () => {
           <Link
             to="/register"
             className="text-yellow-300 font-semibold"
-          >
-            Register
-          </Link>
+          >{t("register")}</Link>
         </p>
       </div>
     </div>

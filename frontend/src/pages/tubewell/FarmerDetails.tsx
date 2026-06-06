@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -26,6 +27,7 @@ interface Entry {
 }
 
 const FarmerDetails = () => {
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -105,9 +107,7 @@ const FarmerDetails = () => {
   if (loading) {
     return (
       <div className="p-8">
-        <h1 className="text-2xl font-bold">
-          Loading...
-        </h1>
+        <h1 className="text-2xl font-bold py-2">{t("loading")}</h1>
       </div>
     );
   }
@@ -116,7 +116,7 @@ const FarmerDetails = () => {
 
   const farmerName =
     entries[0]?.farmer?.name ||
-    "Farmer";
+    t("farmer");
 
   return (
     <div className="p-4 sm:p-8">
@@ -125,13 +125,11 @@ const FarmerDetails = () => {
 
       <div className="mb-8 flex justify-between items-center">
         <div>
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">
           {farmerName}
         </h1>
 
-        <p className="text-gray-600 mt-2">
-          Farmer Water Details
-        </p>
+        <p className="text-gray-600 mt-2">{t("farmerWaterDetails")}</p>
         </div>
         <button
                 onClick={() =>
@@ -152,9 +150,7 @@ const FarmerDetails = () => {
                     shadow-lg
                     cursor-pointer
                 "
-                >
-                Add Water
-                </button>
+                >{t("addWater")}</button>
 
       </div>
 
@@ -174,9 +170,7 @@ const FarmerDetails = () => {
 
         <div className="bg-white rounded-3xl shadow p-6">
 
-          <h2 className="text-gray-500">
-            Total Water Hours
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalWaterHours")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -190,9 +184,7 @@ const FarmerDetails = () => {
 
         <div className="bg-white rounded-3xl shadow p-6">
 
-          <h2 className="text-gray-500">
-            Total Earnings
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalEarnings")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹
@@ -237,9 +229,7 @@ const FarmerDetails = () => {
             transition-all
             cursor-pointer
             "
-        >
-            Preview PDF Bill
-        </button>
+        >{t("previewPdfBill")}</button>
 
         </div>
 
@@ -255,9 +245,7 @@ const FarmerDetails = () => {
         "
       >
 
-        <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-6">
-          Water History
-        </h2>
+        <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-6 py-2">{t("waterHistory")}</h2>
 
         <table className="w-full min-w-[700px]">
 
@@ -265,17 +253,11 @@ const FarmerDetails = () => {
 
             <tr className="bg-linear-to-r from-green-500 to-green-800 text-white">
 
-              <th className="p-4 text-left rounded-l-xl">
-                Date
-              </th>
+              <th className="p-4 text-left rounded-l-xl">{t("date")}</th>
 
-              <th className="p-4 text-left">
-                Hours
-              </th>
+              <th className="p-4 text-left">{t("hours")}</th>
 
-              <th className="p-4 text-left rounded-r-xl">
-                Amount
-              </th>
+              <th className="p-4 text-left rounded-r-xl">{t("amount")}</th>
 
             </tr>
 

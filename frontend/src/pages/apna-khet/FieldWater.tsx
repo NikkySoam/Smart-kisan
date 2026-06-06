@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -33,6 +34,7 @@ interface Entry {
 }
 
 const FieldWater = () => {
+  const { t } = useTranslation();
   const { fieldId } =
     useParams();
 
@@ -131,7 +133,7 @@ const FieldWater = () => {
         );
 
         toast.success(
-            "Entry Updated"
+            t("entryUpdated")
         );
 
         } else {
@@ -152,7 +154,7 @@ const FieldWater = () => {
         );
 
         toast.success(
-            "Entry Added"
+            t("entryAdded")
         );
         }
 
@@ -171,7 +173,7 @@ const FieldWater = () => {
 
     } catch (error) {
         toast.error(
-        "Operation Failed"
+        t("operationFailed")
         );
     }
     };
@@ -192,14 +194,14 @@ const FieldWater = () => {
         );
 
         toast.success(
-        "Entry Deleted"
+        t("entryDeleted")
         );
 
         fetchEntries();
 
     } catch (error) {
         toast.error(
-        "Delete Failed"
+        t("deleteFailed")
         );
     }
     };
@@ -235,7 +237,7 @@ const FieldWater = () => {
 
   const fieldName =
     entries[0]?.field?.name ||
-    "Field";
+    t("field");
 
   return (
     <div className="p-4 sm:p-8">
@@ -256,13 +258,11 @@ const FieldWater = () => {
 
         <div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-            {fieldName} Water
+          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent py-2">
+            {t("fieldWaterTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-600 mt-2">
-            Manage field water usage
-          </p>
+          <p className="text-gray-600 mt-2">{t("manageFieldWaterUsage")}</p>
 
         </div>
 
@@ -285,11 +285,7 @@ const FieldWater = () => {
           "
         >
 
-          <FaPlus />
-
-          Add Water Entry
-
-        </button>
+          <FaPlus />{t("addWaterEntry")}</button>
 
       </div>
 
@@ -325,11 +321,9 @@ const FieldWater = () => {
 
           <div>
 
-            <p className="text-gray-500">
-              Total Water Hours
-            </p>
+            <p className="text-gray-500">{t("totalWaterHours")}</p>
 
-            <h2 className="text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent py-2">
               {totalHours}
             </h2>
 
@@ -352,9 +346,7 @@ const FieldWater = () => {
 
         <div className="p-6 border-b">
 
-          <h2 className="text-2xl font-bold">
-            Water History
-          </h2>
+          <h2 className="text-2xl font-bold py-2">{t("waterHistory")}</h2>
 
         </div>
 
@@ -371,17 +363,11 @@ const FieldWater = () => {
 
               <tr>
 
-                <th className="p-5 text-left">
-                  Date
-                </th>
+                <th className="p-5 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">
-                  Hours
-                </th>
+                <th className="p-5 text-left">{t("hours")}</th>
 
-                <th className="p-5 text-left">
-                Actions
-                </th>
+                <th className="p-5 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -407,7 +393,7 @@ const FieldWater = () => {
 
                     <td className="p-5 font-semibold">
 
-                      {entry.hours} Hours
+                      {entry.hours} {t("hours")}
 
                     </td>
 
@@ -498,7 +484,7 @@ const FieldWater = () => {
             "
           >
 
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 py-2">
               {isEditing
                 ? "Edit Water Entry"
                 : "Add Water Entry"}
@@ -520,7 +506,7 @@ const FieldWater = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Water Hours"
+                placeholder={t("waterHours")}
                 className="
                   w-full
                   border
@@ -567,9 +553,7 @@ const FieldWater = () => {
                     font-semibold
                     cursor-pointer
                   "
-                >
-                  Cancel
-                </button>
+                >{t("cancel")}</button>
 
                 <button
                   type="submit"
@@ -584,7 +568,7 @@ const FieldWater = () => {
                     cursor-pointer
                   "
                 >
-                  {isEditing ? "Update Entry" : "Add Entry"}
+                  {isEditing ? t("updateEntry") : t("addEntry")}
                 </button>
 
               </div>

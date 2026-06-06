@@ -1,10 +1,11 @@
-
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import API from "../api/axios";
 import toast from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 
 const Register = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ const Register = () => {
 
     try {
       if (formData.pin !== formData.confirmPin) {
-        return toast.error("PIN does not match");
+        return toast.error(t("pinDoesNotMatch"));
       }
 
       const res = await API.post(
@@ -47,14 +48,14 @@ const Register = () => {
         res.data.token
       );
 
-      toast.success("Registration Successful");
+      toast.success(t("registrationSuccessful"));
 
       navigate("/dashboard");
 
     } catch (error: any) {
       toast.error(
         error.response?.data?.message ||
-          "Registration Failed"
+          t("registrationFailed")
       );
     }
   };
@@ -95,13 +96,9 @@ const Register = () => {
         "
         >
         <div className="text-center mb-5">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white">
-            Smart Kisan
-          </h1>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white py-2">{t("appName")}</h1>
 
-          <p className="text-gray-200 mt-2 text-sm sm:text-base">
-            Create your farmer account
-          </p>
+          <p className="text-gray-200 mt-2 text-sm sm:text-base">{t("createFarmerAccount")}</p>
         </div>
 
         <form
@@ -109,14 +106,12 @@ const Register = () => {
           className="space-y-4"
         >
           <div>
-            <label className="text-white text-sm block mb-2">
-              Full Name
-            </label>
+            <label className="text-white text-sm block mb-2">{t("fullName")}</label>
 
             <input
               type="text"
               name="name"
-              placeholder="Enter your name"
+              placeholder={t("enterYourName")}
               className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
               onChange={handleChange}
               required
@@ -124,14 +119,12 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">
-              Phone Number
-            </label>
+            <label className="text-white text-sm block mb-2">{t("phoneNumber")}</label>
 
             <input
               type="text"
               name="phone"
-              placeholder="Enter phone number"
+              placeholder={t("enterPhoneNumber")}
               className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
               onChange={handleChange}
               required
@@ -139,14 +132,12 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">
-              4 Digit PIN
-            </label>
+            <label className="text-white text-sm block mb-2">{t("sixDigitPin")}</label>
 
             <input
               type="password"
               name="pin"
-              placeholder="Enter PIN"
+              placeholder={t("enterPin")}
               className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
               onChange={handleChange}
               required
@@ -154,23 +145,19 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">
-              Confirm PIN
-            </label>
+            <label className="text-white text-sm block mb-2">{t("confirmPin")}</label>
 
             <input
               type="password"
               name="confirmPin"
-              placeholder="Confirm PIN"
+              placeholder={t("confirmPin")}
               className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
               onChange={handleChange}
               required
             />
           </div>
 
-          <button className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base">
-            Register
-          </button>
+          <button className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base cursor-pointer">{t("register")}</button>
         </form>
 
         <p className="text-center text-gray-200 mt-6 text-sm sm:text-base">
@@ -179,9 +166,7 @@ const Register = () => {
           <Link
             to="/login"
             className="text-yellow-300 font-semibold"
-          >
-            Login
-          </Link>
+          >{t("login")}</Link>
         </p>
       </div>
     </div>
@@ -189,5 +174,3 @@ const Register = () => {
 };
 
 export default Register;
-
-

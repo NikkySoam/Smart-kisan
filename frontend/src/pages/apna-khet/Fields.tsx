@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -10,6 +11,7 @@ import {
 import API from "../../api/axios";
 
 import toast from "react-hot-toast";
+
 
 import {
   FaTint,
@@ -56,6 +58,8 @@ const fieldImages = [
 ];
 
 const Fields = () => {
+  const { t } = useTranslation();
+
   const navigate = useNavigate();
 
   const token =
@@ -187,7 +191,7 @@ const Fields = () => {
       );
 
       toast.success(
-        "Field Updated"
+        t("fieldUpdated")
       );
 
     } else {
@@ -205,7 +209,7 @@ const Fields = () => {
       );
 
       toast.success(
-        "Field Added Successfully"
+        t("fieldAddedSuccessfully")
       );
     }
 
@@ -226,7 +230,7 @@ const Fields = () => {
 
   } catch (error) {
     toast.error(
-      "Operation Failed"
+      t("operationFailed")
     );
   }
 };
@@ -246,14 +250,14 @@ const Fields = () => {
     );
 
     toast.success(
-      "Field Deleted"
+      t("fieldDeleted")
     );
 
     fetchFields();
 
   } catch (error) {
     toast.error(
-      "Delete Failed"
+      t("deleteFailed")
     );
   }
 };
@@ -340,15 +344,13 @@ const Fields = () => {
               to-green-800
               bg-clip-text
               text-transparent
+              py-2
             "
           >
-            Apna Khet
+            {t("apnaKhet")}
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage all your fields
-            and expenses
-          </p>
+          <p className="text-gray-500 mt-2">{t("manageFieldsExpenses")}</p>
 
         </div>
 
@@ -378,11 +380,7 @@ const Fields = () => {
           "
         >
 
-          <FaPlus />
-
-          Add New Field
-
-        </button>
+          <FaPlus />{t("addNewField")}</button>
 
       </div>
 
@@ -392,7 +390,7 @@ const Fields = () => {
 
         <input
             type="text"
-            placeholder="Search fields, crops, location..."
+            placeholder={t("searchFields")}
             value={search}
             onChange={(e) =>
             setSearch(
@@ -487,7 +485,7 @@ const Fields = () => {
                   "
                 >
 
-                  <h2 className="text-4xl font-bold">
+                  <h2 className="text-4xl font-bold py-2">
                     {field.name}
                   </h2>
 
@@ -526,11 +524,8 @@ const Fields = () => {
                       from-green-500
                       to-green-800
                       bg-clip-text
-                      text-transparent
-                    "
-                  >
-                    Cost Modules
-                  </h3>
+                      text-transparent py-2"
+                  >{t("costModules")}</h3>
 
                   <div
                     className="
@@ -580,9 +575,7 @@ const Fields = () => {
 
                     <FaTint className="text-blue-600 text-2xl mb-4" />
 
-                    <p className="font-semibold text-blue-900">
-                      Water
-                    </p>
+                    <p className="font-semibold text-blue-900">{t("water")}</p>
 
                   </button>
 
@@ -609,9 +602,7 @@ const Fields = () => {
 
                     <FaSeedling className="text-green-600 text-2xl mb-4" />
 
-                    <p className="font-semibold text-green-900">
-                      Fertilizer
-                    </p>
+                    <p className="font-semibold text-green-900">{t("fertilizer")}</p>
 
                   </button>
 
@@ -638,9 +629,7 @@ const Fields = () => {
 
                     <FaTools className="text-yellow-600 text-2xl mb-4" />
 
-                    <p className="font-semibold text-yellow-900">
-                      Labour
-                    </p>
+                    <p className="font-semibold text-yellow-900">{t("labour")}</p>
 
                   </button>
 
@@ -667,9 +656,7 @@ const Fields = () => {
 
                     <FaTractor className="text-gray-700 text-2xl mb-4" />
 
-                    <p className="font-semibold text-gray-900">
-                      Equipment
-                    </p>
+                    <p className="font-semibold text-gray-900">{t("equipment")}</p>
 
                   </button>
 
@@ -690,11 +677,9 @@ const Fields = () => {
                   "
                 >
 
-                  <p className="text-gray-100">
-                    Total Expense
-                  </p>
+                  <p className="text-gray-100">{t("totalExpense")}</p>
 
-                  <h2 className="text-4xl font-bold mt-3">
+                  <h2 className="text-4xl font-bold mt-3 py-2">
 
                     ₹
                     {
@@ -784,11 +769,7 @@ const Fields = () => {
                 "
             >
 
-                <FaEdit />
-
-                Edit
-
-            </button>
+                <FaEdit />{t("edit")}</button>
 
             {/* DELETE */}
 
@@ -813,11 +794,7 @@ const Fields = () => {
                 "
             >
 
-                <FaTrash />
-
-                Delete
-
-            </button>
+                <FaTrash />{t("delete")}</button>
 
             </div>
 
@@ -868,17 +845,14 @@ const Fields = () => {
                   from-green-500
                   to-green-800
                   bg-clip-text
-                  text-transparent
-                "
+                  text-transparent py-2"
               >
                 {isEditing
-                    ? "Edit Field"
-                    : "Add New Field"}
+                    ? t("editField")
+                    : t("addNewField")}
               </h2>
 
-              <p className="text-gray-500 mt-2">
-                Create farming field
-              </p>
+              <p className="text-gray-500 mt-2">{t("createFarmingField")}</p>
 
             </div>
 
@@ -900,7 +874,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Field Name"
+                placeholder={t("fieldName")}
                 className="
                   w-full
                   border
@@ -920,7 +894,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Area (Acre)"
+                placeholder={t("areaAcre")}
                 className="
                   w-full
                   border
@@ -940,7 +914,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Location"
+                placeholder={t("location")}
                 className="
                   w-full
                   border
@@ -960,7 +934,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Current Crop"
+                placeholder={t("currentCrop")}
                 className="
                   w-full
                   border
@@ -999,9 +973,7 @@ const Fields = () => {
                     hover:bg-gray-100
                     transition-all
                   "
-                >
-                  Cancel
-                </button>
+                >{t("cancel")}</button>
 
                 <button
                   type="submit"
@@ -1021,8 +993,8 @@ const Fields = () => {
                   "
                 >
                   {isEditing
-                    ? "Update Field"
-                    : "Add Field"}
+                    ? t("updateField")
+                    : t("addField")}
                 </button>
 
               </div>

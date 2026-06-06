@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 
 import API from "../api/axios";
@@ -22,6 +23,7 @@ const formatNotificationTime = (createdAt: string) =>
   }).format(new Date(createdAt));
 
 const NotificationDropdown = () => {
+  const { t } = useTranslation();
   const token = localStorage.getItem("token");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -139,7 +141,7 @@ const NotificationDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        aria-label="Open notifications"
+        aria-label={t("openNotifications")}
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
         className="
@@ -220,22 +222,16 @@ const NotificationDropdown = () => {
             "
           >
             <div>
-              <h2 className="text-base font-semibold text-gray-900">
-                Notifications
-              </h2>
+              <h2 className="text-base font-semibold text-gray-900">{t("notifications")}</h2>
               <p className="mt-0.5 text-xs text-gray-500">
                 {unreadCount > 0
-                  ? `${unreadCount} unread update${
-                      unreadCount > 1 ? "s" : ""
-                    }`
+                  ? t("unreadUpdate", { count: unreadCount })
                   : "You're all caught up"}
               </p>
             </div>
 
             {unreadCount > 0 && (
-              <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-                New
-              </span>
+              <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">{t("new")}</span>
             )}
           </div>
 
@@ -245,12 +241,8 @@ const NotificationDropdown = () => {
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-400">
                   <FaRegBell className="text-xl" />
                 </div>
-                <p className="mt-4 text-sm font-semibold text-gray-900">
-                  No notifications yet
-                </p>
-                <p className="mt-1 text-sm text-gray-500">
-                  Important farm updates will appear here.
-                </p>
+                <p className="mt-4 text-sm font-semibold text-gray-900">{t("noNotifications")}</p>
+                <p className="mt-1 text-sm text-gray-500">{t("notificationHelp")}</p>
               </div>
             ) : (
               notifications.map((notification) => (
@@ -335,9 +327,7 @@ const NotificationDropdown = () => {
                               focus:ring-green-500/30
                             "
                           >
-                            <FaCheck className="text-[10px]" />
-                            Mark read
-                          </button>
+                            <FaCheck className="text-[10px]" />{t("markRead")}</button>
                         )}
                       </div>
                     </div>

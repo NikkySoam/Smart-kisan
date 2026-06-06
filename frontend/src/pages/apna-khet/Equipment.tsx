@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -33,6 +34,7 @@ interface EquipmentEntry {
 }
 
 const Equipment = () => {
+  const { t } = useTranslation();
   const { fieldId } =
     useParams();
 
@@ -129,7 +131,7 @@ const Equipment = () => {
         );
 
         toast.success(
-          "Equipment Updated"
+          t("equipmentUpdated")
         );
       } else {
         await API.post(
@@ -146,7 +148,7 @@ const Equipment = () => {
         );
 
         toast.success(
-          "Equipment Added"
+          t("equipmentAdded")
         );
       }
 
@@ -166,7 +168,7 @@ const Equipment = () => {
 
     } catch (error) {
       toast.error(
-        "Operation Failed"
+        t("operationFailed")
       );
     }
   };
@@ -185,14 +187,14 @@ const Equipment = () => {
       );
 
       toast.success(
-        "Equipment Deleted"
+        t("equipmentDeleted")
       );
 
       fetchEntries();
 
     } catch (error) {
       toast.error(
-        "Delete Failed"
+        t("deleteFailed")
       );
     }
   };
@@ -228,7 +230,7 @@ const Equipment = () => {
 
   const fieldName =
     entries[0]?.field?.name ||
-    "Field";
+    t("field");
 
   return (
     <div className="p-4 sm:p-8">
@@ -258,15 +260,12 @@ const Equipment = () => {
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent
-            "
+              text-transparent py-2"
           >
-            {fieldName} Equipment
+            {t("fieldEquipmentTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage equipment expenses
-          </p>
+          <p className="text-gray-500 mt-2">{t("manageEquipmentExpenses")}</p>
 
         </div>
 
@@ -293,11 +292,7 @@ const Equipment = () => {
           "
         >
 
-          <FaPlus />
-
-          Add Equipment
-
-        </button>
+          <FaPlus />{t("addEquipment")}</button>
 
       </div>
 
@@ -333,9 +328,7 @@ const Equipment = () => {
 
           <div>
 
-            <p className="text-gray-500">
-              Total Equipment Cost
-            </p>
+            <p className="text-gray-500">{t("totalEquipmentCost")}</p>
 
             <h2
               className="
@@ -346,8 +339,7 @@ const Equipment = () => {
                 to-green-800
                 bg-clip-text
                 text-transparent
-                mt-2
-              "
+                mt-2 py-2"
             >
               ₹{totalAmount}
             </h2>
@@ -379,11 +371,8 @@ const Equipment = () => {
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent
-            "
-          >
-            Equipment History
-          </h2>
+              text-transparent py-2"
+          >{t("equipmentHistory")}</h2>
 
         </div>
 
@@ -402,21 +391,13 @@ const Equipment = () => {
 
               <tr>
 
-                <th className="p-5 text-left">
-                  Equipment
-                </th>
+                <th className="p-5 text-left">{t("equipment")}</th>
 
-                <th className="p-5 text-left">
-                  Amount
-                </th>
+                <th className="p-5 text-left">{t("amount")}</th>
 
-                <th className="p-5 text-left">
-                  Date
-                </th>
+                <th className="p-5 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">
-                  Actions
-                </th>
+                <th className="p-5 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -553,17 +534,14 @@ const Equipment = () => {
             from-green-500
             to-green-800
             bg-clip-text
-            text-transparent
-          "
+            text-transparent py-2"
         >
           {isEditing
             ? "Edit Equipment Entry"
             : "Add Equipment Entry"}
         </h2>
 
-        <p className="text-gray-500 mt-2">
-          Add equipment expense details
-        </p>
+        <p className="text-gray-500 mt-2">{t("addEquipmentExpenseDetails")}</p>
 
       </div>
 
@@ -581,7 +559,7 @@ const Equipment = () => {
           name="equipmentName"
           value={formData.equipmentName}
           onChange={handleChange}
-          placeholder="Equipment Name"
+          placeholder={t("equipmentName")}
           className="
             w-full
             border
@@ -600,7 +578,7 @@ const Equipment = () => {
           name="amount"
           value={formData.amount}
           onChange={handleChange}
-          placeholder="Amount"
+          placeholder={t("amount")}
           className="
             w-full
             border
@@ -659,9 +637,7 @@ const Equipment = () => {
               hover:bg-gray-100
               transition-all
             "
-          >
-            Cancel
-          </button>
+          >{t("cancel")}</button>
 
           {/* SUBMIT */}
 

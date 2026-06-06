@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -25,6 +26,7 @@ interface ReportEntry {
 }
 
 const Reports = () => {
+  const { t } = useTranslation();
   const token =
     localStorage.getItem("token");
 
@@ -127,13 +129,9 @@ const Reports = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
-          Monthly Reports
-        </h1>
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("monthlyReports")}</h1>
 
-        <p className="text-gray-600 mt-2">
-          Analyze monthly water usage
-        </p>
+        <p className="text-gray-600 mt-2">{t("analyzeMonthlyWaterUsage")}</p>
 
       </div>
 
@@ -180,7 +178,7 @@ const Reports = () => {
                 key={i + 1}
                 value={i + 1}
               >
-                Month {i + 1}
+                {t("month")} {i + 1}
               </option>
             )
           )}
@@ -226,9 +224,7 @@ const Reports = () => {
           "
         >
 
-          <option value="">
-            All Farmers
-          </option>
+          <option value="">{t("allFarmers")}</option>
 
           {farmers.map(
             (farmer) => (
@@ -261,9 +257,7 @@ const Reports = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Total Entries
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalEntries")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -275,9 +269,7 @@ const Reports = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Total Hours
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalHours")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -289,9 +281,7 @@ const Reports = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Earnings
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("earnings")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹
@@ -322,21 +312,13 @@ const Reports = () => {
 
             <tr className="bg-linear-to-r from-green-500 to-green-800 text-white">
 
-              <th className="p-4 text-left rounded-l-xl">
-                Farmer
-              </th>
+              <th className="p-4 text-left rounded-l-xl">{t("farmer")}</th>
 
-              <th className="p-4 text-left">
-                Date
-              </th>
+              <th className="p-4 text-left">{t("date")}</th>
 
-              <th className="p-4 text-left">
-                Hours
-              </th>
+              <th className="p-4 text-left">{t("hours")}</th>
 
-              <th className="p-4 text-left rounded-r-xl">
-                Amount
-              </th>
+              <th className="p-4 text-left rounded-r-xl">{t("amount")}</th>
 
             </tr>
 

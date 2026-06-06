@@ -1,7 +1,11 @@
+import { useTranslation } from "react-i18next";
 import NotificationDropdown from "./NotificationDropdown";
 
+import LanguageSwitcher from "./LanguageSwitcher";
+
 const Navbar = () => {
-  return (
+  const { t } = useTranslation();
+return (
     <div
       className="
         h-[60px]
@@ -28,15 +32,14 @@ const Navbar = () => {
             bg-clip-text
             text-transparent
           "
-        >
-          Smart Kisan
-        </h1>
+        >{t("appName")}</h1>
 
       </div>
 
       {/* RIGHT */}
 
       <div className="flex items-center mr-12 gap-5">
+        <LanguageSwitcher />
 
         <NotificationDropdown />
 

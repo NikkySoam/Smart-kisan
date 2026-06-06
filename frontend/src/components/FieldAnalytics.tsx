@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   PieChart,
   Pie,
@@ -29,22 +30,23 @@ const FieldAnalytics = ({
   labour,
   equipment,
 }: Props) => {
+  const { t } = useTranslation();
 
   const data = [
     {
-      name: "Water",
+      name: t("water"),
       value: water,
     },
     {
-      name: "Fertilizer",
+      name: t("fertilizer"),
       value: fertilizer,
     },
     {
-      name: "Labour",
+      name: t("labour"),
       value: labour,
     },
     {
-      name: "Equipment",
+      name: t("equipment"),
       value: equipment,
     },
   ];
@@ -74,13 +76,9 @@ const FieldAnalytics = ({
             bg-clip-text
             text-transparent
           "
-        >
-          Expense Analytics
-        </h2>
+        >{t("expenseAnalytics")}</h2>
 
-        <p className="text-gray-500 mt-2">
-          Field-wise expense distribution
-        </p>
+        <p className="text-gray-500 mt-2">{t("expenseDistribution")}</p>
 
       </div>
 
@@ -148,9 +146,7 @@ const FieldAnalytics = ({
           "
         >
 
-          <p className="text-gray-500">
-            Water
-          </p>
+          <p className="text-gray-500">{t("water")}</p>
 
           <h3 className="text-2xl font-bold text-blue-700 mt-2">
             {water}
@@ -168,12 +164,10 @@ const FieldAnalytics = ({
           "
         >
 
-          <p className="text-gray-500">
-            Fertilizer
-          </p>
+          <p className="text-gray-500">{t("fertilizer")}</p>
 
           <h3 className="text-2xl font-bold text-green-700 mt-2">
-            ₹{fertilizer}
+            â‚¹{fertilizer}
           </h3>
 
         </div>
@@ -188,12 +182,10 @@ const FieldAnalytics = ({
           "
         >
 
-          <p className="text-gray-500">
-            Labour
-          </p>
+          <p className="text-gray-500">{t("labour")}</p>
 
           <h3 className="text-2xl font-bold text-yellow-700 mt-2">
-            ₹{labour}
+            â‚¹{labour}
           </h3>
 
         </div>
@@ -208,12 +200,10 @@ const FieldAnalytics = ({
           "
         >
 
-          <p className="text-gray-500">
-            Equipment
-          </p>
+          <p className="text-gray-500">{t("equipment")}</p>
 
           <h3 className="text-2xl font-bold text-gray-700 mt-2">
-            ₹{equipment}
+            â‚¹{equipment}
           </h3>
 
         </div>

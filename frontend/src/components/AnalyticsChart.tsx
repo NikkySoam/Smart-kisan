@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useCallback,
   useEffect,
@@ -31,6 +32,7 @@ interface ChartData {
 }
 
 const AnalyticsChart = () => {
+  const { t } = useTranslation();
   const token = localStorage.getItem("token");
 
   const [chartData, setChartData] =
@@ -103,7 +105,7 @@ const AnalyticsChart = () => {
       setChartData(monthlyData);
     } catch (error) {
       console.log(error);
-      setError("Failed to load analytics");
+      setError(t("analyticsLoadFailed"));
     } finally {
       setLoading(false);
     }
@@ -116,19 +118,13 @@ const AnalyticsChart = () => {
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 mt-8">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-green-900">
-          Monthly Analytics
-        </h2>
+        <h2 className="text-2xl font-bold text-green-900">{t("monthlyAnalytics")}</h2>
 
-        <p className="text-gray-500 mt-1">
-          Earnings & water usage overview
-        </p>
+        <p className="text-gray-500 mt-1">{t("analyticsOverview")}</p>
       </div>
 
       {loading && (
-        <div className="h-[400px] flex items-center justify-center text-gray-500">
-          Loading analytics...
-        </div>
+        <div className="h-[400px] flex items-center justify-center text-gray-500">{t("loadingAnalytics")}</div>
       )}
 
       {!loading && error && (
@@ -153,14 +149,14 @@ const AnalyticsChart = () => {
 
               <Bar
                 dataKey="earnings"
-                name="Earnings"
+                name={t("earnings")}
                 fill="#15803d"
                 radius={[8, 8, 0, 0]}
               />
 
               <Bar
                 dataKey="hours"
-                name="Hours"
+                name={t("hours")}
                 fill="#22c55e"
                 radius={[8, 8, 0, 0]}
               />

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -15,6 +16,7 @@ import {
 } from "react-icons/fa";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const token =
     localStorage.getItem("token");
 
@@ -100,12 +102,12 @@ const Settings = () => {
       );
 
       toast.success(
-        "Profile updated"
+        t("profileUpdated")
       );
 
     } catch (error) {
       toast.error(
-        "Failed to update profile"
+        t("profileUpdateFailed")
       );
     } finally {
       setProfileLoading(false);
@@ -132,12 +134,12 @@ const Settings = () => {
       );
 
       toast.success(
-        "Water rate updated"
+        t("waterRateUpdated")
       );
 
     } catch (error) {
       toast.error(
-        "Failed to update water rate"
+        t("waterRateUpdateFailed")
       );
     } finally {
       setWaterRateLoading(false);
@@ -163,12 +165,12 @@ const Settings = () => {
       );
 
       toast.success(
-        "City updated"
+        t("cityUpdated")
       );
 
     } catch (error) {
       toast.error(
-        "Failed to update city"
+        t("cityUpdateFailed")
       );
     } finally {
       setCityLoading(false);
@@ -180,14 +182,9 @@ const Settings = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
-          Settings
-        </h1>
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("settings")}</h1>
 
-        <p className="text-gray-600 mt-2">
-          Manage profile, billing rate,
-          and weather location
-        </p>
+        <p className="text-gray-600 mt-2">{t("manageProfile")}</p>
 
       </div>
 
@@ -238,18 +235,16 @@ const Settings = () => {
 
             <div>
 
-              <p className="text-green-100 text-sm">
-                Account Overview
-              </p>
+              <p className="text-green-100 text-sm">{t("accountOverview")}</p>
 
-              <h2 className="text-3xl font-bold mt-1">
+              <h2 className="text-3xl font-bold mt-1 py-2">
                 {formData.name ||
-                  "Farmer"}
+                  t("farmer")}
               </h2>
 
               <p className="text-green-100 mt-1">
                 {formData.phone ||
-                  "No phone number"}
+                  t("noPhoneNumber")}
               </p>
 
             </div>
@@ -277,14 +272,9 @@ const Settings = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900">
-                Profile Details
-              </h2>
+              <h2 className="text-2xl font-bold text-green-900 py-2">{t("profileDetails")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">
-                Name and phone number
-                update together
-              </p>
+              <p className="text-gray-500 text-sm mt-1">{t("namePhoneUpdate")}</p>
             </div>
 
           </div>
@@ -292,9 +282,7 @@ const Settings = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
             <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                Full Name
-              </label>
+              <label className="block mb-2 text-gray-700 font-medium">{t("fullName")}</label>
 
               <input
                 type="text"
@@ -310,14 +298,12 @@ const Settings = () => {
                   outline-none
                   focus:border-green-700
                 "
-                placeholder="Enter full name"
+                placeholder={t("enterFullName")}
               />
             </div>
 
             <div>
-              <label className="block mb-2 text-gray-700 font-medium">
-                Phone Number
-              </label>
+              <label className="block mb-2 text-gray-700 font-medium">{t("phoneNumber")}</label>
 
               <input
                 type="text"
@@ -333,7 +319,7 @@ const Settings = () => {
                   outline-none
                   focus:border-green-700
                 "
-                placeholder="Enter phone number"
+                placeholder={t("enterPhoneNumber")}
               />
             </div>
 
@@ -363,8 +349,8 @@ const Settings = () => {
           >
             <FaSave />
             {profileLoading
-              ? "Saving..."
-              : "Save Profile"}
+              ? t("saving")
+              : t("saveProfile")}
           </button>
 
         </form>
@@ -387,21 +373,14 @@ const Settings = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900">
-                Water Rate
-              </h2>
+              <h2 className="text-2xl font-bold text-green-900 py-2">{t("waterRate")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">
-                Applied to future
-                entries
-              </p>
+              <p className="text-gray-500 text-sm mt-1">{t("appliedFutureEntries")}</p>
             </div>
 
           </div>
 
-          <label className="block mb-2 text-gray-700 font-medium">
-            Rate Per Hour
-          </label>
+          <label className="block mb-2 text-gray-700 font-medium">{t("ratePerHour")}</label>
 
           <input
             type="number"
@@ -417,7 +396,7 @@ const Settings = () => {
               outline-none
               focus:border-green-700
             "
-            placeholder="Enter water rate"
+            placeholder={t("enterWaterRate")}
           />
 
           <button
@@ -437,8 +416,8 @@ const Settings = () => {
             "
           >
             {waterRateLoading
-              ? "Saving..."
-              : "Update Rate"}
+              ? t("saving")
+              : t("updateRate")}
           </button>
 
         </form>
@@ -462,14 +441,9 @@ const Settings = () => {
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900">
-                Weather City
-              </h2>
+              <h2 className="text-2xl font-bold text-green-900 py-2">{t("weatherCity")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">
-                Used by the dashboard
-                weather card
-              </p>
+              <p className="text-gray-500 text-sm mt-1">{t("dashboardWeatherCard")}</p>
             </div>
 
           </div>
@@ -490,7 +464,7 @@ const Settings = () => {
                 outline-none
                 focus:border-green-700
               "
-              placeholder="Enter city"
+              placeholder={t("enterCity")}
             />
 
             <button
@@ -509,8 +483,8 @@ const Settings = () => {
               "
             >
               {cityLoading
-                ? "Saving..."
-                : "Update City"}
+                ? t("saving")
+                : t("updateCity")}
             </button>
 
           </div>

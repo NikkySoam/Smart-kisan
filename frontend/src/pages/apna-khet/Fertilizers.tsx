@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -35,6 +36,7 @@ interface Fertilizer {
 }
 
 const Fertilizers = () => {
+  const { t } = useTranslation();
   const { fieldId } =
     useParams();
 
@@ -54,7 +56,7 @@ const Fertilizers = () => {
     useState(true);
 
   const [fieldName, setFieldName] =
-  useState("Field");
+  useState(t("field"));
 
   const [formData, setFormData] =
     useState({
@@ -111,7 +113,7 @@ const Fertilizers = () => {
             );
 
             setFieldName(
-            res.data.field.name || "Field"
+            res.data.field.name || t("field")
             );
         } catch (error) {
             console.log(error);
@@ -156,7 +158,7 @@ const Fertilizers = () => {
         );
 
         toast.success(
-          "Fertilizer Updated"
+          t("fertilizerUpdated")
         );
       } else {
         await API.post(
@@ -173,7 +175,7 @@ const Fertilizers = () => {
         );
 
         toast.success(
-          "Fertilizer Added"
+          t("fertilizerAdded")
         );
       }
 
@@ -194,7 +196,7 @@ const Fertilizers = () => {
 
     } catch (error) {
       toast.error(
-        "Operation Failed"
+        t("operationFailed")
       );
     }
   };
@@ -213,14 +215,14 @@ const Fertilizers = () => {
       );
 
       toast.success(
-        "Fertilizer Deleted"
+        t("fertilizerDeleted")
       );
 
       fetchEntries();
 
     } catch (error) {
       toast.error(
-        "Delete Failed"
+        t("deleteFailed")
       );
     }
   };
@@ -277,13 +279,11 @@ const Fertilizers = () => {
 
         <div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
-            {fieldName} Fertilizer
+          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">
+            {t("fieldFertilizerTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-600 mt-2">
-            Manage fertilizer usage
-          </p>
+          <p className="text-gray-600 mt-2">{t("manageFertilizerUsage")}</p>
 
         </div>
 
@@ -306,11 +306,7 @@ const Fertilizers = () => {
           "
         >
 
-          <FaPlus />
-
-          Add Fertilizer
-
-        </button>
+          <FaPlus />{t("addFertilizer")}</button>
 
       </div>
 
@@ -346,11 +342,9 @@ const Fertilizers = () => {
 
           <div>
 
-            <p className="text-gray-500">
-              Total Fertilizer Cost
-            </p>
+            <p className="text-gray-500">{t("totalFertilizerCost")}</p>
 
-            <h2 className="text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-2">
+            <h2 className="text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-2 py-2">
               ₹{totalCost}
             </h2>
 
@@ -373,9 +367,7 @@ const Fertilizers = () => {
 
         <div className="p-6 border-b">
 
-          <h2 className="text-2xl font-bold">
-            Fertilizer History
-          </h2>
+          <h2 className="text-2xl font-bold py-2">{t("fertilizerHistory")}</h2>
 
         </div>
 
@@ -392,25 +384,15 @@ const Fertilizers = () => {
 
               <tr>
 
-                <th className="p-5 text-left">
-                  Name
-                </th>
+                <th className="p-5 text-left">{t("name")}</th>
 
-                <th className="p-5 text-left">
-                  Quantity
-                </th>
+                <th className="p-5 text-left">{t("quantity")}</th>
 
-                <th className="p-5 text-left">
-                  Cost
-                </th>
+                <th className="p-5 text-left">{t("cost")}</th>
 
-                <th className="p-5 text-left">
-                  Date
-                </th>
+                <th className="p-5 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">
-                  Actions
-                </th>
+                <th className="p-5 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -433,7 +415,7 @@ const Fertilizers = () => {
                     </td>
 
                     <td className="p-5">
-                      {entry.quantity}
+                      {entry.quantity} kg
                     </td>
 
                     <td className="p-5">
@@ -525,7 +507,7 @@ const Fertilizers = () => {
             "
           >
 
-            <h2 className="text-3xl font-bold mb-6">
+            <h2 className="text-3xl font-bold mb-6 py-2">
               {isEditing
                 ? "Edit Fertilizer"
                 : "Add Fertilizer"}
@@ -547,7 +529,7 @@ const Fertilizers = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Fertilizer Name"
+                placeholder={t("fertilizerName")}
                 className="
                   w-full
                   border
@@ -565,7 +547,7 @@ const Fertilizers = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Quantity"
+                placeholder={t("quantity")}
                 className="
                   w-full
                   border
@@ -583,7 +565,7 @@ const Fertilizers = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Cost"
+                placeholder={t("cost")}
                 className="
                   w-full
                   border
@@ -632,9 +614,7 @@ const Fertilizers = () => {
                     font-semibold
                     cursor-pointer
                   "
-                >
-                  Cancel
-                </button>
+                >{t("cancel")}</button>
 
                 <button
                   type="submit"

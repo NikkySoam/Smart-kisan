@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -32,6 +33,7 @@ interface WaterEntry {
 }
 
 const WaterEntry = () => {
+  const { t } = useTranslation();
   // TOKEN
 
   const token =
@@ -146,7 +148,7 @@ const WaterEntry = () => {
       );
 
       toast.success(
-        "Water Entry Added"
+        t("waterEntryAdded")
       );
 
       setFormData({
@@ -159,7 +161,7 @@ const WaterEntry = () => {
 
     } catch (error) {
       toast.error(
-        "Failed to add entry"
+        t("entryAddFailed")
       );
     }
   };
@@ -169,7 +171,7 @@ const WaterEntry = () => {
         async (id: string) => {
             const confirmDelete =
             window.confirm(
-                "Delete this entry?"
+                t("deleteEntryConfirm")
             );
 
             if (!confirmDelete) return;
@@ -185,14 +187,14 @@ const WaterEntry = () => {
             );
 
             toast.success(
-                "Entry Deleted"
+                t("entryDeleted")
             );
 
             fetchEntries();
 
             } catch (error) {
             toast.error(
-                "Failed to delete entry"
+                t("entryDeleteFailed")
             );
             }
         };
@@ -230,7 +232,7 @@ const WaterEntry = () => {
         );
 
         toast.success(
-            "Entry Updated"
+            t("entryUpdated")
         );
 
         setEditModal(false);
@@ -239,7 +241,7 @@ const WaterEntry = () => {
 
         } catch (error) {
         toast.error(
-            "Failed to update entry"
+            t("entryUpdateFailed")
         );
         }
     };
@@ -267,13 +269,9 @@ const WaterEntry = () => {
 
           <div className="mb-8">
 
-            <h1 className="text-3xl sm:text-5xl font-bold text-white">
-              Water Management
-            </h1>
+            <h1 className="text-3xl sm:text-5xl font-bold text-white py-2">{t("waterManagement")}</h1>
 
-            <p className="text-gray-200 mt-2">
-              Manage water entries farmer-wise
-            </p>
+            <p className="text-gray-200 mt-2">{t("manageWaterEntriesFarmerWise")}</p>
 
           </div>
 
@@ -292,9 +290,7 @@ const WaterEntry = () => {
               mb-8
             "
           >
-            <h2 className="text-2xl font-bold text-white mb-6">
-              Add Water Entry
-            </h2>
+            <h2 className="text-2xl font-bold text-white mb-6 py-2">{t("addWaterEntry")}</h2>
 
             <form
               onSubmit={handleSubmit}
@@ -326,9 +322,7 @@ const WaterEntry = () => {
                 "
                 required
               >
-                <option value="">
-                  Select Farmer
-                </option>
+                <option value="">{t("selectFarmer")}</option>
 
                 {farmers.map(
                   (farmer) => (
@@ -349,7 +343,7 @@ const WaterEntry = () => {
               <input
                 type="number"
                 name="hours"
-                placeholder="Hours"
+                placeholder={t("hours")}
                 value={formData.hours}
                 onChange={
                   handleChange
@@ -395,9 +389,7 @@ const WaterEntry = () => {
                   font-semibold
                   cursor-pointer
                 "
-              >
-                Add Entry
-              </button>
+              >{t("addEntry")}</button>
 
             </form>
 
@@ -418,9 +410,7 @@ const WaterEntry = () => {
             "
           >
 
-            <h2 className="text-2xl font-bold text-white mb-6">
-              Water History
-            </h2>
+            <h2 className="text-2xl font-bold text-white mb-6 py-2">{t("waterHistory")}</h2>
 
             <div className="overflow-x-auto">
 
@@ -430,25 +420,15 @@ const WaterEntry = () => {
 
                   <tr className="bg-linear-to-r from-green-500 to-green-800  text-white">
 
-                    <th className="p-3 text-left rounded-l-xl">
-                      Farmer
-                    </th>
+                    <th className="p-3 text-left rounded-l-xl">{t("farmer")}</th>
 
-                    <th className="p-3 text-left">
-                      Date
-                    </th>
+                    <th className="p-3 text-left">{t("date")}</th>
 
-                    <th className="p-3 text-left">
-                      Hours
-                    </th>
+                    <th className="p-3 text-left">{t("hours")}</th>
 
-                    <th className="p-3 text-left ">
-                      Total Amount
-                    </th>
+                    <th className="p-3 text-left ">{t("totalAmount")}</th>
 
-                    <th className="p-3 text-left rounded-r-xl">
-                        Actions
-                    </th>
+                    <th className="p-3 text-left rounded-r-xl">{t("actions")}</th>
 
                   </tr>
 
@@ -511,9 +491,7 @@ const WaterEntry = () => {
                                 mr-2
                                 cursor-pointer
                             "
-                            >
-                            Edit
-                        </button>
+                            >{t("edit")}</button>
                         <button
                             onClick={() =>
                             deleteEntryHandler(
@@ -529,9 +507,7 @@ const WaterEntry = () => {
                             rounded-lg
                             cursor-pointer
                             "
-                        >
-                            Delete
-                        </button>
+                        >{t("delete")}</button>
                         </td>
 
                       </tr>
@@ -550,9 +526,7 @@ const WaterEntry = () => {
 
           <div className="mt-10">
 
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
-              Farmer Wise Summary
-            </h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 py-2">{t("farmerWiseSummary")}</h2>
 
             <div
               className="
@@ -611,14 +585,14 @@ const WaterEntry = () => {
                         shadow-xl
                       "
                     >
-                      <h3 className="text-2xl font-bold text-white">
+                      <h3 className="text-2xl font-bold text-white py-2">
                         {
                           farmer.name
                         }
                       </h3>
 
                       <p className="mt-4 text-gray-200">
-                        Total Hours:
+                        {t("totalHours")}:
 
                         <span className="font-bold ml-2 text-white">
                           {
@@ -628,7 +602,7 @@ const WaterEntry = () => {
                       </p>
 
                       <p className="mt-3 text-gray-200">
-                        Total Amount:
+                        {t("totalAmount")}:
 
                         <span
                           className="
@@ -695,9 +669,7 @@ const WaterEntry = () => {
                 `}
             >
 
-                <h2 className="text-3xl font-bold text-green-800 mb-6">
-                Edit Water Entry
-                </h2>
+                <h2 className="text-3xl font-bold text-green-800 mb-6 py-2">{t("editWaterEntry")}</h2>
 
                 <form
                 onSubmit={
@@ -809,9 +781,7 @@ const WaterEntry = () => {
                         font-semibold
                         cursor-pointer
                     "
-                    >
-                    Update
-                    </button>
+                    >{t("update")}</button>
 
                     <button
                     type="button"
@@ -830,9 +800,7 @@ const WaterEntry = () => {
                         font-semibold
                         cursor-pointer
                     "
-                    >
-                    Cancel
-                    </button>
+                    >{t("cancel")}</button>
 
                 </div>
 

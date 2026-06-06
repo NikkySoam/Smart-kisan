@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
 } from "react";
 
 import axios from "axios";
+import toast from "react-hot-toast";
 import API from "../api/axios";
 
 interface WeatherData {
@@ -26,6 +28,7 @@ interface WeatherData {
 }
 
 const WeatherCard = () => {
+  const { t } = useTranslation();
   const [weather, setWeather] =
     useState<WeatherData | null>(
       null
@@ -90,8 +93,8 @@ const WeatherCard = () => {
             "token"
             );
 
-        await axios.put(
-            "http://localhost:5000/api/settings/update-profile",
+        await API.put(
+        "/settings/city",
             {
             city: inputCity,
             },
@@ -103,9 +106,14 @@ const WeatherCard = () => {
         );
 
         setCity(inputCity);
+        toast.success(
+          t("cityUpdated")
+          );
 
         } catch (error) {
-        console.log(error);
+          toast.error(
+           t("cityUpdateFailed")
+           );
         }
     };
 
@@ -167,9 +175,7 @@ const WeatherCard = () => {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-3xl p-6 shadow">
-        Loading weather...
-      </div>
+      <div className="bg-white rounded-3xl p-6 shadow">{t("loadingWeather")}</div>
     );
   }
 
@@ -177,9 +183,7 @@ const WeatherCard = () => {
 
   if (!weather) {
     return (
-      <div className="bg-white rounded-3xl p-6 shadow">
-        Failed to load weather
-      </div>
+      <div className="bg-white rounded-3xl p-6 shadow">{t("weatherLoadFailed")}</div>
     );
   }
 
@@ -221,9 +225,7 @@ const WeatherCard = () => {
 
           <div>
 
-            <h2 className="text-2xl font-bold">
-              Weather
-            </h2>
+            <h2 className="text-2xl font-bold">{t("weather")}</h2>
 
             <p className="text-gray-200 mt-1">
               {weather.name}
@@ -259,7 +261,7 @@ const WeatherCard = () => {
                 e.target.value
             )
             }
-            placeholder="Enter city"
+            placeholder={t("enterCity")}
             className="
             flex-1
             bg-white/15
@@ -288,9 +290,7 @@ const WeatherCard = () => {
             whitespace-nowrap
             cursor-pointer
             "
-        >
-            Change City
-        </button>
+        >{t("changeCity")}</button>
 
         </div>
 
@@ -302,7 +302,7 @@ const WeatherCard = () => {
             {Math.round(
               weather.main.temp
             )}
-            °
+            °C
           </h1>
 
           <p className="text-lg capitalize text-gray-200 mt-2">
@@ -338,9 +338,7 @@ const WeatherCard = () => {
             "
           >
 
-            <p className="text-sm text-gray-200">
-              Humidity
-            </p>
+            <p className="text-sm text-gray-200">{t("humidity")}</p>
 
             <h3 className="text-2xl font-bold mt-2">
               {
@@ -365,9 +363,7 @@ const WeatherCard = () => {
             "
           >
 
-            <p className="text-sm text-gray-200">
-              Wind Speed
-            </p>
+            <p className="text-sm text-gray-200">{t("windSpeed")}</p>
 
             <h3 className="text-2xl font-bold mt-2">
               {

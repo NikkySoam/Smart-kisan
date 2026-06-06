@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -31,6 +32,7 @@ interface Stats {
 
 
 const WaterManagement = () => {
+  const { t } = useTranslation();
   const navigate =
     useNavigate();
 
@@ -76,23 +78,23 @@ const WaterManagement = () => {
 
   const cards = [
     {
-      title: "Farmers",
+      title: t("farmers"),
       description:
-        "Manage tubewell farmers",
+        t("manageTubewellFarmers"),
       path: "/farmers",
       icon: <FaUsers />,
     },
     {
-      title: "Water Entries",
+      title: t("waterEntries"),
       description:
-        "Add and manage water usage",
+        t("addManageWaterUsage"),
       path: "/water",
       icon: <FaTint />,
     },
     {
-      title: "Reports",
+      title: t("reports"),
       description:
-        "View monthly water reports",
+        t("viewMonthlyReports"),
       path: "/reports",
       icon: <FaChartBar />,
     },
@@ -114,15 +116,10 @@ const WaterManagement = () => {
             from-green-500
             to-green-800
             bg-clip-text
-            text-transparent
-          "
-        >
-          Water Management
-        </h1>
+            text-transparent py-2"
+        >{t("waterManagement")}</h1>
 
-        <p className="text-gray-500 mt-2">
-          Tubewell business dashboard
-        </p>
+        <p className="text-gray-500 mt-2">{t("tubewellBusinessDashboard")}</p>
 
       </div>
 
@@ -194,8 +191,7 @@ const WaterManagement = () => {
                   text-2xl
                   font-bold
                   text-green-900
-                  mt-6
-                "
+                  mt-6 py-2"
               >
                 {card.title}
               </h2>
@@ -227,9 +223,7 @@ const WaterManagement = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Total Farmers
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalFarmers")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -243,9 +237,7 @@ const WaterManagement = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Water Entries
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("waterEntries")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -259,9 +251,7 @@ const WaterManagement = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Total Hours
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("totalHours")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             {
@@ -275,9 +265,7 @@ const WaterManagement = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Earnings
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("earnings")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹
@@ -292,9 +280,7 @@ const WaterManagement = () => {
 
         <div className="bg-white rounded-3xl p-6 shadow">
 
-          <h2 className="text-gray-500">
-            Water Rate
-          </h2>
+          <h2 className="text-gray-500 py-2">{t("waterRate")}</h2>
 
           <p className="text-4xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mt-4">
             ₹

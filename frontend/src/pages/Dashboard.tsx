@@ -1,4 +1,4 @@
-
+import { useTranslation } from "react-i18next";
 import WeatherCard from "../components/WeatherCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 
@@ -7,6 +7,7 @@ import { FaLeaf,FaTint } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -17,13 +18,9 @@ const Dashboard = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
-          Dashboard
-        </h1>
+        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("dashboard")}</h1>
 
-        <p className="text-gray-600 mt-2">
-          Welcome to Smart Kisan
-        </p>
+        <p className="text-gray-600 mt-2">{t("welcomeSmartKisan")}</p>
 
       </div>
 
@@ -114,15 +111,9 @@ const Dashboard = () => {
 
             <div>
 
-            <h2 className="text-4xl font-bold">
-                Apna Khet
-            </h2>
+            <h2 className="text-4xl font-bold py-2">{t("apnaKhet")}</h2>
 
-            <p className="mt-3 text-gray-200">
-                Manage your fields,
-                fertilizer, water,
-                labour and equipment
-            </p>
+            <p className="mt-3 text-gray-200">{t("apnaKhetDescription")}</p>
 
             </div>
 
@@ -205,15 +196,9 @@ const Dashboard = () => {
 
             <div>
 
-            <h2 className="text-4xl font-bold">
-                Tubewell Water
-            </h2>
+            <h2 className="text-4xl font-bold py-2">{t("tubewellWater")}</h2>
 
-            <p className="mt-3 text-gray-200">
-                Manage farmers,
-                water hours and
-                total income
-            </p>
+            <p className="mt-3 text-gray-200">{t("tubewellWaterDescription")}</p>
 
             </div>
 

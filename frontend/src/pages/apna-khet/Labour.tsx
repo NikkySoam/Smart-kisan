@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -33,6 +34,7 @@ interface LabourEntry {
 }
 
 const Labour = () => {
+  const { t } = useTranslation();
   const { fieldId } =
     useParams();
 
@@ -129,7 +131,7 @@ const Labour = () => {
         );
 
         toast.success(
-          "Labour Updated"
+          t("labourUpdated")
         );
       } else {
         await API.post(
@@ -146,7 +148,7 @@ const Labour = () => {
         );
 
         toast.success(
-          "Labour Added Successfully"
+          t("labourAddedSuccessfully")
         );
       }
 
@@ -166,7 +168,7 @@ const Labour = () => {
 
     } catch (error) {
       toast.error(
-        "Operation Failed"
+        t("operationFailed")
       );
     }
   };
@@ -185,14 +187,14 @@ const Labour = () => {
       );
 
       toast.success(
-        "Labour Deleted"
+        t("labourDeleted")
       );
 
       fetchEntries();
 
     } catch (error) {
       toast.error(
-        "Delete Failed"
+        t("deleteFailed")
       );
     }
   };
@@ -228,7 +230,7 @@ const Labour = () => {
 
   const fieldName =
     entries[0]?.field?.name ||
-    "Field";
+    t("field");
 
   return (
     <div className="p-4 sm:p-8">
@@ -258,15 +260,12 @@ const Labour = () => {
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent
-            "
+              text-transparent py-2"
           >
-            {fieldName} Labour
+            {t("fieldLabourTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-500 mt-2">
-            Manage labour expenses
-          </p>
+          <p className="text-gray-500 mt-2">{t("manageLabourExpenses")}</p>
 
         </div>
 
@@ -295,11 +294,7 @@ const Labour = () => {
           "
         >
 
-          <FaPlus />
-
-          Add Labour
-
-        </button>
+          <FaPlus />{t("addLabour")}</button>
 
       </div>
 
@@ -341,9 +336,7 @@ const Labour = () => {
 
           <div>
 
-            <p className="text-gray-500">
-              Total Labour Cost
-            </p>
+            <p className="text-gray-500">{t("totalLabourCost")}</p>
 
             <h2
               className="
@@ -354,8 +347,7 @@ const Labour = () => {
                 to-green-800
                 bg-clip-text
                 text-transparent
-                mt-2
-              "
+                mt-2 py-2"
             >
               ₹{totalAmount}
             </h2>
@@ -389,11 +381,8 @@ const Labour = () => {
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent
-            "
-          >
-            Labour History
-          </h2>
+              text-transparent py-2"
+          >{t("labourHistory")}</h2>
 
         </div>
 
@@ -414,21 +403,13 @@ const Labour = () => {
 
               <tr>
 
-                <th className="p-5 text-left">
-                  Work Type
-                </th>
+                <th className="p-5 text-left">{t("workType")}</th>
 
-                <th className="p-5 text-left">
-                  Amount
-                </th>
+                <th className="p-5 text-left">{t("amount")}</th>
 
-                <th className="p-5 text-left">
-                  Date
-                </th>
+                <th className="p-5 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">
-                  Actions
-                </th>
+                <th className="p-5 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -573,17 +554,14 @@ const Labour = () => {
                   from-green-500
                   to-green-800
                   bg-clip-text
-                  text-transparent
-                "
+                  text-transparent py-2"
               >
                 {isEditing
-                  ? "Edit Labour Entry"
-                  : "Add Labour Entry"}
+                  ? t("editLabourEntry")
+                  : t("addLabourEntry")}
               </h2>
 
-              <p className="text-gray-500 mt-2">
-                Add labour expense details
-              </p>
+              <p className="text-gray-500 mt-2">{t("addLabourExpenseDetails")}</p>
 
             </div>
 
@@ -607,7 +585,7 @@ const Labour = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Work Type"
+                placeholder={t("workType")}
                 className="
                   w-full
                   border
@@ -630,7 +608,7 @@ const Labour = () => {
                 onChange={
                   handleChange
                 }
-                placeholder="Amount"
+                placeholder={t("amount")}
                 className="
                   w-full
                   border
@@ -693,9 +671,7 @@ const Labour = () => {
                     hover:bg-gray-100
                     transition-all
                   "
-                >
-                  Cancel
-                </button>
+                >{t("cancel")}</button>
 
                 {/* SUBMIT */}
 
@@ -717,8 +693,8 @@ const Labour = () => {
                   "
                 >
                   {isEditing
-                    ? "Update Labour"
-                    : "Add Labour"}
+                    ? t("updateLabour")
+                    : t("addLabour")}
                 </button>
 
               </div>

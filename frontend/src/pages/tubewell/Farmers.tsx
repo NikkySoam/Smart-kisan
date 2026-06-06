@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useEffect,
   useState,
@@ -15,6 +16,7 @@ interface Farmer {
 }
 
 const Farmers = () => {
+  const { t } = useTranslation();
 
   const navigate = useNavigate();
 
@@ -103,7 +105,7 @@ const Farmers = () => {
       );
 
       toast.success(
-        "Farmer Added Successfully"
+        t("farmerAdded")
       );
 
       setFormData({
@@ -119,7 +121,7 @@ const Farmers = () => {
     } catch (error) {
 
       toast.error(
-        "Failed to add farmer"
+        t("farmerAddFailed")
       );
 
     }
@@ -129,7 +131,7 @@ const Farmers = () => {
     async (id: string) => {
         const confirmDelete =
         window.confirm(
-            "Delete this farmer?"
+            t("deleteFarmerConfirm")
         );
 
         if (!confirmDelete) return;
@@ -145,14 +147,14 @@ const Farmers = () => {
         );
 
         toast.success(
-            "Farmer Deleted"
+            t("farmerDeleted")
         );
 
         fetchFarmers();
 
         } catch (error) {
         toast.error(
-            "Failed to delete farmer"
+            t("farmerDeleteFailed")
         );
         }
     };
@@ -192,7 +194,7 @@ const Farmers = () => {
             );
 
             toast.success(
-                "Farmer Updated"
+                t("farmerUpdated")
             );
 
             setEditModal(false);
@@ -201,7 +203,7 @@ const Farmers = () => {
 
             } catch (error) {
             toast.error(
-                "Failed to update farmer"
+                t("farmerUpdateFailed")
             );
             }
         };
@@ -232,13 +234,9 @@ const Farmers = () => {
 
             <div>
 
-              <h1 className="text-3xl sm:text-5xl font-bold text-white">
-                Farmers Management
-              </h1>
+              <h1 className="text-3xl sm:text-5xl font-bold text-white py-2">{t("farmersManagement")}</h1>
 
-              <p className="text-gray-200 mt-2">
-                Manage all farmers here
-              </p>
+              <p className="text-gray-200 mt-2">{t("manageAllFarmers")}</p>
 
             </div>
 
@@ -262,8 +260,8 @@ const Farmers = () => {
               "
             >
               {showForm
-                ? "Close"
-                : "Add Farmer"}
+                ? t("close")
+                : t("addFarmer")}
             </button>
 
           </div>
@@ -301,9 +299,7 @@ const Farmers = () => {
                 "
               >
 
-                <h2 className="text-2xl font-bold text-white mb-5 text-center">
-                  Add Farmer
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-5 text-center py-2">{t("addFarmer")}</h2>
 
                 <form
                   onSubmit={handleSubmit}
@@ -313,7 +309,7 @@ const Farmers = () => {
                   <input
                     type="text"
                     name="name"
-                    placeholder="Farmer Name"
+                    placeholder={t("farmerName")}
                     value={formData.name}
                     onChange={handleChange}
                     className="
@@ -328,7 +324,7 @@ const Farmers = () => {
                   <input
                     type="text"
                     name="phone"
-                    placeholder="Phone Number"
+                    placeholder={t("phoneNumber")}
                     value={formData.phone}
                     onChange={handleChange}
                     className="
@@ -342,7 +338,7 @@ const Farmers = () => {
                   <input
                     type="text"
                     name="village"
-                    placeholder="Village"
+                    placeholder={t("village")}
                     value={formData.village}
                     onChange={handleChange}
                     className="
@@ -363,9 +359,7 @@ const Farmers = () => {
                       font-semibold
                       cursor-pointer
                     "
-                  >
-                    Add Farmer
-                  </button>
+                  >{t("addFarmer")}</button>
 
                 </form>
 
@@ -405,16 +399,16 @@ const Farmers = () => {
                 "
               >
 
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-bold text-white py-2">
                   {farmer.name}
                 </h2>
 
                 <p className="text-gray-200 mt-3">
-                  📞 {farmer.phone || "No Phone"}
+                   {farmer.phone || t("noPhone")}
                 </p>
 
                 <p className="text-gray-200 mt-2">
-                  📍 {farmer.village || "No Village"}
+                   {farmer.village || t("noVillage")}
                 </p>
 
                <button
@@ -434,9 +428,7 @@ const Farmers = () => {
                     rounded-xl
                     cursor-pointer
                 "
-                >
-                View Details
-                </button>
+                >{t("viewDetails")}</button>
 
                 <button
                 onClick={() =>
@@ -453,9 +445,7 @@ const Farmers = () => {
                     rounded-xl
                     cursor-pointer
                 "
-                >
-                Edit Farmer
-                </button>
+                >{t("editFarmer")}</button>
 
                 <button
                     onClick={() =>
@@ -474,9 +464,7 @@ const Farmers = () => {
                         rounded-xl
                         cursor-pointer
                     "
-                    >
-                    Delete Farmer
-                </button>
+                    >{t("deleteFarmer")}</button>
 
               </div>
 
@@ -526,9 +514,7 @@ const Farmers = () => {
                 `}
             >
 
-                <h2 className="text-3xl font-bold text-green-800 mb-6">
-                Edit Farmer
-                </h2>
+                <h2 className="text-3xl font-bold text-green-800 mb-6 py-2">{t("editFarmer")}</h2>
 
                 <form
                 onSubmit={
@@ -554,7 +540,7 @@ const Farmers = () => {
                     p-4
                     rounded-2xl
                     "
-                    placeholder="Farmer Name"
+                    placeholder={t("farmerName")}
                 />
 
                 <input
@@ -575,7 +561,7 @@ const Farmers = () => {
                     p-4
                     rounded-2xl
                     "
-                    placeholder="Phone"
+                    placeholder={t("phone")}
                 />
 
                 <input
@@ -596,7 +582,7 @@ const Farmers = () => {
                     p-4
                     rounded-2xl
                     "
-                    placeholder="Village"
+                    placeholder={t("village")}
                 />
 
                 <div className="flex gap-4">
@@ -611,9 +597,7 @@ const Farmers = () => {
                         p-4
                         rounded-2xl
                     "
-                    >
-                    Update
-                    </button>
+                    >{t("update")}</button>
 
                     <button
                     type="button"
@@ -627,9 +611,7 @@ const Farmers = () => {
                         p-4
                         rounded-2xl
                     "
-                    >
-                    Cancel
-                    </button>
+                    >{t("cancel")}</button>
 
                 </div>
 
