@@ -8,7 +8,12 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
 
 app.use(helmet());
 
@@ -29,8 +34,6 @@ import notificationRoutes from "./routes/notificationRoutes";
 import reminderRoutes from "./routes/reminderRoutes";
 
 
-
-
 app.use("/api/auth", authRoutes);
 app.use("/api/farmers", farmerRoutes);
 app.use("/api/water", waterRoutes);
@@ -45,10 +48,12 @@ app.use("/api/equipment",equipmentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reminders",reminderRoutes);
 
-app.get("/", (req, res) => {
-  res.json({
-    message: "API Running",
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Server is healthy",
   });
 });
+
 
 export default app;
