@@ -20,15 +20,23 @@ const generateToken_1 = __importDefault(require("../utils/generateToken"));
 const registerController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, phone, pin, confirmPin, } = req.body;
+        if (!pin || !confirmPin) {
+            return res.status(400).json({
+                success: false,
+                message: "PIN and Confirm PIN are required",
+            });
+        }
+        const pinValue = String(pin);
+        const confirmPinValue = String(confirmPin);
         // CHECK PIN LENGTH
-        if (pin.length < 6) {
+        if (pinValue.length < 6) {
             return res.status(400).json({
                 success: false,
                 message: "PIN must be at least 6 digits",
             });
         }
         // CHECK PIN MATCH
-        if (pin !== confirmPin) {
+        if (pinValue !== confirmPinValue) {
             return res.status(400).json({
                 success: false,
                 message: "PIN and Confirm PIN do not match",
@@ -43,7 +51,7 @@ const registerController = (req, res) => __awaiter(void 0, void 0, void 0, funct
             });
         }
         // HASH PIN
-        const hashedPin = yield bcryptjs_1.default.hash(pin, 10);
+        const hashedPin = yield bcryptjs_1.default.hash(pinValue, 10);
         // CREATE USER
         const user = yield User_1.default.create({
             name,

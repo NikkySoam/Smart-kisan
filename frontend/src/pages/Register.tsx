@@ -40,6 +40,7 @@ const Register = () => {
           name: formData.name,
           phone: formData.phone,
           pin: formData.pin,
+          confirmPin: formData.confirmPin,
         }
       );
 

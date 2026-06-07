@@ -21,19 +21,29 @@ export const registerController = async (
       confirmPin,
     } = req.body;
 
+    if (!pin || !confirmPin) {
+      return res.status(400).json({
+        success: false,
+        message: "PIN and Confirm PIN are required",
+      });
+    }
+
+    const pinValue = String(pin);
+    const confirmPinValue = String(confirmPin);
+
     // CHECK PIN LENGTH
 
-    if (pin.length < 6) {
+    if (pinValue.length < 6) {
       return res.status(400).json({
         success: false,
         message:
           "PIN must be at least 6 digits",
       });
     }
-    
+
     // CHECK PIN MATCH
 
-    if (pin !== confirmPin) {
+    if (pinValue !== confirmPinValue) {
       return res.status(400).json({
         success: false,
         message:
@@ -58,7 +68,7 @@ export const registerController = async (
     // HASH PIN
 
     const hashedPin =
-      await bcrypt.hash(pin, 10);
+      await bcrypt.hash(pinValue, 10);
 
     // CREATE USER
 
