@@ -11,7 +11,7 @@ return (
         h-[60px]
         bg-green-700
         shadow-md
-        px-6
+        px-4 md:px-6
         flex
         items-center
         justify-between
@@ -24,7 +24,7 @@ return (
 
         <h1
           className="
-            text-3xl
+            text-xl md:text-3xl
             font-bold
             bg-linear-to-r
             from-white
@@ -38,7 +38,7 @@ return (
 
       {/* RIGHT */}
 
-      <div className="flex items-center mr-12 gap-5">
+      <div className="flex items-center mr-12 gap-4">
         <LanguageSwitcher />
 
         <NotificationDropdown />

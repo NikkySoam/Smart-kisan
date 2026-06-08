@@ -6,6 +6,53 @@ body {
   box-sizing: border-box;
 }
 
+/* Responsive base font sizing for better mobile readability */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 640px) {
+  /* slightly smaller text on small phones to look professional */
+  html {
+    font-size: 14px;
+  }
+}
+
+/* Prevent automatic font-size adjustments on mobile browsers */
+html, body {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Make images and svgs scale on small screens */
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Provide a common inner padding for pages so content isn't hidden */
+.app-content,
+.page-container {
+  padding: 1rem;
+}
+
+/* Form controls sizing for mobile */
+input,
+button,
+select,
+textarea {
+  font-size: 0.95rem;
+}
+
+@media (max-width: 640px) {
+  input,
+  button,
+  select,
+  textarea {
+    font-size: 0.9rem;
+  }
+}
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

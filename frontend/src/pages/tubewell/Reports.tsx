@@ -129,7 +129,7 @@ const Reports = () => {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("monthlyReports")}</h1>
+        <h1 className="text-2xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("monthlyReports")}</h1>
 
         <p className="text-gray-600 mt-2">{t("analyzeMonthlyWaterUsage")}</p>
 
@@ -306,7 +306,7 @@ const Reports = () => {
         "
       >
 
-        <table className="w-full min-w-[700px]">
+        <table className="w-full md:min-w-[700px]">
 
           <thead>
 

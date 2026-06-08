@@ -64,15 +64,14 @@ const Register = () => {
   return (
         <div
         className="
-            h-screen
-            overflow-hidden
-            bg-cover
-            bg-center
-            bg-no-repeat
-            flex
-            justify-center
-            items-center
-            px-4
+          min-h-screen
+          bg-cover
+          bg-center
+          bg-no-repeat
+          flex
+          justify-center
+          items-center
+          px-4
         "
         style={{
             backgroundImage:

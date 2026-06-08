@@ -269,7 +269,7 @@ const WaterEntry = () => {
 
           <div className="mb-8">
 
-            <h1 className="text-3xl sm:text-5xl font-bold text-white py-2">{t("waterManagement")}</h1>
+            <h1 className="text-2xl sm:text-5xl font-bold text-white py-2">{t("waterManagement")}</h1>
 
             <p className="text-gray-200 mt-2">{t("manageWaterEntriesFarmerWise")}</p>
 
@@ -414,7 +414,7 @@ const WaterEntry = () => {
 
             <div className="overflow-x-auto">
 
-              <table className="w-full min-w-[700px]">
+              <table className="w-full md:min-w-[700px]">
 
                 <thead>
 

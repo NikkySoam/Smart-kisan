@@ -125,7 +125,7 @@ const FarmerDetails = () => {
 
       <div className="mb-8 flex justify-between items-center">
         <div>
-        <h1 className="text-3xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">
+        <h1 className="text-2xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">
           {farmerName}
         </h1>
 
@@ -247,7 +247,7 @@ const FarmerDetails = () => {
 
         <h2 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent mb-6 py-2">{t("waterHistory")}</h2>
 
-        <table className="w-full min-w-[700px]">
+        <table className="w-full md:min-w-[700px]">
 
           <thead>
 

@@ -126,7 +126,7 @@ const MainLayout = () => {
   ];
 
   return (
-    <div className="h-screen overflow-hidden flex bg-emerald-50">
+    <div className="min-h-screen flex bg-emerald-50">
 
       {/* MOBILE BUTTON */}
 
@@ -158,7 +158,8 @@ const MainLayout = () => {
           top-0
           left-0
           z-40
-          h-screen
+          md:h-screen
+          h-[80vh]
           w-[260px]
           bg-green-800
           text-white
@@ -302,15 +303,16 @@ const MainLayout = () => {
         className="
           flex-1
           lg:ml-[260px]
-          h-screen
+          min-h-screen
           bg-green-50
           flex
           flex-col
         "
+        role="main"
       >
         <Navbar />
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto app-content">
           <Outlet />
         </div>
       </main>

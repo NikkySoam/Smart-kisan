@@ -234,7 +234,7 @@ const Farmers = () => {
 
             <div>
 
-              <h1 className="text-3xl sm:text-5xl font-bold text-white py-2">{t("farmersManagement")}</h1>
+              <h1 className="text-2xl sm:text-5xl font-bold text-white py-2">{t("farmersManagement")}</h1>
 
               <p className="text-gray-200 mt-2">{t("manageAllFarmers")}</p>
 

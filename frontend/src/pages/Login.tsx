@@ -60,8 +60,7 @@ const Login = () => {
   return (
     <div
       className="
-        h-screen
-        overflow-hidden
+        min-h-screen
         bg-cover
         bg-center
         bg-no-repeat
