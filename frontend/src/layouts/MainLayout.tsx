@@ -19,6 +19,7 @@ import {
 
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import MobileBottomNav from "../components/MobileBottomNav";
 
 const MainLayout = () => {
   const { t } = useTranslation();
@@ -316,6 +317,8 @@ const MainLayout = () => {
           <Outlet />
         </div>
       </main>
+
+      <MobileBottomNav />
 
     </div>
   );
