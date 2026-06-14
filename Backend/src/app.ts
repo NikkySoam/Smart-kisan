@@ -33,6 +33,8 @@ import labourRoutes from "./routes/labourRoutes";
 import equipmentRoutes from "./routes/equipmentRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import reminderRoutes from "./routes/reminderRoutes";
+import aiRoutes from "./routes/aiRoutes";
+
 
 
 app.use("/api/auth", authRoutes);
@@ -48,6 +50,7 @@ app.use("/api/labour",labourRoutes);
 app.use("/api/equipment",equipmentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reminders",reminderRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({

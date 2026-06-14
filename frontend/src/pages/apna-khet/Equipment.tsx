@@ -50,6 +50,12 @@ const Equipment = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState("");
+
   const [showModal, setShowModal] =
     useState(false);
 
@@ -117,6 +123,10 @@ const Equipment = () => {
   ) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     try {
 
       if (isEditing) {
@@ -164,18 +174,31 @@ const Equipment = () => {
         date: "",
       });
 
-      fetchEntries();
+      await fetchEntries();
 
     } catch (error) {
       toast.error(
         t("operationFailed")
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (
     id: string
   ) => {
+    const confirmDelete =
+      window.confirm(
+        t("deleteEntryConfirm")
+      );
+
+    if (!confirmDelete) return;
+
+    if (deletingId) return;
+
+    setDeletingId(id);
+
     try {
       await API.delete(
         `/equipment/${id}`,
@@ -190,12 +213,14 @@ const Equipment = () => {
         t("equipmentDeleted")
       );
 
-      fetchEntries();
+      await fetchEntries();
 
     } catch (error) {
       toast.error(
         t("deleteFailed")
       );
+    } finally {
+      setDeletingId("");
     }
   };
 
@@ -449,6 +474,7 @@ const Equipment = () => {
                       <div className="flex gap-3">
 
                         <button
+                          disabled={!!deletingId || submitting}
                           onClick={() =>
                             handleEdit(entry)
                           }
@@ -458,6 +484,8 @@ const Equipment = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                           "
                         >
@@ -465,6 +493,7 @@ const Equipment = () => {
                         </button>
 
                         <button
+                          disabled={!!deletingId || submitting}
                           onClick={() =>
                             handleDelete(entry._id)
                           }
@@ -474,6 +503,8 @@ const Equipment = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                           "
                         >
@@ -616,6 +647,7 @@ const Equipment = () => {
 
           <button
             type="button"
+            disabled={submitting}
             onClick={() => {
               setShowModal(false);
               setIsEditing(false);
@@ -634,6 +666,8 @@ const Equipment = () => {
               rounded-2xl
               font-semibold
               cursor-pointer
+              disabled:opacity-60
+              disabled:cursor-not-allowed
               hover:bg-gray-100
               transition-all
             "
@@ -643,6 +677,7 @@ const Equipment = () => {
 
           <button
             type="submit"
+            disabled={submitting}
             className="
               flex-1
               bg-linear-to-r
@@ -655,12 +690,16 @@ const Equipment = () => {
               rounded-2xl
               font-semibold
               cursor-pointer
+              disabled:opacity-60
+              disabled:cursor-not-allowed
               transition-all
             "
           >
-            {isEditing
-              ? "Update Equipment"
-              : "Add Equipment"}
+            {submitting
+              ? t("saving")
+              : isEditing
+                ? "Update Equipment"
+                : "Add Equipment"}
           </button>
 
         </div>

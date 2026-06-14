@@ -24,6 +24,7 @@ import Fertilizers from "./pages/apna-khet/Fertilizers";
 import Labour from "./pages/apna-khet/Labour";
 import Equipment from "./pages/apna-khet/Equipment";
 import WaterManagement from "./pages/tubewell/WaterManagement";
+import CropDoctor from "./components/CropDoctor";
 
 function App() {
   return (
@@ -151,6 +152,12 @@ function App() {
           <Route
             path="/water-management"
             element={<WaterManagement />}
+          />
+
+            {/* AI CROP DOCTOR PAGE */}
+          <Route
+            path="/crop-doctor"
+            element={<CropDoctor />}
           />
 
         </Route>

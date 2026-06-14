@@ -29,6 +29,15 @@ const Farmers = () => {
   const [showForm, setShowForm] =
     useState(false);
 
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [updating, setUpdating] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState("");
+
   const [formData, setFormData] =
     useState({
       name: "",
@@ -92,6 +101,10 @@ const Farmers = () => {
   ) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     try {
 
       await API.post(
@@ -116,7 +129,7 @@ const Farmers = () => {
 
       setShowForm(false);
 
-      fetchFarmers();
+      await fetchFarmers();
 
     } catch (error) {
 
@@ -124,6 +137,8 @@ const Farmers = () => {
         t("farmerAddFailed")
       );
 
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -135,6 +150,10 @@ const Farmers = () => {
         );
 
         if (!confirmDelete) return;
+
+        if (deletingId) return;
+
+        setDeletingId(id);
 
         try {
         await API.delete(
@@ -150,12 +169,14 @@ const Farmers = () => {
             t("farmerDeleted")
         );
 
-        fetchFarmers();
+        await fetchFarmers();
 
         } catch (error) {
         toast.error(
             t("farmerDeleteFailed")
         );
+        } finally {
+        setDeletingId("");
         }
     };
 
@@ -182,6 +203,10 @@ const Farmers = () => {
         ) => {
             e.preventDefault();
 
+            if (updating) return;
+
+            setUpdating(true);
+
             try {
             await API.put(
                 `/farmers/${selectedFarmer._id}`,
@@ -199,12 +224,14 @@ const Farmers = () => {
 
             setEditModal(false);
 
-            fetchFarmers();
+            await fetchFarmers();
 
             } catch (error) {
             toast.error(
                 t("farmerUpdateFailed")
             );
+            } finally {
+            setUpdating(false);
             }
         };
 
@@ -350,16 +377,20 @@ const Farmers = () => {
                   />
 
                   <button
+                    type="submit"
+                    disabled={submitting}
                     className="
                       bg-green-700
                       hover:bg-green-800
+                      disabled:opacity-60
+                      disabled:cursor-not-allowed
                       text-white
                       rounded-xl
                       p-3
                       font-semibold
                       cursor-pointer
                     "
-                  >{t("addFarmer")}</button>
+                  >{submitting ? t("saving") : t("addFarmer")}</button>
 
                 </form>
 
@@ -431,6 +462,7 @@ const Farmers = () => {
                 >{t("viewDetails")}</button>
 
                 <button
+                disabled={!!deletingId || updating || submitting}
                 onClick={() =>
                     openEditModal(farmer)
                 }
@@ -444,10 +476,13 @@ const Farmers = () => {
                     p-3
                     rounded-xl
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                 "
                 >{t("editFarmer")}</button>
 
                 <button
+                    disabled={!!deletingId || updating || submitting}
                     onClick={() =>
                         deleteFarmerHandler(
                         farmer._id
@@ -463,8 +498,10 @@ const Farmers = () => {
                         p-3
                         rounded-xl
                         cursor-pointer
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
                     "
-                    >{t("deleteFarmer")}</button>
+                    >{deletingId === farmer._id ? t("loading") : t("deleteFarmer")}</button>
 
               </div>
 
@@ -589,18 +626,22 @@ const Farmers = () => {
 
                     <button
                     type="submit"
+                    disabled={updating}
                     className="
                         flex-1
                         bg-green-700
                         hover:bg-green-800
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
                         text-white
                         p-4
                         rounded-2xl
                     "
-                    >{t("update")}</button>
+                    >{updating ? t("saving") : t("update")}</button>
 
                     <button
                     type="button"
+                    disabled={updating}
                     onClick={() =>
                         setEditModal(false)
                     }
@@ -608,6 +649,8 @@ const Farmers = () => {
                         flex-1
                         bg-gray-300
                         hover:bg-gray-400
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
                         p-4
                         rounded-2xl
                     "

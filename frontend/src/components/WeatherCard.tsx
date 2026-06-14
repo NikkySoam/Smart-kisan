@@ -40,6 +40,9 @@ const WeatherCard = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [cityUpdating, setCityUpdating] =
+    useState(false);
+
   // CITY
 
   const [city, setCity] =
@@ -87,6 +90,10 @@ const WeatherCard = () => {
 
   const updateCity =
     async () => {
+        if (cityUpdating) return;
+
+        setCityUpdating(true);
+
         try {
         const token =
             localStorage.getItem(
@@ -114,6 +121,8 @@ const WeatherCard = () => {
           toast.error(
            t("cityUpdateFailed")
            );
+        } finally {
+          setCityUpdating(false);
         }
     };
 
@@ -278,10 +287,13 @@ const WeatherCard = () => {
         />
 
         <button
+            disabled={cityUpdating}
             onClick={updateCity}
             className="
             bg-green-600
             hover:bg-green-700
+            disabled:opacity-60
+            disabled:cursor-not-allowed
             transition-all
             px-5
             py-3
@@ -290,7 +302,7 @@ const WeatherCard = () => {
             whitespace-nowrap
             cursor-pointer
             "
-        >{t("changeCity")}</button>
+        >{cityUpdating ? t("saving") : t("changeCity")}</button>
 
         </div>
 

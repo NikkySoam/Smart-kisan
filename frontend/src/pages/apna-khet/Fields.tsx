@@ -76,6 +76,12 @@ const Fields = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [submitting, setSubmitting] =
+  useState(false);
+
+  const [deletingId, setDeletingId] =
+  useState("");
+
   const [search, setSearch] =
   useState("");
 
@@ -174,6 +180,10 @@ const Fields = () => {
 ) => {
   e.preventDefault();
 
+  if (submitting) return;
+
+  setSubmitting(true);
+
   try {
 
     // EDIT
@@ -226,18 +236,31 @@ const Fields = () => {
       crop: "",
     });
 
-    fetchFields();
+    await fetchFields();
 
   } catch (error) {
     toast.error(
       t("operationFailed")
     );
+  } finally {
+    setSubmitting(false);
   }
 };
 
     const handleDelete = async (
   id: string
 ) => {
+  const confirmDelete =
+    window.confirm(
+      t("deleteFieldConfirm")
+    );
+
+  if (!confirmDelete) return;
+
+  if (deletingId) return;
+
+  setDeletingId(id);
+
   try {
 
     await API.delete(
@@ -253,12 +276,14 @@ const Fields = () => {
       t("fieldDeleted")
     );
 
-    fetchFields();
+    await fetchFields();
 
   } catch (error) {
     toast.error(
       t("deleteFailed")
     );
+  } finally {
+    setDeletingId("");
   }
 };
 
@@ -749,6 +774,7 @@ const Fields = () => {
             {/* EDIT */}
 
             <button
+                disabled={!!deletingId || submitting}
                 onClick={() =>
                 handleEdit(field)
                 }
@@ -765,6 +791,8 @@ const Fields = () => {
                 gap-2
                 font-semibold
                 cursor-pointer
+                disabled:opacity-60
+                disabled:cursor-not-allowed
                 transition-all
                 "
             >
@@ -774,6 +802,7 @@ const Fields = () => {
             {/* DELETE */}
 
             <button
+                disabled={!!deletingId || submitting}
                 onClick={() =>
                 handleDelete(field._id)
                 }
@@ -790,6 +819,8 @@ const Fields = () => {
                 gap-2
                 font-semibold
                 cursor-pointer
+                disabled:opacity-60
+                disabled:cursor-not-allowed
                 transition-all
                 "
             >
@@ -951,6 +982,7 @@ const Fields = () => {
 
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() =>{
                     setShowModal(false);
                     setIsEditing(false);
@@ -970,6 +1002,8 @@ const Fields = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                     hover:bg-gray-100
                     transition-all
                   "
@@ -977,6 +1011,7 @@ const Fields = () => {
 
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="
                     flex-1
                     bg-linear-to-r
@@ -989,12 +1024,16 @@ const Fields = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                     transition-all
                   "
                 >
-                  {isEditing
-                    ? t("updateField")
-                    : t("addField")}
+                  {submitting
+                    ? t("saving")
+                    : isEditing
+                      ? t("updateField")
+                      : t("addField")}
                 </button>
 
               </div>

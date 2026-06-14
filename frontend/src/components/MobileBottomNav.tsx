@@ -1,33 +1,41 @@
 import { Link, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
   FaHome,
+  FaRobot,
   FaSeedling,
   FaTint,
   FaCog,
 } from "react-icons/fa";
 
 const MobileBottomNav = () => {
+  const { t } = useTranslation();
   const location = useLocation();
 
   const navItems = [
     {
-      label: "Home",
+      label: t("dashboard"),
       path: "/dashboard",
       icon: <FaHome />,
     },
     {
-      label: "Fields",
+      label: t("fields"),
       path: "/fields",
       icon: <FaSeedling />,
     },
     {
-      label: "Water",
+      label: t("cropDoctor"),
+      path: "/crop-doctor",
+      icon: <FaRobot />,
+    },
+    {
+      label: t("water"),
       path: "/water-management",
       icon: <FaTint />,
     },
     {
-      label: "Settings",
+      label: t("settings"),
       path: "/settings",
       icon: <FaCog />,
     },
@@ -56,7 +64,7 @@ const MobileBottomNav = () => {
       <div
         className="
           grid
-          grid-cols-4
+          grid-cols-5
           h-16
         "
       >

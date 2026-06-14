@@ -29,6 +29,7 @@ const NotificationDropdown = () => {
 
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [readingId, setReadingId] = useState("");
 
   const fetchNotifications = async () => {
     
@@ -107,6 +108,10 @@ const NotificationDropdown = () => {
   }, []);
 
   const handleRead = async (id: string) => {
+    if (readingId) return;
+
+    setReadingId(id);
+
     try {
       await API.put(
         `/notifications/${id}/read`,
@@ -130,6 +135,8 @@ const NotificationDropdown = () => {
       );
     } catch (error) {
       console.log(error);
+    } finally {
+      setReadingId("");
     }
   };
 
@@ -304,6 +311,7 @@ const NotificationDropdown = () => {
                         {!notification.isRead && (
                           <button
                             type="button"
+                            disabled={!!readingId}
                             onClick={() => handleRead(notification._id)}
                             className="
                               inline-flex
@@ -320,6 +328,8 @@ const NotificationDropdown = () => {
                               font-semibold
                               text-green-700
                               transition
+                              disabled:opacity-60
+                              disabled:cursor-not-allowed
                               hover:border-green-300
                               hover:bg-green-50
                               focus:outline-none

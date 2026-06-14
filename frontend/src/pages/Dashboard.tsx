@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import WeatherCard from "../components/WeatherCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 
-import { FaLeaf,FaTint } from "react-icons/fa";
+import { FaLeaf,FaTint,FaStethoscope } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 
@@ -36,6 +36,91 @@ const Dashboard = () => {
         "
       >
 
+
+               {/* CROP DOCTOR */}
+        <div
+        onClick={() =>
+            navigate("/crop-doctor")
+        }
+        className="
+            relative
+            overflow-hidden
+            rounded-3xl
+            shadow-lg
+            cursor-pointer
+            group
+            min-h-[260px]
+            bg-cover
+            bg-center
+            hover:scale-[1.02]
+            transition-all
+        "
+        style={{
+            backgroundImage:"url(/ai-bg.jpeg)",
+        }}
+        >
+
+        {/* OVERLAY */}
+
+        <div
+            className="
+            absolute
+            inset-0
+            bg-black/45
+            group-hover:bg-black/35
+            transition-all
+            "
+        ></div>
+
+        {/* CONTENT */}
+
+        <div
+            className="
+            relative
+            z-10
+            h-full
+            p-6
+            flex
+            flex-col
+            justify-between
+            text-white
+            "
+        >
+
+            {/* ICON */}
+
+            <div
+            className="
+                w-16
+                h-16
+                rounded-2xl
+                bg-white/20
+                backdrop-blur-md
+                flex
+                items-center
+                justify-center
+            "
+            >
+
+            <FaStethoscope className="text-3xl" />
+
+            </div>
+
+            {/* TEXT */}
+
+            <div>
+
+            <h2 className="text-4xl font-bold py-2">{t("cropDoctor")}</h2>
+
+            <p className="mt-3 text-gray-200">{t("cropDoctorDescription")}</p>
+
+            </div>
+
+        </div>
+
+        </div>
+
+
         {/* APNA KHET */}
 
         <div
@@ -55,9 +140,8 @@ const Dashboard = () => {
             hover:scale-[1.02]
             transition-all
         "
-        style={{
-            backgroundImage:
-            "url(https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop)",
+       style={{
+            backgroundImage:"url(/field.jpg)",
         }}
         >
 
@@ -141,8 +225,7 @@ const Dashboard = () => {
             transition-all
         "
         style={{
-            backgroundImage:
-            "url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1974&auto=format&fit=crop)",
+            backgroundImage:"url(/tubewell.jpg)",
         }}
         >
 
@@ -205,6 +288,9 @@ const Dashboard = () => {
         </div>
 
         </div>
+
+ 
+
 
       </div>
 

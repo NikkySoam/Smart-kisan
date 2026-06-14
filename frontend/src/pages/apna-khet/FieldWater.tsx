@@ -53,6 +53,12 @@ const FieldWater = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState("");
+
   const [formData, setFormData] =
     useState({
       hours: "",
@@ -116,6 +122,10 @@ const FieldWater = () => {
     ) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     try {
 
         // EDIT
@@ -169,12 +179,14 @@ const FieldWater = () => {
         date: "",
         });
 
-        fetchEntries();
+        await fetchEntries();
 
     } catch (error) {
         toast.error(
         t("operationFailed")
         );
+    } finally {
+        setSubmitting(false);
     }
     };
 
@@ -182,6 +194,17 @@ const FieldWater = () => {
     const handleDelete = async (
     id: string
     ) => {
+    const confirmDelete =
+        window.confirm(
+        t("deleteEntryConfirm")
+        );
+
+    if (!confirmDelete) return;
+
+    if (deletingId) return;
+
+    setDeletingId(id);
+
     try {
 
         await API.delete(
@@ -197,12 +220,14 @@ const FieldWater = () => {
         t("entryDeleted")
         );
 
-        fetchEntries();
+        await fetchEntries();
 
     } catch (error) {
         toast.error(
         t("deleteFailed")
         );
+    } finally {
+        setDeletingId("");
     }
     };
 
@@ -404,6 +429,7 @@ const FieldWater = () => {
                         {/* EDIT */}
 
                         <button
+                        disabled={!!deletingId || submitting}
                         onClick={() =>
                             handleEdit(entry)
                         }
@@ -413,6 +439,8 @@ const FieldWater = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                         "
                         >
@@ -424,6 +452,7 @@ const FieldWater = () => {
                         {/* DELETE */}
 
                         <button
+                        disabled={!!deletingId || submitting}
                         onClick={() =>
                             handleDelete(entry._id)
                         }
@@ -433,6 +462,8 @@ const FieldWater = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                         "
                         >
@@ -536,6 +567,7 @@ const FieldWater = () => {
 
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() =>{
                       setShowModal(false);
                       setIsEditing(false);
@@ -552,11 +584,14 @@ const FieldWater = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                   "
                 >{t("cancel")}</button>
 
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="
                     flex-1
                     bg-linear-to-r from-blue-500 to-purple-600
@@ -566,9 +601,15 @@ const FieldWater = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                   "
                 >
-                  {isEditing ? t("updateEntry") : t("addEntry")}
+                  {submitting
+                    ? t("saving")
+                    : isEditing
+                      ? t("updateEntry")
+                      : t("addEntry")}
                 </button>
 
               </div>

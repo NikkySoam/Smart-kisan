@@ -50,6 +50,12 @@ const Labour = () => {
   const [loading, setLoading] =
     useState(true);
 
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState("");
+
   const [showModal, setShowModal] =
     useState(false);
 
@@ -117,6 +123,10 @@ const Labour = () => {
   ) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     try {
 
       if (isEditing) {
@@ -164,18 +174,31 @@ const Labour = () => {
         date: "",
       });
 
-      fetchEntries();
+      await fetchEntries();
 
     } catch (error) {
       toast.error(
         t("operationFailed")
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (
     id: string
   ) => {
+    const confirmDelete =
+      window.confirm(
+        t("deleteEntryConfirm")
+      );
+
+    if (!confirmDelete) return;
+
+    if (deletingId) return;
+
+    setDeletingId(id);
+
     try {
       await API.delete(
         `/labour/${id}`,
@@ -190,12 +213,14 @@ const Labour = () => {
         t("labourDeleted")
       );
 
-      fetchEntries();
+      await fetchEntries();
 
     } catch (error) {
       toast.error(
         t("deleteFailed")
       );
+    } finally {
+      setDeletingId("");
     }
   };
 
@@ -469,6 +494,7 @@ const Labour = () => {
                       <div className="flex gap-3">
 
                         <button
+                          disabled={!!deletingId || submitting}
                           onClick={() =>
                             handleEdit(entry)
                           }
@@ -478,6 +504,8 @@ const Labour = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                           "
                         >
@@ -485,6 +513,7 @@ const Labour = () => {
                         </button>
 
                         <button
+                          disabled={!!deletingId || submitting}
                           onClick={() =>
                             handleDelete(entry._id)
                           }
@@ -494,6 +523,8 @@ const Labour = () => {
                             p-3
                             rounded-xl
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             transition-all
                           "
                         >
@@ -650,6 +681,7 @@ const Labour = () => {
 
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() => {
                     setShowModal(false);
                     setIsEditing(false);
@@ -668,6 +700,8 @@ const Labour = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                     hover:bg-gray-100
                     transition-all
                   "
@@ -677,6 +711,7 @@ const Labour = () => {
 
                 <button
                   type="submit"
+                  disabled={submitting}
                   className="
                     flex-1
                     bg-linear-to-r
@@ -689,12 +724,16 @@ const Labour = () => {
                     rounded-2xl
                     font-semibold
                     cursor-pointer
+                    disabled:opacity-60
+                    disabled:cursor-not-allowed
                     transition-all
                   "
                 >
-                  {isEditing
-                    ? t("updateLabour")
-                    : t("addLabour")}
+                  {submitting
+                    ? t("saving")
+                    : isEditing
+                      ? t("updateLabour")
+                      : t("addLabour")}
                 </button>
 
               </div>

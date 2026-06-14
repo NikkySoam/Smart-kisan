@@ -336,6 +336,7 @@ const Settings = () => {
               hover:from-green-600
               hover:to-green-900
               disabled:opacity-60
+              disabled:cursor-not-allowed
               text-white
               px-6
               py-4
@@ -408,6 +409,7 @@ const Settings = () => {
               bg-green-700
               hover:bg-green-800
               disabled:opacity-60
+              disabled:cursor-not-allowed
               text-white
               p-4
               rounded-2xl
@@ -474,6 +476,7 @@ const Settings = () => {
                 bg-green-700
                 hover:bg-green-800
                 disabled:opacity-60
+                disabled:cursor-not-allowed
                 text-white
                 px-8
                 py-4

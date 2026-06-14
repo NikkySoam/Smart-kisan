@@ -26,7 +26,7 @@ const fieldSchema =
 
       area: {
         type: Number,
-        required: true,
+        default: 0
       },
 
       location: {

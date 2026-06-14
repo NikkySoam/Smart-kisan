@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import NotificationDropdown from "./NotificationDropdown";
 
+
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = () => {
@@ -39,6 +40,7 @@ return (
       {/* RIGHT */}
 
       <div className="flex items-center mr-12 gap-4">
+       
         <LanguageSwitcher />
 
         <NotificationDropdown />

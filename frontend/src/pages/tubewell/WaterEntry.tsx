@@ -32,6 +32,8 @@ interface WaterEntry {
   date: string;
 }
 
+const INITIAL_VISIBLE_ENTRIES = 10;
+
 const WaterEntry = () => {
   const { t } = useTranslation();
   // TOKEN
@@ -46,6 +48,18 @@ const WaterEntry = () => {
 
   const [farmers, setFarmers] =
     useState<Farmer[]>([]);
+
+  const [submitting, setSubmitting] =
+    useState(false);
+
+  const [updating, setUpdating] =
+    useState(false);
+
+  const [deletingId, setDeletingId] =
+    useState("");
+
+  const [visibleEntriesCount, setVisibleEntriesCount] =
+    useState(INITIAL_VISIBLE_ENTRIES);
 
   const [formData, setFormData] =
     useState({
@@ -136,6 +150,10 @@ const WaterEntry = () => {
   ) => {
     e.preventDefault();
 
+    if (submitting) return;
+
+    setSubmitting(true);
+
     try {
       await API.post(
         "/water",
@@ -157,12 +175,14 @@ const WaterEntry = () => {
         date: "",
       });
 
-      fetchEntries();
+      await fetchEntries();
 
     } catch (error) {
       toast.error(
         t("entryAddFailed")
       );
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -175,6 +195,10 @@ const WaterEntry = () => {
             );
 
             if (!confirmDelete) return;
+
+            if (deletingId) return;
+
+            setDeletingId(id);
 
             try {
             await API.delete(
@@ -190,12 +214,14 @@ const WaterEntry = () => {
                 t("entryDeleted")
             );
 
-            fetchEntries();
+            await fetchEntries();
 
             } catch (error) {
             toast.error(
                 t("entryDeleteFailed")
             );
+            } finally {
+            setDeletingId("");
             }
         };
 
@@ -220,6 +246,10 @@ const WaterEntry = () => {
     ) => {
         e.preventDefault();
 
+        if (updating) return;
+
+        setUpdating(true);
+
         try {
         await API.put(
             `/water/${selectedEntry._id}`,
@@ -237,14 +267,26 @@ const WaterEntry = () => {
 
         setEditModal(false);
 
-        fetchEntries();
+        await fetchEntries();
 
         } catch (error) {
         toast.error(
             t("entryUpdateFailed")
         );
+        } finally {
+        setUpdating(false);
         }
     };
+
+  const visibleEntries =
+    entries.slice(
+      0,
+      visibleEntriesCount
+    );
+
+  const hasMoreEntries =
+    visibleEntriesCount <
+    entries.length;
 
   return (
     <div
@@ -378,9 +420,13 @@ const WaterEntry = () => {
               {/* BUTTON */}
 
               <button
+                type="submit"
+                disabled={submitting}
                 className="
                   bg-linear-to-r from-green-500 to-green-800 
                   hover:from-green-600 hover:to-green-900
+                  disabled:opacity-60
+                  disabled:cursor-not-allowed
                   transition-all
                   duration-300
                   text-white
@@ -389,7 +435,7 @@ const WaterEntry = () => {
                   font-semibold
                   cursor-pointer
                 "
-              >{t("addEntry")}</button>
+              >{submitting ? t("saving") : t("addEntry")}</button>
 
             </form>
 
@@ -436,7 +482,7 @@ const WaterEntry = () => {
 
                 <tbody>
 
-                  {entries.map(
+                  {visibleEntries.map(
                     (item) => (
                       <tr
                         key={item._id}
@@ -478,6 +524,7 @@ const WaterEntry = () => {
 
                         <td className="p-4">
                         <button
+                            disabled={!!deletingId || updating || submitting}
                             onClick={() =>
                                 openEditModal(item)
                             }
@@ -490,9 +537,12 @@ const WaterEntry = () => {
                                 rounded-lg
                                 mr-2
                                 cursor-pointer
+                                disabled:opacity-60
+                                disabled:cursor-not-allowed
                             "
                             >{t("edit")}</button>
                         <button
+                            disabled={!!deletingId || updating || submitting}
                             onClick={() =>
                             deleteEntryHandler(
                                 item._id
@@ -506,8 +556,10 @@ const WaterEntry = () => {
                             py-2
                             rounded-lg
                             cursor-pointer
+                            disabled:opacity-60
+                            disabled:cursor-not-allowed
                             "
-                        >{t("delete")}</button>
+                        >{deletingId === item._id ? t("loading") : t("delete")}</button>
                         </td>
 
                       </tr>
@@ -519,6 +571,34 @@ const WaterEntry = () => {
               </table>
 
             </div>
+
+            {hasMoreEntries && (
+              <div className="mt-6 flex justify-center">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVisibleEntriesCount(
+                      (count) => count + INITIAL_VISIBLE_ENTRIES
+                    )
+                  }
+                  className="
+                    bg-white/20
+                    hover:bg-white/30
+                    border
+                    border-white/30
+                    text-white
+                    px-6
+                    py-3
+                    rounded-2xl
+                    font-semibold
+                    transition-all
+                    cursor-pointer
+                  "
+                >
+                  {t("showMore")}
+                </button>
+              </div>
+            )}
 
           </div>
 
@@ -768,6 +848,7 @@ const WaterEntry = () => {
 
                     <button
                     type="submit"
+                    disabled={updating}
                     className="
                         flex-1
                         bg-linear-to-r from-green-500 to-green-800 
@@ -775,16 +856,19 @@ const WaterEntry = () => {
                         hover:scale-105
                         transition
                         duration-300
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
                         text-white
                         p-4
                         rounded-2xl
                         font-semibold
                         cursor-pointer
                     "
-                    >{t("update")}</button>
+                    >{updating ? t("saving") : t("update")}</button>
 
                     <button
                     type="button"
+                    disabled={updating}
                     onClick={() =>
                         setEditModal(false)
                     }
@@ -795,6 +879,8 @@ const WaterEntry = () => {
                         hover:scale-105
                         transition
                         duration-300
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
                         p-4
                         rounded-2xl
                         font-semibold

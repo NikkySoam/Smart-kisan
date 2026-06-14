@@ -9,11 +9,10 @@ import {
 import {
   FaHome,
   FaTint,
-  FaUsers,
   FaSignOutAlt,
   FaBars,
   FaCog,
-  FaChartBar,
+  FaRobot,
   FaSeedling,
 } from "react-icons/fa";
 
@@ -33,6 +32,11 @@ const MainLayout = () => {
   // LOGOUT
 
   const logoutHandler = () => {
+    const confirmLogout =
+      window.confirm(t("logoutConfirm"));
+
+    if (!confirmLogout) return;
+
     localStorage.removeItem(
       "token"
     );
@@ -65,6 +69,12 @@ const MainLayout = () => {
       );
     }
 
+    if (path === "/crop-doctor") {
+      return location.pathname.startsWith(
+        "/crop-doctor"
+      );
+    }
+
     return location.pathname === path;
   };
 
@@ -77,30 +87,20 @@ const MainLayout = () => {
           path: "/dashboard",
           icon: <FaHome />,
         },
+        {
+          label: t("cropDoctor"),
+          path: "/crop-doctor",
+          icon: <FaRobot />,
+        },
       ],
     },
     {
       title: t("tubewellWaterGroup"),
       links: [
         {
-          label: t("management"),
+          label: t("tubewell"),
           path: "/water-management",
           icon: <FaTint />,
-        },
-        {
-          label: t("farmers"),
-          path: "/farmers",
-          icon: <FaUsers />,
-        },
-        {
-          label: t("waterEntry"),
-          path: "/water",
-          icon: <FaTint />,
-        },
-        {
-          label: t("reports"),
-          path: "/reports",
-          icon: <FaChartBar />,
         },
       ],
     },

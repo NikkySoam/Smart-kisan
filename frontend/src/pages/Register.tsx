@@ -15,6 +15,9 @@ const Register = () => {
     confirmPin: "",
   });
 
+  const [loading, setLoading] =
+    useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -29,10 +32,14 @@ const Register = () => {
   ) => {
     e.preventDefault();
 
+    if (loading) return;
+
     try {
       if (formData.pin !== formData.confirmPin) {
         return toast.error(t("pinDoesNotMatch"));
       }
+
+      setLoading(true);
 
       const res = await API.post(
         "/auth/register",
@@ -58,6 +65,8 @@ const Register = () => {
         error.response?.data?.message ||
           t("registrationFailed")
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -157,7 +166,13 @@ const Register = () => {
             />
           </div>
 
-          <button className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base cursor-pointer">{t("register")}</button>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base cursor-pointer"
+          >
+            {loading ? t("loading") : t("register")}
+          </button>
         </form>
 
         <p className="text-center text-gray-200 mt-6 text-sm sm:text-base">

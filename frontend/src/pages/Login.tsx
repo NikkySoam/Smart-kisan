@@ -20,6 +20,9 @@ const Login = () => {
       pin: "",
     });
 
+  const [loading, setLoading] =
+    useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -33,6 +36,10 @@ const Login = () => {
     e: React.FormEvent
   ) => {
     e.preventDefault();
+
+    if (loading) return;
+
+    setLoading(true);
 
     try {
       const res = await API.post(
@@ -54,6 +61,8 @@ const Login = () => {
         error.response?.data?.message ||
           t("loginFailed")
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,10 +151,14 @@ const Login = () => {
           </div>
 
           <button
+            type="submit"
+            disabled={loading}
             className="
               w-full
               bg-linear-to-r from-green-500 to-green-800 
               hover:from-green-600 hover:to-green-900
+              disabled:opacity-60
+              disabled:cursor-not-allowed
               transition-all
               duration-300
               text-white
@@ -155,7 +168,7 @@ const Login = () => {
               text-base
               cursor-pointer
             "
-          >{t("login")}</button>
+          >{loading ? t("loading") : t("login")}</button>
         </form>
 
         <p className="text-center text-gray-200 mt-5 text-sm sm:text-base">
