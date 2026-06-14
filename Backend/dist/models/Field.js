@@ -41,7 +41,7 @@ const fieldSchema = new mongoose_1.Schema({
     },
     area: {
         type: Number,
-        required: true,
+        default: 0
     },
     location: {
         type: String,
