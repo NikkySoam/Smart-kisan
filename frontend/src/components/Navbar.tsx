@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import NotificationDropdown from "./NotificationDropdown";
 
+import OfflineWaterBadge from "./OfflineWaterBadge";
 
 import LanguageSwitcher from "./LanguageSwitcher";
 
@@ -42,6 +43,8 @@ return (
       <div className="flex items-center mr-12 gap-4">
        
         <LanguageSwitcher />
+
+        <OfflineWaterBadge />
 
         <NotificationDropdown />
 

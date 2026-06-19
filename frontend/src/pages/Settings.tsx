@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 
 import API from "../api/axios";
+
+import {cacheSettings} from "../utils/cacheSettings";
+
+import { getCachedSettings } from "../utils/getCachedSettings";
 
 import toast from "react-hot-toast";
 
@@ -37,37 +38,90 @@ const Settings = () => {
       city: "",
     });
 
-  const fetchSettings = async () => {
+const fetchSettings =
+  async () => {
+
     try {
-      const res = await API.get(
-        "/settings",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+
+      const res =
+        await API.get(
+          "/settings",
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
+
+      const settings =
+        res.data.data;
 
       setFormData({
         name:
-          res.data.data.name || "",
+          settings.name || "",
         phone:
-          res.data.data.phone || "",
+          settings.phone || "",
         waterRate:
-          res.data.data.waterRate || "",
+          settings.waterRate || "",
         city:
-          res.data.data.city || "",
+          settings.city || "",
       });
 
-    } catch (error) {
-      console.log(error);
+      await cacheSettings(
+        settings
+      );
+
+    } catch {
+
+      const cached =
+        await getCachedSettings();
+
+      if (cached) {
+
+        setFormData({
+          name:
+            cached.name || "",
+          phone:
+            cached.phone || "",
+          waterRate:
+            cached.waterRate || "",
+          city:
+            cached.city || "",
+        });
+
+      }
     }
-  };
+};
 
   useEffect(() => {
-    fetchSettings();
-  }, []);
 
+  const loadData =
+    async () => {
+
+      const cached =
+        await getCachedSettings();
+
+      if (cached) {
+
+        setFormData({
+          name:
+            cached.name || "",
+          phone:
+            cached.phone || "",
+          waterRate:
+            cached.waterRate || "",
+          city:
+            cached.city || "",
+        });
+      }
+
+      fetchSettings();
+    };
+
+  loadData();
+
+}, []);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {

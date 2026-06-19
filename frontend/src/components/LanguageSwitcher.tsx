@@ -43,8 +43,10 @@ const LanguageSwitcher =
         className="
           relative
           flex
-          h-10
-          w-24
+          h-8
+          md:h-10
+          w-20
+          md:w-24
           cursor-pointer
           items-center
           rounded-full
@@ -65,15 +67,17 @@ const LanguageSwitcher =
           className={`
             absolute
             top-1
-            h-8
-            w-11
+            h-6
+            md:h-8
+            w-9
+            md:w-11
             rounded-full
             bg-green-700
             shadow
             transition-transform
             duration-300
             ${isHindi
-              ? "translate-x-11"
+              ? "translate-x-9 md:translate-x-11"
               : "translate-x-0"}
           `}
         />

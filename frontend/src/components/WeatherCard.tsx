@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
-import {
-  useEffect,
-  useState,
-} from "react";
+import {useEffect,useState,} from "react";
+
+import {cacheWeather } from "../utils/cacheWeather";
+
+import {getCachedWeather } from "../utils/getCachedWeather";
 
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -126,32 +127,64 @@ const WeatherCard = () => {
         }
     };
 
-  const fetchWeather =
-    async () => {
-      try {
-        const res =
-          await axios.get(
-            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-          );
 
-        setWeather(res.data);
+ const fetchWeather =
+  async () => {
 
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
+    try {
+
+      const res =
+        await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        );
+
+      setWeather(
+        res.data
+      );
+
+      await cacheWeather(
+        res.data
+      );
+
+    } catch (error) {
+
+      const cached =
+        await getCachedWeather();
+
+      if (cached) {
+
+        setWeather(
+          cached
+        );
+
       }
-    };
+
+    } finally {
+
+      setLoading(false);
+
+    }
+};
 
   useEffect(() => {
     fetchSettings();
   }, []);
 
+
   useEffect(() => {
-    if (city) {
-        fetchWeather();
-    }
-    }, [city]);
+    const loadWeather =
+      async () => {
+        const cached =await getCachedWeather();
+        if (cached) {
+          setWeather(cached);
+          setLoading(false);
+        }
+        if (city) {
+          fetchWeather();
+        }
+      };
+    loadWeather();
+  }, [city]);
 
 
     const getBackgroundImage =

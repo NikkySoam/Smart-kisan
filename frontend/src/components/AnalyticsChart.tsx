@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import {useCallback,useEffect,useState,} from "react";
+
+import { getCachedWaterEntries } from "../utils/getCachedWaterEntries";
+
+import {cacheWaterEntries } from "../utils/cacheWaterEntries";
 
 import API from "../api/axios";
 
@@ -44,76 +44,114 @@ const AnalyticsChart = () => {
   const [error, setError] =
     useState("");
 
-  const fetchAnalytics = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError("");
+    const buildAnalytics =
+      (entries: Entry[]) => {
 
-      const res = await API.get("/water", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const months = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
 
-      const entries: Entry[] = res.data.data || [];
+        const currentYear = new Date().getFullYear();
 
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
+        const monthlyData = months.map((month) => ({
+              month,
+              earnings: 0,
+              hours: 0,
+            })
+          );
 
-      const currentYear = new Date().getFullYear();
+        entries.forEach(
+          (entry) => {
+            const entryDate = new Date(entry.date);
 
-      const monthlyData: ChartData[] = months.map(
-        (month) => ({
-          month,
-          earnings: 0,
-          hours: 0,
-        })
-      );
+            if ( Number.isNaN( entryDate.getTime())) {
+              return;
+            }
 
-      entries.forEach((entry) => {
-        const entryDate = new Date(entry.date);
+            if ( entryDate.getFullYear() !== currentYear) {
+              return;
+            }
 
-        if (Number.isNaN(entryDate.getTime())) {
-          return;
+            const monthIndex = entryDate.getMonth();
+
+            monthlyData[monthIndex].earnings +=Number(entry.totalAmount) || 0;
+
+            monthlyData[monthIndex].hours += Number( entry.hours) || 0;
+          }
+        );
+
+        setChartData(monthlyData);
+    };
+
+    //FETCH ANALYTICS
+
+    const fetchAnalytics = useCallback(async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res =
+          await API.get(
+            "/water",
+            {
+              headers: {
+                Authorization:
+                  `Bearer ${token}`,
+              },
+            }
+          );
+
+        const entries = res.data.data || [];
+
+        await cacheWaterEntries( entries );
+
+        buildAnalytics( entries );
+
+      } catch {
+
+        const cached = await getCachedWaterEntries();
+
+        if ( cached && cached.length > 0) {
+          buildAnalytics(cached);
+        } else {
+          setError(t("analyticsLoadFailed"));
         }
 
-        if (entryDate.getFullYear() !== currentYear) {
-          return;
-        }
+      } finally {
 
-        const monthIndex = entryDate.getMonth();
+        setLoading(false);
 
-        monthlyData[monthIndex].earnings +=
-          Number(entry.totalAmount) || 0;
+      }
+    },
+    [token]
+  );
 
-        monthlyData[monthIndex].hours +=
-          Number(entry.hours) || 0;
-      });
+    useEffect(() => {
+      const loadData = async () => {
 
-      setChartData(monthlyData);
-    } catch (error) {
-      console.log(error);
-      setError(t("analyticsLoadFailed"));
-    } finally {
-      setLoading(false);
-    }
-  }, [token]);
+          const cached = await getCachedWaterEntries();
 
-  useEffect(() => {
-    fetchAnalytics();
-  }, [fetchAnalytics]);
+          if (cached && cached.length > 0) {
+            buildAnalytics(cached);
+            setLoading(false);
+          }
+          fetchAnalytics();
+        };
+
+      loadData();
+
+    }, [fetchAnalytics]);
 
   return (
     <div className="bg-white rounded-3xl shadow-lg p-6 mt-8">

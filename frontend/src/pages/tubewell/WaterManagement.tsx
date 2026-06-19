@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
-import {
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState,} from "react";
 
-import {
-  useNavigate,
-} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import toast from "react-hot-toast";
+
+import { cacheWaterStats } from "../../utils/cacheWaterStats";
+
+import { getCachedWaterStats } from "../../utils/getCachedWaterStats";
 
 import API from "../../api/axios";
 
@@ -54,27 +54,47 @@ const WaterManagement = () => {
 
   // FETCH STATS
 
-  const fetchStats = async () => {
+  const fetchStats =
+  async () => {
+
     try {
-      const res = await API.get(
-        "/dashboard/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+
+      const res =
+        await API.get(
+          "/dashboard/stats",
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
 
       setStats(res.data.data);
+      await cacheWaterStats(res.data.data);
 
-    } catch (error) {
-      console.log(error);
+    } catch {
+
+      const cached = await getCachedWaterStats();
+
+      if (cached) {
+          setStats(cached);
+      }
     }
-  };
+};
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+
+  const loadData = async () => {
+      const cached = await getCachedWaterStats();
+
+      if (cached) {
+        setStats(cached);
+      }
+      fetchStats();
+    };
+  loadData();
+}, []);
 
   const cards = [
     {

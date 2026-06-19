@@ -5,6 +5,9 @@ import {
 } from "react";
 
 import API from "../../api/axios";
+import { saveOfflineWater } from "../../utils/saveOfflineWater";
+import { cacheFarmers } from "../../utils/cacheFarmers";
+import { getCachedFarmers } from "../../utils/getCachedFarmers";
 
 import toast from "react-hot-toast";
 
@@ -103,22 +106,51 @@ const WaterEntry = () => {
 
   // FETCH FARMERS
 
-  const fetchFarmers = async () => {
+ const fetchFarmers =
+  async () => {
+
+    if (!navigator.onLine) {
+      const cached = await getCachedFarmers();
+      setFarmers( cached );
+      return;
+    }
+
     try {
-      const res = await API.get(
-        "/farmers",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+
+      const res =
+        await API.get(
+          "/farmers",
+          {
+            headers: {
+              Authorization:
+                `Bearer ${token}`,
+            },
+          }
+        );
+
+      setFarmers(
+        res.data.data
       );
 
-      setFarmers(res.data.data);
+      await cacheFarmers(
+        res.data.data
+      );
 
-    } catch (error) {
-      console.log(error);
+    } catch {
+
+      const cached =
+        await getCachedFarmers();
+
+      setFarmers(
+        cached
+      );
+
+      toast(
+        "Using offline farmers list"
+      );
+
     }
+
   };
 
   // LOAD DATA
@@ -155,6 +187,27 @@ const WaterEntry = () => {
     setSubmitting(true);
 
     try {
+      
+      // ADD WATER OFFLINE
+      if (!navigator.onLine) {
+        await saveOfflineWater(
+        formData
+      );
+
+      toast.success(
+        "Saved Offline"
+      );
+
+      setFormData({
+        farmer: "",
+        hours: "",
+        date: "",
+      });
+
+      return;
+    }
+
+    // API CALL FOR STORE WATER ENTRY
       await API.post(
         "/water",
         formData,
