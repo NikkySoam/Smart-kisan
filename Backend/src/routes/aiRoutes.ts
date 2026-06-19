@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 
-import { detectCropIssue } from "../services/aiController";
+import { detectCropIssue, getCropHistory, deleteCropScan} from "../services/aiController";
 
 import protect from "../middleware/authMiddleware";
 
@@ -12,5 +12,7 @@ const upload = multer({
 });
 
 router.post("/detect-pest", protect, upload.single("image"), detectCropIssue);
+router.get("/history", protect, getCropHistory );
+router.delete("/history/:id", protect, deleteCropScan );
 
 export default router;

@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FaCamera } from "react-icons/fa";
 import { GiPlantRoots } from "react-icons/gi";
+import { useNavigate } from "react-router-dom";
+import { FaHistory } from "react-icons/fa";
+
 import toast from "react-hot-toast";
 
 import API from "../api/axios";
@@ -16,6 +19,8 @@ interface CropAnalysis {
 }
 
 const CropDoctor = () => {
+  const navigate = useNavigate();
+
   const { t } = useTranslation();
 
   const [image, setImage] =
@@ -122,39 +127,74 @@ const CropDoctor = () => {
           sm:p-8
           text-white
           shadow-xl
+          flex
+          items-start justify-between
         "
       >
-        <div className="flex items-center gap-4">
-          <GiPlantRoots
+       <div className="flex items-center gap-4">
+        <GiPlantRoots
+          className="
+            text-4xl
+            sm:text-5xl
+          "
+        />
+
+        <div>
+          <h1
             className="
-              text-4xl
-              sm:text-5xl
+              text-2xl
+              sm:text-4xl
+              font-bold
             "
-          />
+          >
+            {t("cropDoctor")}
+          </h1>
 
-          <div>
-            <h1
-              className="
-                text-2xl
-                sm:text-4xl
-                font-bold
-              "
-            >
-              {t("cropDoctor")}
-            </h1>
-
-            <p
-              className="
-                text-green-100
-                text-sm
-                sm:text-base
-                mt-2
-              "
-            >
-              {t("cropDoctorUploadDescription")}
-            </p>
-          </div>
+          <p
+            className="
+              text-green-100
+              text-sm
+              sm:text-base
+              mt-2
+            "
+          >
+            {t("cropDoctorUploadDescription")}
+          </p>
         </div>
+      </div>
+
+      <button
+        onClick={() =>
+          navigate("/crop-history")
+        }
+        className="
+          cursor-pointer
+          flex
+          items-center
+          gap-2
+
+          bg-white/20
+          hover:bg-white/30
+
+          backdrop-blur-sm
+
+          px-4
+          py-2
+
+          rounded-xl
+
+          text-white
+          text-sm
+          sm:text-base
+
+          transition-all
+        "
+      >
+        <FaHistory />
+        <span className="hidden sm:block">
+          History
+        </span>
+      </button>
       </div>
 
       {/* UPLOAD CARD */}

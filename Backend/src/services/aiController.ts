@@ -1,17 +1,19 @@
 import { Request, Response } from "express";
 import { GoogleGenAI } from "@google/genai";
 
+import CropScan from "../models/cropScanModel";
+import { uploadToCloudinary,} from "../utils/uploadToCloudinary";
+
+import cloudinary from "../config/cloudinary";
+
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
 
 
-export const detectCropIssue =
-  async (
-    req: Request,
-    res: Response
-  ) => {
+export const detectCropIssue = async ( req: Request, res: Response) => {
+
     try {
       if (!req.file) {
         return res.status(400).json({
@@ -24,17 +26,24 @@ export const detectCropIssue =
         req.file.buffer.toString(
           "base64"
         );
-
-      const response =
+        
+        const response =
         await ai.models.generateContent({
           model:
-            "gemini-3-flash-preview",
-
+          "gemini-2.5-flash",
+          
           contents: [
             {
+              inlineData: {
+                mimeType:
+                req.file.mimetype,
+                data: imageBase64,
+              },
+            },
+            {
               text: `
-            You are an expert agricultural assistant for Indian farmers.
-
+              You are an expert agricultural assistant for Indian farmers.
+              
             Your task is to analyze the uploaded crop image and identify the most likely pest, disease, nutrient deficiency, or crop health issue.
 
             Priority:
@@ -83,7 +92,7 @@ export const detectCropIssue =
             ""
             ]
             }
-
+            
             Example response:
 
             {
@@ -105,15 +114,8 @@ export const detectCropIssue =
             }
 
             `,
-            },
-
-            {
-              inlineData: {
-                mimeType:
-                  req.file.mimetype,
-                data: imageBase64,
-              },
-            },
+            }
+            
           ],
 
           config: {
@@ -121,11 +123,12 @@ export const detectCropIssue =
             
         }
         });
-
-      const responseText = response.text ?? "";
-      let analysisResult = null;
-
-      try {
+        
+        
+        const responseText = response.text ?? "";
+        let analysisResult = null;
+        
+        try {
         const jsonMatch = responseText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           analysisResult = JSON.parse(jsonMatch[0]);
@@ -133,11 +136,32 @@ export const detectCropIssue =
           analysisResult = JSON.parse(responseText);
         }
 
-        console.log("back2",analysisResult)
 
+        // SAVE IN CLOUD
+      const uploadResult = await uploadToCloudinary( req.file.buffer, "crop-doctor" );
+      const imageUrl = uploadResult.secure_url;
+      const cloudinaryPublicId = uploadResult.public_id;
+    
+      // STORE IN DATABASE
+      const userId = (req as any).user._id;
+
+        if (analysisResult) {
+          await CropScan.create({
+          user: userId,
+          imageUrl,
+          cloudinaryPublicId,
+          crop: analysisResult.crop,
+          problem: analysisResult.problem,
+          symptoms: analysisResult.symptoms || [],
+          medicine: analysisResult.medicine || [],
+          advice: analysisResult.advice || [],
+          });
+        }
+        
       } catch (parseError) {
         analysisResult = null;
       }
+      
 
       res.status(200).json({
         success: true,
@@ -145,11 +169,102 @@ export const detectCropIssue =
       });
 
     } catch (error) {
+      console.error(error);
 
       res.status(500).json({
         success: false,
         message:
           "AI analysis failed",
       });
+    }
+  };
+
+
+
+    // GET CROP ANALYSIS HISTORY
+
+export const getCropHistory =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+    try {
+
+      const userId =
+        (req as any).user._id;
+
+      const scans =
+        await CropScan.find({
+          user: userId,
+        })
+        .sort({
+          createdAt: -1,
+        });
+
+      res.status(200).json({
+        success: true,
+        data: scans,
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Unable to fetch crop history",
+      });
+
+    }
+  };
+
+
+  // DELETE HISTORY CARD
+  export const deleteCropScan =
+  async (
+    req: Request,
+    res: Response
+  ) => {
+
+    try {
+
+      const userId =
+        (req as any).user._id;
+
+      const scan =
+        await CropScan.findOne({
+          _id: req.params.id,
+          user: userId,
+        });
+
+      if (!scan) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "Scan not found",
+        });
+      }
+
+      await cloudinary.uploader.destroy(
+        scan.cloudinaryPublicId
+      );
+
+      await CropScan.findByIdAndDelete(
+        scan._id
+      );
+
+      res.status(200).json({
+        success: true,
+        message:
+          "Scan deleted successfully",
+      });
+
+    } catch (error) {
+
+      res.status(500).json({
+        success: false,
+        message:
+          "Delete failed",
+      });
+
     }
   };
