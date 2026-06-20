@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState,} from "react";
 
 import {useNavigate} from "react-router-dom";
-import toast from "react-hot-toast";
 
 import { cacheWaterStats } from "../../utils/cacheWaterStats";
 

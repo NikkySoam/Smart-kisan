@@ -8,9 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.detectCropIssue = void 0;
+exports.deleteCropScan = exports.getCropHistory = exports.detectCropIssue = void 0;
 const genai_1 = require("@google/genai");
+const cropScanModel_1 = __importDefault(require("../models/cropScanModel"));
+const uploadToCloudinary_1 = require("../utils/uploadToCloudinary");
+const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const ai = new genai_1.GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
@@ -25,12 +31,18 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
         }
         const imageBase64 = req.file.buffer.toString("base64");
         const response = yield ai.models.generateContent({
-            model: "gemini-3-flash-preview",
+            model: "gemini-2.5-flash",
             contents: [
                 {
+                    inlineData: {
+                        mimeType: req.file.mimetype,
+                        data: imageBase64,
+                    },
+                },
+                {
                     text: `
-            You are an expert agricultural assistant for Indian farmers.
-
+              You are an expert agricultural assistant for Indian farmers.
+              
             Your task is to analyze the uploaded crop image and identify the most likely pest, disease, nutrient deficiency, or crop health issue.
 
             Priority:
@@ -79,7 +91,7 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             ""
             ]
             }
-
+            
             Example response:
 
             {
@@ -101,13 +113,7 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             }
 
             `,
-                },
-                {
-                    inlineData: {
-                        mimeType: req.file.mimetype,
-                        data: imageBase64,
-                    },
-                },
+                }
             ],
             config: {
                 responseMimeType: "application/json",
@@ -123,7 +129,24 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             else if (responseText.trim().length > 0) {
                 analysisResult = JSON.parse(responseText);
             }
-            console.log("back2", analysisResult);
+            // SAVE IN CLOUD
+            const uploadResult = yield (0, uploadToCloudinary_1.uploadToCloudinary)(req.file.buffer, "crop-doctor");
+            const imageUrl = uploadResult.secure_url;
+            const cloudinaryPublicId = uploadResult.public_id;
+            // STORE IN DATABASE
+            const userId = req.user._id;
+            if (analysisResult) {
+                yield cropScanModel_1.default.create({
+                    user: userId,
+                    imageUrl,
+                    cloudinaryPublicId,
+                    crop: analysisResult.crop,
+                    problem: analysisResult.problem,
+                    symptoms: analysisResult.symptoms || [],
+                    medicine: analysisResult.medicine || [],
+                    advice: analysisResult.advice || [],
+                });
+            }
         }
         catch (parseError) {
             analysisResult = null;
@@ -134,6 +157,7 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({
             success: false,
             message: "AI analysis failed",
@@ -141,3 +165,55 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.detectCropIssue = detectCropIssue;
+// GET CROP ANALYSIS HISTORY
+const getCropHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.user._id;
+        const scans = yield cropScanModel_1.default.find({
+            user: userId,
+        })
+            .sort({
+            createdAt: -1,
+        });
+        res.status(200).json({
+            success: true,
+            data: scans,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Unable to fetch crop history",
+        });
+    }
+});
+exports.getCropHistory = getCropHistory;
+// DELETE HISTORY CARD
+const deleteCropScan = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userId = req.user._id;
+        const scan = yield cropScanModel_1.default.findOne({
+            _id: req.params.id,
+            user: userId,
+        });
+        if (!scan) {
+            return res.status(404).json({
+                success: false,
+                message: "Scan not found",
+            });
+        }
+        yield cloudinary_1.default.uploader.destroy(scan.cloudinaryPublicId);
+        yield cropScanModel_1.default.findByIdAndDelete(scan._id);
+        res.status(200).json({
+            success: true,
+            message: "Scan deleted successfully",
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Delete failed",
+        });
+    }
+});
+exports.deleteCropScan = deleteCropScan;
