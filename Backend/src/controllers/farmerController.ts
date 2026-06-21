@@ -1,19 +1,12 @@
 import { Response } from "express";
 
 import Farmer from "../models/Farmer";
-
 import Water from "../models/Water";
-
 import { AuthRequest } from "../middleware/authMiddleware";
 
 
 // ADD FARMER
-
-export const addFarmer =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const addFarmer = async ( req: AuthRequest, res: Response) => {
     try {
       const {name, phone, village} = req.body;
 
@@ -44,11 +37,7 @@ export const addFarmer =
 
 // GET FARMERS
 
-export const getFarmers =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const getFarmers = async (req: AuthRequest, res: Response) => {
     try {
       const farmers =
         await Farmer.find({
@@ -77,19 +66,11 @@ export const getFarmers =
 
   // UPDATE FARMER
 
-export const updateFarmer =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const updateFarmer = async ( req: AuthRequest, res: Response ) => {
     try {
       const { id } = req.params;
 
-      const {
-        name,
-        phone,
-        village,
-      } = req.body;
+      const {name,phone,village} = req.body;
 
       const farmer =
         await Farmer.findOne({
@@ -108,14 +89,8 @@ export const updateFarmer =
       const updatedFarmer =
         await Farmer.findByIdAndUpdate(
           id,
-          {
-            name,
-            phone,
-            village,
-          },
-          {
-            new: true,
-          }
+          { name, phone, village },
+          { new: true }
         );
 
       res.status(200).json({
@@ -164,9 +139,7 @@ export const deleteFarmer =
 
       // DELETE RELATED WATER ENTRIES
 
-      await Water.deleteMany({
-        farmer: id,
-      });
+      await Water.deleteMany({ farmer: id });
 
       // DELETE FARMER
 

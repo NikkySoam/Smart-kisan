@@ -145,6 +145,8 @@ export const detectCropIssue = async ( req: Request, res: Response) => {
       // STORE IN DATABASE
       const userId = (req as any).user._id;
 
+        console.log("1",analysisResult);
+
         if (analysisResult) {
           await CropScan.create({
           user: userId,
@@ -159,10 +161,11 @@ export const detectCropIssue = async ( req: Request, res: Response) => {
         }
         
       } catch (parseError) {
+        console.error(parseError)
         analysisResult = null;
       }
       
-
+      console.log("2")
       res.status(200).json({
         success: true,
         data: analysisResult,

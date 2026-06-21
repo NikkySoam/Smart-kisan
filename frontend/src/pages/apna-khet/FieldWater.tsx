@@ -265,7 +265,7 @@ const FieldWater = () => {
     t("field");
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="py-2 px-4 sm:p-4">
 
       {/* HEADER */}
 
@@ -277,17 +277,29 @@ const FieldWater = () => {
           justify-between
           sm:items-center
           gap-4
-          mb-10
+          mb-4
         "
       >
 
         <div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent py-2">
+          <h1
+            className="
+              text-2xl
+              sm:text-3xl
+              font-bold
+              bg-linear-to-r
+              from-blue-500
+              to-purple-600
+              bg-clip-text
+              text-transparent
+              py-2
+            "
+          >
             {t("fieldWaterTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-600 mt-2">{t("manageFieldWaterUsage")}</p>
+          <p className="text-gray-500 mt-1">{t("manageFieldWaterUsage")}</p>
 
         </div>
 
@@ -299,8 +311,7 @@ const FieldWater = () => {
             bg-linear-to-r from-blue-500 to-purple-600
             hover:from-blue-600 hover:to-purple-700
             text-white
-            px-6
-            py-4
+            p-3
             rounded-2xl
             flex
             items-center
@@ -321,8 +332,8 @@ const FieldWater = () => {
           bg-white
           rounded-3xl
           shadow-lg
-          p-8
-          mb-8
+          p-4
+          mb-4
         "
       >
 
@@ -369,7 +380,7 @@ const FieldWater = () => {
         "
       >
 
-        <div className="p-6 border-b">
+        <div className="py-2 px-4 border-b">
 
           <h2 className="text-2xl font-bold py-2">{t("waterHistory")}</h2>
 
@@ -388,11 +399,11 @@ const FieldWater = () => {
 
               <tr>
 
-                <th className="p-5 text-left">{t("date")}</th>
+                <th className="p-3 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">{t("hours")}</th>
+                <th className="p-3 text-left">{t("hours")}</th>
 
-                <th className="p-5 text-left">{t("actions")}</th>
+                <th className="p-3 text-left">{t("actions")}</th>
 
               </tr>
 

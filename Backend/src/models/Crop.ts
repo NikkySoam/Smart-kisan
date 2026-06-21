@@ -1,16 +1,10 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
+import mongoose, { Schema,Document } from "mongoose";
 
 export interface ICrop
   extends Document {
   name: string;
-
   season: string;
-
   area: number;
-
   user: mongoose.Types.ObjectId;
 }
 
@@ -47,7 +41,4 @@ const cropSchema =
     }
   );
 
-export default mongoose.model<ICrop>(
-  "Crop",
-  cropSchema
-);
+export default mongoose.model<ICrop>( "Crop", cropSchema );

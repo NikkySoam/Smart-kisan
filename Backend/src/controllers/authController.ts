@@ -1,25 +1,12 @@
 import { Request, Response } from "express";
-
 import bcrypt from "bcryptjs";
-
 import User from "../models/User";
-
 import generateToken from "../utils/generateToken";
 
-
 // REGISTER
-
-export const registerController = async (
-  req: Request,
-  res: Response
-) => {
+export const registerController = async ( req: Request,res: Response) => {
   try {
-    const {
-      name,
-      phone,
-      pin,
-      confirmPin,
-    } = req.body;
+    const { name,phone,pin,confirmPin } = req.body;
 
     if (!pin || !confirmPin) {
       return res.status(400).json({
@@ -32,7 +19,6 @@ export const registerController = async (
     const confirmPinValue = String(confirmPin);
 
     // CHECK PIN LENGTH
-
     if (pinValue.length < 6) {
       return res.status(400).json({
         success: false,
@@ -54,8 +40,7 @@ export const registerController = async (
 
     // CHECK EXISTING USER
 
-    const existingUser =
-      await User.findOne({ phone });
+    const existingUser = await User.findOne({ phone });
 
     if (existingUser) {
       return res.status(400).json({
@@ -66,12 +51,9 @@ export const registerController = async (
     }
 
     // HASH PIN
-
-    const hashedPin =
-      await bcrypt.hash(pinValue, 10);
+    const hashedPin = await bcrypt.hash(pinValue, 10);
 
     // CREATE USER
-
     const user = await User.create({
       name,
       phone,
@@ -80,9 +62,7 @@ export const registerController = async (
 
     // GENERATE TOKEN
 
-    const token = generateToken(
-      user._id.toString()
-    );
+    const token = generateToken(user._id.toString());
 
     res.status(201).json({
       success: true,
@@ -91,7 +71,6 @@ export const registerController = async (
     });
 
   } catch (error) {
-    console.log(error);
 
     res.status(500).json({
       success: false,
@@ -102,18 +81,12 @@ export const registerController = async (
 
 // LOGIN
 
-export const loginController = async (
-  req: Request,
-  res: Response
-) => {
+export const loginController = async (req: Request,res: Response) => {
   try {
     const { phone, pin } = req.body;
 
     // FIND USER
-
-    const user = await User.findOne({
-      phone,
-    });
+    const user = await User.findOne({phone,});
 
     if (!user) {
       return res.status(400).json({
@@ -123,7 +96,6 @@ export const loginController = async (
     }
 
     // MATCH PIN
-
     const isMatch =
       await bcrypt.compare(
         pin,
@@ -138,10 +110,7 @@ export const loginController = async (
     }
 
     // TOKEN
-
-    const token = generateToken(
-      user._id.toString()
-    );
+    const token = generateToken(user._id.toString());
 
     res.status(200).json({
       success: true,
@@ -150,7 +119,6 @@ export const loginController = async (
     });
 
   } catch (error) {
-    console.log(error);
 
     res.status(500).json({
       success: false,

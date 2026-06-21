@@ -4,6 +4,9 @@ import Field from "../models/Field";
 
 import { AuthRequest } from "../middleware/authMiddleware";
 
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
+import cloudinary from "../config/cloudinary";
+
 import FieldWater from "../models/FieldWater";
 
 import Fertilizer from "../models/Fertilizer";
@@ -30,12 +33,27 @@ export const addField =
         crop,
       } = req.body;
 
+      const file = req.file as Express.Multer.File | undefined;
+      let imageUrl = "";
+      let cloudinaryPublicId = "";
+
+      if (file) {
+        const uploadResult = await uploadToCloudinary(
+          file.buffer,
+          "fields"
+        );
+        imageUrl = uploadResult.secure_url || "";
+        cloudinaryPublicId = uploadResult.public_id || "";
+      }
+
       const field =
         await Field.create({
           name,
-          area,
+          area: Number(area),
           location,
           crop,
+          imageUrl,
+          cloudinaryPublicId,
           user: req.user._id,
         });
 
@@ -236,6 +254,8 @@ export const updateField =
         crop,
       } = req.body;
 
+      const file = req.file as Express.Multer.File | undefined;
+
       const field =
         await Field.findOne({
           _id: id,
@@ -250,8 +270,25 @@ export const updateField =
         });
       }
 
+      if (file) {
+        if (field.cloudinaryPublicId) {
+          await cloudinary.uploader.destroy(
+            field.cloudinaryPublicId
+          );
+        }
+
+        const uploadResult = await uploadToCloudinary(
+          file.buffer,
+          "fields"
+        );
+
+        field.imageUrl = uploadResult.secure_url || "";
+        field.cloudinaryPublicId =
+          uploadResult.public_id || "";
+      }
+
       field.name = name;
-      field.area = area;
+      field.area = Number(area);
       field.location =
         location;
       field.crop = crop;

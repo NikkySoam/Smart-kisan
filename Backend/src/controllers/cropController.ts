@@ -1,26 +1,14 @@
 import { Response } from "express";
-
 import Crop from "../models/Crop";
-
 import { AuthRequest } from "../middleware/authMiddleware";
 
 
 // ADD CROP
-
-export const addCrop =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const addCrop = async ( req: AuthRequest, res: Response ) => {
     try {
-      const {
-        name,
-        season,
-        area,
-      } = req.body;
+      const { name,season,area } = req.body;
 
-      const crop =
-        await Crop.create({
+      const crop = await Crop.create({
           name,
           season,
           area,
@@ -47,18 +35,13 @@ export const addCrop =
 
 // GET CROPS
 
-export const getCrops =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const getCrops = async ( req: AuthRequest, res: Response) => {
     try {
-      const crops =
-        await Crop.find({
-          user: req.user._id,
+      const crops = await Crop.find({ 
+        user: req.user._id,
         }).sort({
           createdAt: -1,
-        });
+          });
 
       res.status(200).json({
         success: true,

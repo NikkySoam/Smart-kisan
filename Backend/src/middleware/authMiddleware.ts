@@ -1,12 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-
 import jwt from "jsonwebtoken";
-
 import User from "../models/User";
 
-interface JwtPayload {
-  id: string;
-}
+interface JwtPayload { id: string }
+
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -17,15 +14,12 @@ const protect = async (
   res: Response,
   next: NextFunction
 ) => {
+
   try {
     let token;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith(
-        "Bearer"
-      )
-    ) {
+    if ( req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+
       token =
         req.headers.authorization.split(
           " "
@@ -36,9 +30,7 @@ const protect = async (
         process.env.JWT_SECRET as string
       ) as JwtPayload;
 
-      req.user = await User.findById(
-        decoded.id
-      );
+      req.user = await User.findById( decoded.id);
 
       next();
 

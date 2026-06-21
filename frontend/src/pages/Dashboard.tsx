@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import WeatherCard from "../components/WeatherCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 
-import { FaLeaf,FaTint,FaStethoscope } from "react-icons/fa";
+import { FaLeaf, FaTint, FaStethoscope } from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 
@@ -12,16 +12,37 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="p-4 sm:p-8">
-
+    <div className="py-2 px-4 sm:p-4">
       {/* HEADER */}
 
-      <div className="mb-8">
+      <div
+        className=" 
+          flex
+          flex-col
+          sm:flex-row
+          justify-between
+          sm:items-center
+          gap-4
+          mb-8" >
+        <div>
+          <h1
+            className="
+              text-2xl
+              sm:text-3xl
+              font-bold
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              bg-clip-text
+              text-transparent
+              py-2
+            "
+          >
+            {t("dashboard")}
+          </h1>
 
-        <h1 className="text-2xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("dashboard")}</h1>
-
-        <p className="text-gray-600 mt-2">{t("welcomeSmartKisan")}</p>
-
+          <p className="text-gray-500 mt-1">{t("welcomeSmartKisan")}</p>
+        </div>
       </div>
 
       {/* STATS CARDS */}
@@ -32,17 +53,14 @@ const Dashboard = () => {
           grid-cols-1
           sm:grid-cols-2
           lg:grid-cols-3
-          gap-6
+          gap-5
+          mb-10
         "
       >
-
-
-               {/* CROP DOCTOR */}
+        {/* CROP DOCTOR */}
         <div
-        onClick={() =>
-            navigate("/crop-doctor")
-        }
-        className="
+          onClick={() => navigate("/crop-doctor")}
+          className="
             relative
             overflow-hidden
             rounded-3xl
@@ -55,14 +73,13 @@ const Dashboard = () => {
             hover:scale-[1.02]
             transition-all
         "
-        style={{
-            backgroundImage:"url(/ai-bg.jpeg)",
-        }}
+          style={{
+            backgroundImage: "url(/ai-bg.jpeg)",
+          }}
         >
+          {/* OVERLAY */}
 
-        {/* OVERLAY */}
-
-        <div
+          <div
             className="
             absolute
             inset-0
@@ -70,11 +87,11 @@ const Dashboard = () => {
             group-hover:bg-black/35
             transition-all
             "
-        ></div>
+          ></div>
 
-        {/* CONTENT */}
+          {/* CONTENT */}
 
-        <div
+          <div
             className="
             relative
             z-10
@@ -85,12 +102,11 @@ const Dashboard = () => {
             justify-between
             text-white
             "
-        >
-
+          >
             {/* ICON */}
 
             <div
-            className="
+              className="
                 w-16
                 h-16
                 rounded-2xl
@@ -101,33 +117,24 @@ const Dashboard = () => {
                 justify-center
             "
             >
-
-            <FaStethoscope className="text-3xl" />
-
+              <FaStethoscope className="text-3xl" />
             </div>
 
             {/* TEXT */}
 
             <div>
+              <h2 className="text-4xl font-bold py-2">{t("cropDoctor")}</h2>
 
-            <h2 className="text-4xl font-bold py-2">{t("cropDoctor")}</h2>
-
-            <p className="mt-3 text-gray-200">{t("cropDoctorDescription")}</p>
-
+              <p className="mt-3 text-gray-200">{t("cropDoctorDescription")}</p>
             </div>
-
+          </div>
         </div>
-
-        </div>
-
 
         {/* APNA KHET */}
 
         <div
-        onClick={() =>
-            navigate("/fields")
-        }
-        className="
+          onClick={() => navigate("/fields")}
+          className="
             relative
             overflow-hidden
             rounded-3xl
@@ -140,14 +147,13 @@ const Dashboard = () => {
             hover:scale-[1.02]
             transition-all
         "
-       style={{
-            backgroundImage:"url(/field.jpg)",
-        }}
+          style={{
+            backgroundImage: "url(/field.jpg)",
+          }}
         >
+          {/* OVERLAY */}
 
-        {/* OVERLAY */}
-
-        <div
+          <div
             className="
             absolute
             inset-0
@@ -155,11 +161,11 @@ const Dashboard = () => {
             group-hover:bg-black/35
             transition-all
             "
-        ></div>
+          ></div>
 
-        {/* CONTENT */}
+          {/* CONTENT */}
 
-        <div
+          <div
             className="
             relative
             z-10
@@ -170,12 +176,11 @@ const Dashboard = () => {
             justify-between
             text-white
             "
-        >
-
+          >
             {/* TOP */}
 
             <div
-            className="
+              className="
                 w-16
                 h-16
                 rounded-2xl
@@ -186,32 +191,24 @@ const Dashboard = () => {
                 justify-center
             "
             >
-
-            <FaLeaf className="text-3xl" />
-
+              <FaLeaf className="text-3xl" />
             </div>
 
             {/* BOTTOM */}
 
             <div>
+              <h2 className="text-4xl font-bold py-2">{t("apnaKhet")}</h2>
 
-            <h2 className="text-4xl font-bold py-2">{t("apnaKhet")}</h2>
-
-            <p className="mt-3 text-gray-200">{t("apnaKhetDescription")}</p>
-
+              <p className="mt-3 text-gray-200">{t("apnaKhetDescription")}</p>
             </div>
-
-        </div>
-
+          </div>
         </div>
 
         {/* WATER MANAGEMENT */}
 
         <div
-        onClick={() =>
-            navigate("/water-management")
-        }
-        className="
+          onClick={() => navigate("/water-management")}
+          className="
             relative
             overflow-hidden
             rounded-3xl
@@ -224,14 +221,13 @@ const Dashboard = () => {
             hover:scale-[1.02]
             transition-all
         "
-        style={{
-            backgroundImage:"url(/tubewell.jpg)",
-        }}
+          style={{
+            backgroundImage: "url(/tubewell.jpg)",
+          }}
         >
+          {/* OVERLAY */}
 
-        {/* OVERLAY */}
-
-        <div
+          <div
             className="
             absolute
             inset-0
@@ -239,11 +235,11 @@ const Dashboard = () => {
             group-hover:bg-black/35
             transition-all
             "
-        ></div>
+          ></div>
 
-        {/* CONTENT */}
+          {/* CONTENT */}
 
-        <div
+          <div
             className="
             relative
             z-10
@@ -254,12 +250,11 @@ const Dashboard = () => {
             justify-between
             text-white
             "
-        >
-
+          >
             {/* ICON */}
 
             <div
-            className="
+              className="
                 w-16
                 h-16
                 rounded-2xl
@@ -270,30 +265,21 @@ const Dashboard = () => {
                 justify-center
             "
             >
-
-            <FaTint className="text-3xl" />
-
+              <FaTint className="text-3xl" />
             </div>
 
             {/* TEXT */}
 
             <div>
+              <h2 className="text-4xl font-bold py-2">{t("tubewellWater")}</h2>
 
-            <h2 className="text-4xl font-bold py-2">{t("tubewellWater")}</h2>
-
-            <p className="mt-3 text-gray-200">{t("tubewellWaterDescription")}</p>
-
+              <p className="mt-3 text-gray-200">
+                {t("tubewellWaterDescription")}
+              </p>
             </div>
-
+          </div>
         </div>
-
-        </div>
-
- 
-
-
       </div>
-
 
       <div className="mt-8">
         <WeatherCard />
@@ -302,7 +288,6 @@ const Dashboard = () => {
       <div className="mt-8">
         <AnalyticsChart />
       </div>
-
     </div>
   );
 };

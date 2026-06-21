@@ -286,7 +286,7 @@ const Fertilizers = () => {
   
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="py-2 px-4 sm:p-4">
 
       {/* HEADER */}
 
@@ -298,17 +298,29 @@ const Fertilizers = () => {
           justify-between
           sm:items-center
           gap-4
-          mb-10
+          mb-4
         "
       >
 
         <div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">
+          <h1
+            className="
+              text-2xl
+              sm:text-3xl
+              font-bold
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              bg-clip-text
+              text-transparent
+              py-2
+            "
+          >
             {t("fieldFertilizerTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-600 mt-2">{t("manageFertilizerUsage")}</p>
+          <p className="text-gray-500 mt-1">{t("manageFertilizerUsage")}</p>
 
         </div>
 
@@ -317,17 +329,20 @@ const Fertilizers = () => {
             setShowModal(true)
           }
           className="
-            bg-linear-to-r from-green-600 to-green-800 
-            hover:from-green-700 hover:to-green-900
+            bg-linear-to-r
+            from-green-600
+            to-green-800
+            hover:from-green-700
+            hover:to-green-900
             text-white
-            px-6
-            py-4
+            p-3
             rounded-2xl
             flex
             items-center
             gap-3
             font-semibold
             cursor-pointer
+            transition-all
           "
         >
 
@@ -342,8 +357,8 @@ const Fertilizers = () => {
           bg-white
           rounded-3xl
           shadow-lg
-          p-8
-          mb-8
+          p-4
+          mb-4
         "
       >
 
@@ -390,9 +405,20 @@ const Fertilizers = () => {
         "
       >
 
-        <div className="p-6 border-b">
+        <div className="py-2 px-4 border-b">
 
-          <h2 className="text-2xl font-bold py-2">{t("fertilizerHistory")}</h2>
+          <h2
+            className="
+              text-2xl
+              font-bold
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              bg-clip-text
+              text-transparent
+              py-2
+            "
+          >{t("fertilizerHistory")}</h2>
 
         </div>
 
@@ -409,15 +435,15 @@ const Fertilizers = () => {
 
               <tr>
 
-                <th className="p-5 text-left">{t("name")}</th>
+                <th className="p-3 text-left">{t("name")}</th>
 
-                <th className="p-5 text-left">{t("quantity")}</th>
+                <th className="p-3 text-left">{t("quantity")}</th>
 
-                <th className="p-5 text-left">{t("cost")}</th>
+                <th className="p-3 text-left">{t("cost")}</th>
 
-                <th className="p-5 text-left">{t("date")}</th>
+                <th className="p-3 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">{t("actions")}</th>
+                <th className="p-3 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -433,21 +459,21 @@ const Fertilizers = () => {
                     className="border-b"
                   >
 
-                    <td className="p-5 font-semibold">
+                    <td className="p-3 font-semibold">
                       {
                         entry.fertilizerName
                       }
                     </td>
 
-                    <td className="p-5">
+                    <td className="p-3">
                       {entry.quantity} kg
                     </td>
 
-                    <td className="p-5">
+                    <td className="p-3">
                       ₹{entry.cost}
                     </td>
 
-                    <td className="p-5">
+                    <td className="p-3">
 
                       {new Date(
                         entry.date
@@ -455,7 +481,7 @@ const Fertilizers = () => {
 
                     </td>
 
-                    <td className="p-5">
+                    <td className="p-3">
                       <div className="flex gap-3">
 
                         <button

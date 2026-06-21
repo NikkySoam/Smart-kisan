@@ -3,16 +3,11 @@ import mongoose, {
   Document,
 } from "mongoose";
 
-export interface ILabour
-  extends Document {
+export interface ILabour extends Document {
   field: mongoose.Types.ObjectId;
-
   amount: number;
-
   workType: string;
-
   date: Date;
-
   user: mongoose.Types.ObjectId;
 }
 
@@ -20,12 +15,8 @@ const labourSchema =
   new Schema<ILabour>(
     {
       field: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Field",
-
         required: true,
       },
 
@@ -45,12 +36,8 @@ const labourSchema =
       },
 
       user: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-
         required: true,
       },
     },
@@ -59,7 +46,4 @@ const labourSchema =
     }
   );
 
-export default mongoose.model<ILabour>(
-  "Labour",
-  labourSchema
-);
+export default mongoose.model<ILabour>("Labour",labourSchema );

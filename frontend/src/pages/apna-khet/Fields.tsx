@@ -12,6 +12,9 @@ import API from "../../api/axios";
 
 import toast from "react-hot-toast";
 
+import { cacheFields } from "../../utils/cacheFields";
+import { getCachedFields } from "../../utils/getCachedFields";
+
 
 import {
   FaTint,
@@ -33,6 +36,8 @@ interface Field {
   location: string;
 
   crop: string;
+
+  imageUrl?: string;
 }
 
 interface Analytics {
@@ -47,15 +52,6 @@ interface Analytics {
   totalExpense: number;
 }
 
-const fieldImages = [
-  "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop",
-
-  "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1974&auto=format&fit=crop",
-
-  "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1974&auto=format&fit=crop",
-
-  "https://images.unsplash.com/photo-1499529112087-3cb3b73cec95?q=80&w=1974&auto=format&fit=crop",
-];
 
 const Fields = () => {
   const { t } = useTranslation();
@@ -92,6 +88,12 @@ const Fields = () => {
   useState(false);
 
     const [editId, setEditId] =
+    useState("");
+
+  const [imageFile, setImageFile] =
+    useState<File | null>(null);
+
+  const [imagePreview, setImagePreview] =
     useState("");
 
   const [formData, setFormData] =
@@ -150,6 +152,12 @@ const Fields = () => {
           analyticsData
         );
 
+        // CACHE DATA
+        await cacheFields({
+          fields: res.data.data,
+          analytics: analyticsData,
+        });
+
       } catch (error) {
         console.log(error);
       } finally {
@@ -158,7 +166,18 @@ const Fields = () => {
     };
 
   useEffect(() => {
-    fetchFields();
+    const loadData = async () => {
+      // Load cached data first
+      const cached = await getCachedFields();
+      if (cached) {
+        setFields(cached.fields);
+        setAnalytics(cached.analytics);
+        setLoading(false);
+      }
+      // Fetch fresh data
+      fetchFields();
+    };
+    loadData();
   }, []);
 
   // HANDLE CHANGE
@@ -173,6 +192,21 @@ const Fields = () => {
     });
   };
 
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+
+    if (file) {
+      setImagePreview(
+        URL.createObjectURL(file)
+      );
+    } else {
+      setImagePreview("");
+    }
+  };
+
   // ADD FIELD
 
   const handleSubmit = async (
@@ -185,42 +219,49 @@ const Fields = () => {
   setSubmitting(true);
 
   try {
+      const body = new FormData();
+      body.append("name", formData.name);
+      body.append("area", formData.area);
+      body.append("location", formData.location);
+      body.append("crop", formData.crop);
 
-    // EDIT
+      if (imageFile) {
+        body.append("image", imageFile);
+      }
 
-    if (isEditing) {
+      // EDIT
 
-      await API.put(
-        `/fields/${editId}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      if (isEditing) {
 
-      toast.success(
-        t("fieldUpdated")
-      );
+        await API.put(
+          `/fields/${editId}`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    } else {
+        toast.success(
+          t("fieldUpdated")
+        );
 
-      // CREATE
+      } else {
 
-      await API.post(
-        "/fields",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        // CREATE
 
-      toast.success(
-        t("fieldAddedSuccessfully")
-      );
+        await API.post(
+          "/fields",
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+      toast.success(t("fieldAddedSuccessfully"));
     }
 
     setShowModal(false);
@@ -235,6 +276,8 @@ const Fields = () => {
       location: "",
       crop: "",
     });
+    setImageFile(null);
+    setImagePreview("");
 
     await fetchFields();
 
@@ -308,6 +351,9 @@ const Fields = () => {
     crop: field.crop,
   });
 
+  setImageFile(null);
+  setImagePreview(field.imageUrl || "");
+
   setShowModal(true);
 };
 
@@ -341,7 +387,7 @@ const Fields = () => {
   );
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="py-2 px-4 sm:p-4">
 
       {/* HEADER */}
 
@@ -353,7 +399,7 @@ const Fields = () => {
           justify-between
           sm:items-center
           gap-4
-          mb-10
+          mb-4
         "
       >
 
@@ -361,8 +407,8 @@ const Fields = () => {
 
           <h1
             className="
-              text-4xl
-              sm:text-5xl
+              text-2xl
+              sm:text-3xl
               font-bold
               bg-linear-to-r
               from-green-500
@@ -375,7 +421,7 @@ const Fields = () => {
             {t("apnaKhet")}
           </h1>
 
-          <p className="text-gray-500 mt-2">{t("manageFieldsExpenses")}</p>
+          <p className="text-gray-500 mt-1">{t("manageFieldsExpenses")}</p>
 
         </div>
 
@@ -392,8 +438,7 @@ const Fields = () => {
             hover:from-green-600
             hover:to-green-900
             text-white
-            px-6
-            py-4
+            p-3
             rounded-2xl
             flex
             items-center
@@ -411,7 +456,7 @@ const Fields = () => {
 
       {/* SEARCH */}
 
-        <div className="mb-8">
+        <div className="mb-6">
 
         <input
             type="text"
@@ -427,7 +472,7 @@ const Fields = () => {
             bg-white
             border
             border-gray-300
-            p-5
+            p-3
             rounded-3xl
             outline-none
             shadow-sm
@@ -446,6 +491,7 @@ const Fields = () => {
           md:grid-cols-2
           xl:grid-cols-3
           gap-5
+          mb-10
         "
       >
 
@@ -476,26 +522,16 @@ const Fields = () => {
                   bg-center
                 "
                 style={{
-                  backgroundImage: `url(${
-                    fieldImages[
-                      index %
-                        fieldImages.length
-                    ]
-                  })`,
+                  backgroundImage: `url(${field.imageUrl})`,
                 }}
               >
-
-                {/* OVERLAY */}
-
                 <div
                   className="
                     absolute
                     inset-0
-                    bg-black/40
+                    bg-black/20
                   "
                 ></div>
-
-                {/* CONTENT */}
 
                 <div
                   className="
@@ -522,13 +558,73 @@ const Fields = () => {
                     {field.location}
                   </p>
 
+
+                  <div className="flex gap-4 mt-5">
+                    {/* EDIT */}
+
+                    <button
+                        disabled={!!deletingId || submitting}
+                        onClick={() =>
+                        handleEdit(field)
+                        }
+                        className="
+                        flex-1
+                        bg-blue-100
+                        hover:bg-blue-200
+                        text-blue-700
+                        p-3
+                        rounded-2xl
+                        flex
+                        justify-center
+                        items-center
+                        gap-2
+                        font-semibold
+                        cursor-pointer
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
+                        transition-all
+                        "
+                    >
+
+                        <FaEdit />{t("edit")}</button>
+
+                    {/* DELETE */}
+
+                    <button
+                        disabled={!!deletingId || submitting}
+                        onClick={() =>
+                        handleDelete(field._id)
+                        }
+                        className="
+                        flex-1
+                        bg-red-100
+                        hover:bg-red-200
+                        text-red-700
+                        p-3
+                        rounded-2xl
+                        flex
+                        justify-center
+                        items-center
+                        gap-2
+                        font-semibold
+                        cursor-pointer
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
+                        transition-all
+                        "
+                    >
+
+                        <FaTrash />{t("delete")}</button>
+
+                    </div>
+
                 </div>
 
               </div>
 
               {/* BODY */}
 
-              <div className="p-6">
+              <div className="py-3 px-4">
 
                 {/* TOP */}
 
@@ -537,7 +633,7 @@ const Fields = () => {
                     flex
                     justify-between
                     items-center
-                    mb-6
+                    mb-2
                   "
                 >
 
@@ -573,7 +669,7 @@ const Fields = () => {
                   className="
                     grid
                     grid-cols-2
-                    gap-4
+                    gap-2
                   "
                 >
 
@@ -591,7 +687,7 @@ const Fields = () => {
                       border
                       border-blue-100
                       rounded-2xl
-                      p-5
+                      p-3
                       text-left
                       transition-all
                       cursor-pointer
@@ -618,7 +714,7 @@ const Fields = () => {
                       border
                       border-green-100
                       rounded-2xl
-                      p-5
+                      p-3
                       text-left
                       transition-all
                       cursor-pointer
@@ -645,7 +741,7 @@ const Fields = () => {
                       border
                       border-yellow-100
                       rounded-2xl
-                      p-5
+                      p-3
                       text-left
                       transition-all
                       cursor-pointer
@@ -672,7 +768,7 @@ const Fields = () => {
                       border
                       border-gray-200
                       rounded-2xl
-                      p-5
+                      p-3
                       text-left
                       transition-all
                       cursor-pointer
@@ -691,12 +787,12 @@ const Fields = () => {
 
                 <div
                   className="
-                    mt-6
+                    mt-3
                     rounded-3xl
                     bg-linear-to-r
                     from-green-500
                     to-green-800
-                    p-4
+                    p-3
                     text-white
                     shadow-lg
                   "
@@ -704,7 +800,7 @@ const Fields = () => {
 
                   <p className="text-gray-100">{t("totalExpense")}</p>
 
-                  <h2 className="text-4xl font-bold mt-3 py-2">
+                  <h2 className="text-4xl font-bold mt-1 py-1">
 
                     ₹
                     {
@@ -719,10 +815,10 @@ const Fields = () => {
 
                   <div
                     className="
-                      mt-5
+                      mt-1
                       grid
                       grid-cols-2
-                      gap-3
+                      gap-1
                       text-sm
                     "
                   >
@@ -769,65 +865,7 @@ const Fields = () => {
 
                 {/* ACTIONS */}
 
-            <div className="flex gap-4 mt-5">
-
-            {/* EDIT */}
-
-            <button
-                disabled={!!deletingId || submitting}
-                onClick={() =>
-                handleEdit(field)
-                }
-                className="
-                flex-1
-                bg-blue-100
-                hover:bg-blue-200
-                text-blue-700
-                p-4
-                rounded-2xl
-                flex
-                justify-center
-                items-center
-                gap-2
-                font-semibold
-                cursor-pointer
-                disabled:opacity-60
-                disabled:cursor-not-allowed
-                transition-all
-                "
-            >
-
-                <FaEdit />{t("edit")}</button>
-
-            {/* DELETE */}
-
-            <button
-                disabled={!!deletingId || submitting}
-                onClick={() =>
-                handleDelete(field._id)
-                }
-                className="
-                flex-1
-                bg-red-100
-                hover:bg-red-200
-                text-red-700
-                p-4
-                rounded-2xl
-                flex
-                justify-center
-                items-center
-                gap-2
-                font-semibold
-                cursor-pointer
-                disabled:opacity-60
-                disabled:cursor-not-allowed
-                transition-all
-                "
-            >
-
-                <FaTrash />{t("delete")}</button>
-
-            </div>
+            
 
               </div>
 
@@ -859,6 +897,7 @@ const Fields = () => {
               bg-white
               rounded-3xl
               w-full
+              
               max-w-2xl
               p-8
             "
@@ -866,7 +905,7 @@ const Fields = () => {
 
             {/* HEADER */}
 
-            <div className="mb-8">
+            <div className="mb-4">
 
               <h2
                 className="
@@ -893,7 +932,7 @@ const Fields = () => {
               onSubmit={
                 handleSubmit
               }
-              className="space-y-5"
+              className="space-y-1"
             >
 
               <input
@@ -976,6 +1015,47 @@ const Fields = () => {
                 "
               />
 
+              <label className="block">
+                <span className="text-sm font-medium text-gray-700">
+                  {t("fieldImage")}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="
+                    mt-2
+                    w-full
+                    border
+                    border-gray-300
+                    rounded-2xl
+                    p-3
+                    bg-white
+                    outline-none
+                  "
+                />
+              </label>
+
+              {imagePreview && (
+                <div className="mt-3">
+                  <p className="text-sm text-gray-600 mb-2">
+                    {t("previewImage")}
+                  </p>
+                  <img
+                    src={imagePreview}
+                    alt={t("fieldImage")}
+                    className="
+                      w-30
+                      
+                      object-cover
+                      rounded-3xl
+                      border
+                      border-gray-200
+                    "
+                  />
+                </div>
+              )}
+
               {/* BUTTONS */}
 
               <div className="flex gap-4 pt-2">
@@ -992,6 +1072,8 @@ const Fields = () => {
                         location: "",
                         crop: "",
                         });
+                    setImageFile(null);
+                    setImagePreview("");
                     }
                   }
                   className="

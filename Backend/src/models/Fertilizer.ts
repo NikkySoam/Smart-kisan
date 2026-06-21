@@ -1,20 +1,12 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IFertilizer
   extends Document {
   field: mongoose.Types.ObjectId;
-
   fertilizerName: string;
-
   quantity: number;
-
   cost: number;
-
   date: Date;
-
   user: mongoose.Types.ObjectId;
 }
 
@@ -22,12 +14,8 @@ const fertilizerSchema =
   new Schema<IFertilizer>(
     {
       field: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Field",
-
         required: true,
       },
 
@@ -52,12 +40,8 @@ const fertilizerSchema =
       },
 
       user: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-
         required: true,
       },
     },
@@ -66,7 +50,4 @@ const fertilizerSchema =
     }
   );
 
-export default mongoose.model<IFertilizer>(
-  "Fertilizer",
-  fertilizerSchema
-);
+export default mongoose.model<IFertilizer>("Fertilizer",fertilizerSchema);

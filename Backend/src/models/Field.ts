@@ -1,18 +1,13 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IField
   extends Document {
   name: string;
-
   area: number;
-
   location: string;
-
   crop: string;
-
+  imageUrl: string;
+  cloudinaryPublicId: string;
   user: mongoose.Types.ObjectId;
 }
 
@@ -36,16 +31,20 @@ const fieldSchema =
 
       crop: {
         type: String,
+         required: true,
+      },
+      imageUrl: {
+        type: String,
         default: "",
       },
 
+      cloudinaryPublicId: {
+        type: String,
+        default: "",
+      },
       user: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-
         required: true,
       },
     },
@@ -54,7 +53,4 @@ const fieldSchema =
     }
   );
 
-export default mongoose.model<IField>(
-  "Field",
-  fieldSchema
-);
+export default mongoose.model<IField>( "Field",fieldSchema );

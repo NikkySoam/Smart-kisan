@@ -1,8 +1,5 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
-
+import mongoose, {Schema,Document } from "mongoose";
+ 
 export interface IFarmer
   extends Document {
   name: string;
@@ -43,7 +40,4 @@ const farmerSchema =
   user: 1,
 });
 
-export default mongoose.model<IFarmer>(
-  "Farmer",
-  farmerSchema
-);
+export default mongoose.model<IFarmer>("Farmer",farmerSchema);

@@ -258,7 +258,7 @@ const Labour = () => {
     t("field");
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="py-2 px-4 sm:p-4">
 
       {/* HEADER */}
 
@@ -270,7 +270,7 @@ const Labour = () => {
           justify-between
           sm:items-center
           gap-4
-          mb-10
+          mb-4
         "
       >
 
@@ -278,23 +278,23 @@ const Labour = () => {
 
           <h1
             className="
-              text-4xl
-              sm:text-5xl
+              text-2xl
+              sm:text-3xl
               font-bold
               bg-linear-to-r
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent py-2"
+              text-transparent
+              py-2
+            "
           >
             {t("fieldLabourTitle", { fieldName })}
           </h1>
 
-          <p className="text-gray-500 mt-2">{t("manageLabourExpenses")}</p>
+          <p className="text-gray-500 mt-1">{t("manageLabourExpenses")}</p>
 
         </div>
-
-        {/* BUTTON */}
 
         <button
           onClick={() =>
@@ -307,8 +307,7 @@ const Labour = () => {
             hover:from-green-600
             hover:to-green-900
             text-white
-            px-6
-            py-4
+            p-3
             rounded-2xl
             flex
             items-center
@@ -330,8 +329,8 @@ const Labour = () => {
           bg-white
           rounded-3xl
           shadow-lg
-          p-8
-          mb-8
+          p-4
+          mb-4
           hover:shadow-2xl
           transition-all
         "
@@ -396,7 +395,7 @@ const Labour = () => {
 
         {/* HEADER */}
 
-        <div className="p-6 border-b">
+        <div className="py-2 px-4 border-b">
 
           <h2
             className="
@@ -406,7 +405,9 @@ const Labour = () => {
               from-green-500
               to-green-800
               bg-clip-text
-              text-transparent py-2"
+              text-transparent
+              py-2
+            "
           >{t("labourHistory")}</h2>
 
         </div>
@@ -428,13 +429,13 @@ const Labour = () => {
 
               <tr>
 
-                <th className="p-5 text-left">{t("workType")}</th>
+                <th className="p-3 text-left">{t("workType")}</th>
 
-                <th className="p-5 text-left">{t("amount")}</th>
+                <th className="p-3 text-left">{t("amount")}</th>
 
-                <th className="p-5 text-left">{t("date")}</th>
+                <th className="p-3 text-left">{t("date")}</th>
 
-                <th className="p-5 text-left">{t("actions")}</th>
+                <th className="p-3 text-left">{t("actions")}</th>
 
               </tr>
 
@@ -456,7 +457,7 @@ const Labour = () => {
 
                     {/* WORK TYPE */}
 
-                    <td className="p-5 font-semibold">
+                    <td className="p-3 font-semibold">
 
                       {entry.workType}
 
@@ -466,7 +467,7 @@ const Labour = () => {
 
                     <td
                       className="
-                        p-5
+                        p-3
                         font-bold
                         bg-linear-to-r
                         from-green-500
@@ -482,7 +483,7 @@ const Labour = () => {
 
                     {/* DATE */}
 
-                    <td className="p-5">
+                    <td className="p-3">
 
                       {new Date(
                         entry.date
@@ -490,7 +491,7 @@ const Labour = () => {
 
                     </td>
 
-                    <td className="p-5">
+                    <td className="p-3">
                       <div className="flex gap-3">
 
                         <button

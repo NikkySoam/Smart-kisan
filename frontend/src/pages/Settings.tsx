@@ -232,14 +232,40 @@ const fetchSettings =
   };
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="py-2 px-4 sm:p-4">
 
-      <div className="mb-8">
+      {/* HEADER */}
 
-        <h1 className="text-2xl sm:text-5xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent py-2">{t("settings")}</h1>
+      <div
+        className="
+          flex
+          flex-col
+          sm:flex-row
+          justify-between
+          sm:items-center
+          gap-4
+          mb-8
+        "
+      >
+        <div>
+          <h1
+            className="
+              text-2xl
+              sm:text-3xl
+              font-bold
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              bg-clip-text
+              text-transparent
+              py-2
+            "
+          >
+            {t("settings")}
+          </h1>
 
-        <p className="text-gray-600 mt-2">{t("manageProfile")}</p>
-
+          <p className="text-gray-500 mt-1">{t("manageProfile")}</p>
+        </div>
       </div>
 
       <div
@@ -248,7 +274,8 @@ const fetchSettings =
           grid
           grid-cols-1
           xl:grid-cols-3
-          gap-6
+          gap-5
+          mb-10
         "
       >
 

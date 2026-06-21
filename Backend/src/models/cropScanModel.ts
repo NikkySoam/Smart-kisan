@@ -1,7 +1,4 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ICropScan
   extends Document {
@@ -53,7 +50,4 @@ const cropScanSchema =
     }
   );
 
-export default mongoose.model(
-  "CropScan",
-  cropScanSchema
-);
+export default mongoose.model( "CropScan", cropScanSchema );

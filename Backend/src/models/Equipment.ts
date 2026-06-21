@@ -1,18 +1,11 @@
-import mongoose, {
-  Schema,
-  Document,
-} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IEquipment
   extends Document {
   field: mongoose.Types.ObjectId;
-
   equipmentName: string;
-
   amount: number;
-
   date: Date;
-
   user: mongoose.Types.ObjectId;
 }
 
@@ -20,12 +13,8 @@ const equipmentSchema =
   new Schema<IEquipment>(
     {
       field: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Field",
-
         required: true,
       },
 
@@ -45,12 +34,8 @@ const equipmentSchema =
       },
 
       user: {
-        type:
-          mongoose.Schema.Types
-            .ObjectId,
-
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-
         required: true,
       },
     },
@@ -59,7 +44,4 @@ const equipmentSchema =
     }
   );
 
-export default mongoose.model<IEquipment>(
-  "Equipment",
-  equipmentSchema
-);
+export default mongoose.model<IEquipment>( "Equipment", equipmentSchema );

@@ -110,9 +110,8 @@ const CropDoctor = () => {
         w-full
         max-w-6xl
         mx-auto
-        px-3
+        p-3
         sm:px-5
-        py-6
       "
     >
       {/* HEADER */}
@@ -123,8 +122,8 @@ const CropDoctor = () => {
           bg-linear-to-r
           from-green-500
           to-green-800
-          p-6
-          sm:p-8
+          p-4
+          sm:p-6
           text-white
           shadow-xl
           flex
@@ -143,7 +142,7 @@ const CropDoctor = () => {
           <h1
             className="
               text-2xl
-              sm:text-4xl
+              sm:text-3xl
               font-bold
             "
           >

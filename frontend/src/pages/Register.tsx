@@ -100,11 +100,11 @@ const Register = () => {
             border-white/20
             rounded-3xl
             shadow-2xl
-            p-5
-            sm:p-6
+            p-6
+            sm:p-8
         "
         >
-        <div className="text-center mb-5">
+        <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-white py-2">{t("appName")}</h1>
 
           <p className="text-gray-200 mt-2 text-sm sm:text-base">{t("createFarmerAccount")}</p>
@@ -112,55 +112,55 @@ const Register = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4"
+          className="space-y-5"
         >
           <div>
-            <label className="text-white text-sm block mb-2">{t("fullName")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("fullName")}</label>
 
             <input
               type="text"
               name="name"
               placeholder={t("enterYourName")}
-              className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
+              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">{t("phoneNumber")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("phoneNumber")}</label>
 
             <input
               type="text"
               name="phone"
               placeholder={t("enterPhoneNumber")}
-              className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
+              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">{t("sixDigitPin")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("sixDigitPin")}</label>
 
             <input
               type="password"
               name="pin"
               placeholder={t("enterPin")}
-              className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
+              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">{t("confirmPin")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("confirmPin")}</label>
 
             <input
               type="password"
               name="confirmPin"
               placeholder={t("confirmPin")}
-              className="w-full p-2.5 rounded-xl bg-white/90 outline-none text-black"
+              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
               onChange={handleChange}
               required
             />
@@ -169,7 +169,22 @@ const Register = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-linear-to-r from-green-500 to-green-800  hover:from-green-600 hover:to-green-900 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 text-white font-semibold p-2.5 rounded-xl text-base cursor-pointer"
+            className="
+            w-full
+            bg-linear-to-r from-green-500 to-green-800
+            hover:from-green-600 hover:to-green-900
+            disabled:opacity-60
+            disabled:cursor-not-allowed
+            transition-all
+            duration-300
+            text-white
+            font-semibold
+            p-3
+            rounded-xl
+            text-base
+            cursor-pointer
+            mt-6
+            "
           >
             {loading ? t("loading") : t("register")}
           </button>
@@ -180,7 +195,7 @@ const Register = () => {
 
           <Link
             to="/login"
-            className="text-yellow-300 font-semibold"
+            className="text-yellow-300 font-semibold hover:text-yellow-400 transition-all"
           >{t("login")}</Link>
         </p>
       </div>

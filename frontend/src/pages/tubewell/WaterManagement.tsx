@@ -120,11 +120,11 @@ const WaterManagement = () => {
   ];
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="p-4 sm:py-2 sm:px-8 mb-10">
 
       {/* HEADER */}
 
-      <div className="mb-10">
+      <div className="mb-6">
 
         <h1
           className="
@@ -149,7 +149,7 @@ const WaterManagement = () => {
           grid
           grid-cols-1
           md:grid-cols-3
-          gap-6
+          gap-4
           mb-10
         "
       >

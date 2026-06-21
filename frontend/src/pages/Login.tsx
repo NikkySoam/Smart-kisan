@@ -96,11 +96,11 @@ const Login = () => {
           border-white/20
           rounded-3xl
           shadow-2xl
-          p-5
-          sm:p-6
+          p-6
+          sm:p-8
         "
       >
-        <div className="text-center mb-5">
+        <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-white py-2">{t("appName")}</h1>
 
           <p className="text-gray-200 mt-2 text-sm sm:text-base">{t("loginToContinue")}</p>
@@ -108,10 +108,10 @@ const Login = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4"
+          className="space-y-5"
         >
           <div>
-            <label className="text-white text-sm block mb-2">{t("phoneNumber")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("phoneNumber")}</label>
 
             <input
               type="text"
@@ -119,11 +119,14 @@ const Login = () => {
               placeholder={t("enterPhoneNumber")}
               className="
                 w-full
-                p-2.5
+                p-3
                 rounded-xl
                 bg-white/90
                 outline-none
                 text-black
+                focus:ring-2
+                focus:ring-green-500
+                transition-all
               "
               onChange={handleChange}
               required
@@ -131,7 +134,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-2">{t("pin")}</label>
+            <label className="text-white text-sm block mb-3 font-semibold">{t("pin")}</label>
 
             <input
               type="password"
@@ -139,11 +142,14 @@ const Login = () => {
               placeholder={t("enterPin")}
               className="
                 w-full
-                p-2.5
+                p-3
                 rounded-xl
                 bg-white/90
                 outline-none
                 text-black
+                focus:ring-2
+                focus:ring-green-500
+                transition-all
               "
               onChange={handleChange}
               required
@@ -163,20 +169,21 @@ const Login = () => {
               duration-300
               text-white
               font-semibold
-              p-2.5
+              p-3
               rounded-xl
               text-base
               cursor-pointer
+              mt-6
             "
           >{loading ? t("loading") : t("login")}</button>
         </form>
 
-        <p className="text-center text-gray-200 mt-5 text-sm sm:text-base">
+        <p className="text-center text-gray-200 mt-6 text-sm sm:text-base">
           Don't have an account?{" "}
 
           <Link
             to="/register"
-            className="text-yellow-300 font-semibold"
+            className="text-yellow-300 font-semibold hover:text-yellow-400 transition-all"
           >{t("register")}</Link>
         </p>
       </div>

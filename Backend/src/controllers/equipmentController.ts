@@ -1,27 +1,13 @@
 import { Response } from "express";
-
 import Equipment from "../models/Equipment";
-
 import Field from "../models/Field";
-
 import { AuthRequest } from "../middleware/authMiddleware";
 
 
 // ADD EQUIPMENT
-
-export const addEquipment =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const addEquipment = async ( req: AuthRequest, res: Response ) => {
     try {
-
-      const {
-        field,
-        equipmentName,
-        amount,
-        date,
-      } = req.body;
+      const {field, equipmentName, amount, date} = req.body;
 
       const fieldExists =
         await Field.findOne({
@@ -38,7 +24,7 @@ export const addEquipment =
       }
 
       const equipment =
-        await Equipment.create({
+         await Equipment.create({
           field,
           equipmentName,
           amount,
@@ -65,16 +51,9 @@ export const addEquipment =
 
 
 // GET EQUIPMENT BY FIELD
-
-export const getEquipmentByField =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const getEquipmentByField = async (req: AuthRequest, res: Response ) => {
     try {
-
-      const { fieldId } =
-        req.params;
+      const { fieldId } = req.params;
 
       const equipment =
         await Equipment.find({
@@ -87,11 +66,7 @@ export const getEquipmentByField =
           });
 
       const totalAmount =
-        equipment.reduce(
-          (acc, item) =>
-            acc + item.amount,
-          0
-        );
+        equipment.reduce((acc, item) => acc + item.amount,0 );
 
       res.status(200).json({
         success: true,
@@ -112,22 +87,11 @@ export const getEquipmentByField =
 
 
 // UPDATE EQUIPMENT
-
-export const updateEquipment =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const updateEquipment = async (req: AuthRequest, res: Response ) => {
     try {
+      const { id } = req.params;
 
-      const { id } =
-        req.params;
-
-      const {
-        equipmentName,
-        amount,
-        date,
-      } = req.body;
+      const { equipmentName, amount, date} = req.body;
 
       const equipment =
         await Equipment.findOne({
@@ -143,12 +107,9 @@ export const updateEquipment =
         });
       }
 
-      equipment.equipmentName =
-        equipmentName;
-      equipment.amount =
-        amount;
-      equipment.date =
-        date;
+      equipment.equipmentName = equipmentName;
+      equipment.amount =amount;
+      equipment.date = date;
 
       await equipment.save();
 
@@ -172,18 +133,11 @@ export const updateEquipment =
 
 // DELETE EQUIPMENT
 
-export const deleteEquipment =
-  async (
-    req: AuthRequest,
-    res: Response
-  ) => {
+export const deleteEquipment = async (req: AuthRequest,res: Response) => {
     try {
+      const { id } = req.params;
 
-      const { id } =
-        req.params;
-
-      const equipment =
-        await Equipment.findOne({
+      const equipment = await Equipment.findOne({
           _id: id,
           user: req.user._id,
         });

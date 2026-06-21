@@ -2,7 +2,7 @@ import { openDB } from "idb";
 
 export const dbPromise = openDB(
   "smart-kisan-db",
-  4,
+  5,
   {
     upgrade(db) {
       if (
@@ -74,6 +74,16 @@ export const dbPromise = openDB(
             {
             keyPath: "_id",
             }
+        );
+        }
+
+    if (
+        !db.objectStoreNames.contains(
+            "fields"
+        )
+        ) {
+        db.createObjectStore(
+            "fields"
         );
         }
 

@@ -20,20 +20,21 @@ const MobileBottomNav = () => {
       icon: <FaHome />,
     },
     {
-      label: t("fields"),
-      path: "/fields",
-      icon: <FaSeedling />,
+      label: t("water"),
+      path: "/water-management",
+      icon: <FaTint />,
     },
     {
       label: t("cropDoctor"),
       path: "/crop-doctor",
       icon: <FaRobot />,
     },
-    {
-      label: t("water"),
-      path: "/water-management",
-      icon: <FaTint />,
+     {
+      label: t("fields"),
+      path: "/fields",
+      icon: <FaSeedling />,
     },
+   
     {
       label: t("settings"),
       path: "/settings",
