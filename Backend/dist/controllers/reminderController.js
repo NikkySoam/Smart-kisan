@@ -19,6 +19,7 @@ const Fertilizer_1 = __importDefault(require("../models/Fertilizer"));
 const Notification_1 = __importDefault(require("../models/Notification"));
 // CHECK REMINDERS
 const checkReminders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         // DELETE NOTIFICATIONS
         // OLDER THAN 7 DAYS
@@ -61,28 +62,10 @@ const checkReminders = (req, res) => __awaiter(void 0, void 0, void 0, function*
                         60 *
                         24));
                 if (waterDiff >= 7) {
-                    // CHECK EXISTING
-                    // CHECK LAST 24 HOURS
-                    const yesterday = // 24 hrs before
-                     new Date(Date.now() -
-                        24 *
-                            60 *
-                            60 *
-                            1000);
-                    const existing = yield Notification_1.default.findOne({
-                        user: req.user._id,
-                        title: "Water Reminder",
-                        type: "water",
-                        message: {
-                            $regex: field.name,
-                            $options: "i",
-                        },
-                        createdAt: {
-                            $gte: yesterday,
-                        },
-                    });
-                    if (!existing) {
-                        yield Notification_1.default.findOneAndUpdate({
+                    const alreadyReminded = ((_a = field.lastWaterReminderFor) === null || _a === void 0 ? void 0 : _a.toString()) ===
+                        lastWater._id.toString();
+                    if (!alreadyReminded) {
+                        const existing = yield Notification_1.default.findOne({
                             user: req.user._id,
                             title: "Water Reminder",
                             type: "water",
@@ -91,19 +74,25 @@ const checkReminders = (req, res) => __awaiter(void 0, void 0, void 0, function*
                                 $options: "i",
                             },
                             createdAt: {
-                                $gte: yesterday,
+                                $gte: lastWater.date,
                             },
-                        }, {
-                            $setOnInsert: {
+                        });
+                        if (existing) {
+                            field.lastWaterReminderFor =
+                                lastWater._id;
+                            yield field.save();
+                        }
+                        else {
+                            yield Notification_1.default.create({
                                 user: req.user._id,
                                 title: "Water Reminder",
                                 message: `Water reminder for ${field.name}. No water added since ${waterDiff} days.`,
                                 type: "water",
-                            },
-                        }, {
-                            upsert: true,
-                            new: true,
-                        });
+                            });
+                            field.lastWaterReminderFor =
+                                lastWater._id;
+                            yield field.save();
+                        }
                     }
                 }
             }
@@ -117,26 +106,10 @@ const checkReminders = (req, res) => __awaiter(void 0, void 0, void 0, function*
                         24));
                 if (fertilizerDiff >=
                     25) {
-                    const yesterday = // 24hrs before
-                     new Date(Date.now() -
-                        24 *
-                            60 *
-                            60 *
-                            1000);
-                    const existing = yield Notification_1.default.findOne({
-                        user: req.user._id,
-                        title: "Fertilizer Reminder",
-                        type: "fertilizer",
-                        message: {
-                            $regex: field.name,
-                            $options: "i",
-                        },
-                        createdAt: {
-                            $gte: yesterday,
-                        },
-                    });
-                    if (!existing) {
-                        yield Notification_1.default.findOneAndUpdate({
+                    const alreadyReminded = ((_b = field.lastFertilizerReminderFor) === null || _b === void 0 ? void 0 : _b.toString()) ===
+                        lastFertilizer._id.toString();
+                    if (!alreadyReminded) {
+                        const existing = yield Notification_1.default.findOne({
                             user: req.user._id,
                             title: "Fertilizer Reminder",
                             type: "fertilizer",
@@ -145,19 +118,25 @@ const checkReminders = (req, res) => __awaiter(void 0, void 0, void 0, function*
                                 $options: "i",
                             },
                             createdAt: {
-                                $gte: yesterday,
+                                $gte: lastFertilizer.date,
                             },
-                        }, {
-                            $setOnInsert: {
+                        });
+                        if (existing) {
+                            field.lastFertilizerReminderFor =
+                                lastFertilizer._id;
+                            yield field.save();
+                        }
+                        else {
+                            yield Notification_1.default.create({
                                 user: req.user._id,
                                 title: "Fertilizer Reminder",
                                 message: `Fertilizer reminder for ${field.name}. No fertilizer added since ${fertilizerDiff} days.`,
                                 type: "fertilizer",
-                            },
-                        }, {
-                            upsert: true,
-                            new: true,
-                        });
+                            });
+                            field.lastFertilizerReminderFor =
+                                lastFertilizer._id;
+                            yield field.save();
+                        }
                     }
                 }
             }

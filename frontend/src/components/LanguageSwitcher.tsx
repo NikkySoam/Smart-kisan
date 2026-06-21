@@ -50,17 +50,19 @@ const LanguageSwitcher =
           cursor-pointer
           items-center
           rounded-full
-          bg-green-100
+          border
+          border-emerald-900/10
+          bg-emerald-50
           p-1
           text-sm
           font-bold
           text-green-800
           shadow-inner
           transition-all
-          hover:bg-green-200
+          hover:bg-emerald-100
           focus:outline-none
           focus:ring-2
-          focus:ring-white/70
+          focus:ring-emerald-700/20
         "
       >
         <span
@@ -72,7 +74,7 @@ const LanguageSwitcher =
             w-9
             md:w-11
             rounded-full
-            bg-green-700
+            bg-emerald-800
             shadow
             transition-transform
             duration-300

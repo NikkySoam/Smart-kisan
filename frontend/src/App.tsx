@@ -2,11 +2,11 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 
 import { Toaster } from "react-hot-toast";
 
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
@@ -39,11 +39,7 @@ function App() {
 
         <Route
           path="/"
-          element={
-            <Navigate
-              to="/dashboard"
-            />
-          }
+          element={<Landing />}
         />
 
         {/* LOGIN */}

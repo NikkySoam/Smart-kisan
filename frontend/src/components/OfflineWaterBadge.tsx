@@ -64,7 +64,7 @@ const OfflineWaterBadge =
       window.addEventListener(
         "offline-entry-added",
         loadCount
-        );
+      );
 
       return () => {
 
@@ -79,11 +79,9 @@ const OfflineWaterBadge =
         );
 
         window.removeEventListener(
-        "offline-entry-added",
-        loadCount
+          "offline-entry-added",
+          loadCount
         );
-
-
       };
 
     }, []);
@@ -98,9 +96,9 @@ const OfflineWaterBadge =
     return (
       <div
         className={`
+          rounded-full
           px-3
           py-2
-          rounded-xl
           text-sm
           font-semibold
           text-white
@@ -113,8 +111,8 @@ const OfflineWaterBadge =
         `}
       >
         {online
-          ? `🔄 ${pendingCount} Pending`
-          : "🔴 Offline"}
+          ? `${pendingCount} Pending`
+          : "Offline"}
       </div>
     );
 };

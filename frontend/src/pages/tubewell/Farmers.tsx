@@ -4,6 +4,15 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaEdit,
+  FaEye,
+  FaMapMarkerAlt,
+  FaPhone,
+  FaPlus,
+  FaTrash,
+  FaUser,
+} from "react-icons/fa";
 
 import API from "../../api/axios";
 import toast from "react-hot-toast";
@@ -231,65 +240,116 @@ const Farmers = () => {
                 t("farmerUpdateFailed")
             );
             } finally {
-            setUpdating(false);
-            }
-        };
+        setUpdating(false);
+        }
+    };
+
+  const inputClassName = `
+    w-full
+    rounded-lg
+    border
+    border-emerald-900/10
+    bg-white/90
+    px-4
+    py-3
+    text-slate-900
+    outline-none
+    transition-all
+    placeholder:text-slate-400
+    focus:border-emerald-700
+    focus:ring-4
+    focus:ring-emerald-700/10
+  `;
+
+  const primaryButtonClassName = `
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    rounded-lg
+    bg-emerald-800
+    px-5
+    py-3
+    font-semibold
+    text-white
+    shadow-sm
+    transition-all
+    hover:bg-emerald-700
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    cursor-pointer
+  `;
 
   return (
     <div
       className="
-        min-h-screen
-        bg-cover
-        bg-center
-        bg-no-repeat
-        p-4
-        sm:p-8
+        mx-auto
+        max-w-7xl
+        px-3
+        py-4
+        sm:px-5
+        lg:px-8
       "
-    //   style={{
-    //     backgroundImage:
-    //       "url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop')",
-    //   }}
     >
-
-      <div className="min-h-screen bg-black/40 rounded-3xl p-4 sm:p-8">
-
-        <div className="max-w-7xl mx-auto">
 
           {/* HEADER */}
 
-          <div className="mb-8 flex justify-between items-center">
+          <div className="mb-8 overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top_right,_rgba(104,219,169,0.35),_transparent_36%),linear-gradient(135deg,_#006948,_#002114)] p-6 text-white shadow-xl sm:p-8">
 
-            <div>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
 
-              <h1 className="text-2xl sm:text-5xl font-bold text-white py-2">{t("farmersManagement")}</h1>
+              <div>
+                <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-wide text-emerald-100">
+                  {t("tubewell")}
+                </span>
 
-              <p className="text-gray-200 mt-2">{t("manageAllFarmers")}</p>
+                <h1 className="mt-5 text-3xl font-black leading-tight sm:text-5xl">
+                  {t("farmersManagement")}
+                </h1>
+
+                <p className="mt-3 max-w-2xl text-emerald-50">
+                  {t("manageAllFarmers")}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:items-end">
+                <div className="rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
+                  <p className="text-2xl font-black">{farmers.length}</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-100">
+                    {t("totalFarmers")}
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowForm(!showForm)
+                  }
+                  className="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-lg
+                    bg-white
+                    px-5
+                    py-3
+                    font-semibold
+                    text-emerald-800
+                    shadow-sm
+                    transition-all
+                    hover:bg-emerald-50
+                    cursor-pointer
+                  "
+                >
+                  <FaPlus />
+                  {showForm
+                    ? t("close")
+                    : t("addFarmer")}
+                </button>
+              </div>
 
             </div>
-
-            <button
-              onClick={() =>
-                setShowForm(!showForm)
-              }
-              className="
-                bg-linear-to-r from-green-500 to-green-800 
-                hover:from-green-600 hover:to-green-900
-                text-white
-                px-6
-                py-1
-                md:py-3
-                sm:py-2
-                rounded-2xl
-                font-semibold
-                shadow-lg
-                cursor-pointer
-
-              "
-            >
-              {showForm
-                ? t("close")
-                : t("addFarmer")}
-            </button>
 
           </div>
 
@@ -299,7 +359,7 @@ const Farmers = () => {
 
             <div
                 className={`
-                    flex justify-center mb-10
+                    mb-8
                     transition-all duration-500 ease-in-out
                     overflow-hidden
                     ${
@@ -313,24 +373,30 @@ const Farmers = () => {
               <div
                 className="
                   w-full
-                  sm:w-[70%]
-                  lg:w-[25%]
-                  
-                  bg-white/15
-                  backdrop-blur-lg
+                  max-w-2xl
+                  bg-white/80
+                  backdrop-blur-xl
                   border
-                  border-white/20
-                  rounded-3xl
-                  p-5
-                  shadow-xl
+                  border-emerald-900/10
+                  rounded-lg
+                  p-6
+                  shadow-sm
                 "
               >
 
-                <h2 className="text-2xl font-bold text-white mb-5 text-center py-2">{t("addFarmer")}</h2>
+                <div className="mb-5 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
+                    <FaUser />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-950">{t("addFarmer")}</h2>
+                    <p className="text-sm text-slate-500">{t("manageAllFarmers")}</p>
+                  </div>
+                </div>
 
                 <form
                   onSubmit={handleSubmit}
-                  className="flex flex-col gap-3"
+                  className="grid gap-4 md:grid-cols-3"
                 >
 
                   <input
@@ -339,12 +405,7 @@ const Farmers = () => {
                     placeholder={t("farmerName")}
                     value={formData.name}
                     onChange={handleChange}
-                    className="
-                      p-3
-                      rounded-xl
-                      bg-white/90
-                      outline-none
-                    "
+                    className={inputClassName}
                     required
                   />
 
@@ -354,12 +415,7 @@ const Farmers = () => {
                     placeholder={t("phoneNumber")}
                     value={formData.phone}
                     onChange={handleChange}
-                    className="
-                      p-3
-                      rounded-xl
-                      bg-white/90
-                      outline-none
-                    "
+                    className={inputClassName}
                   />
 
                   <input
@@ -368,29 +424,17 @@ const Farmers = () => {
                     placeholder={t("village")}
                     value={formData.village}
                     onChange={handleChange}
-                    className="
-                      p-3
-                      rounded-xl
-                      bg-white/90
-                      outline-none
-                    "
+                    className={inputClassName}
                   />
 
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="
-                      bg-green-700
-                      hover:bg-green-800
-                      disabled:opacity-60
-                      disabled:cursor-not-allowed
-                      text-white
-                      rounded-xl
-                      p-3
-                      font-semibold
-                      cursor-pointer
-                    "
-                  >{submitting ? t("saving") : t("addFarmer")}</button>
+                    className={`md:col-span-3 ${primaryButtonClassName}`}
+                  >
+                    <FaPlus />
+                    {submitting ? t("saving") : t("addFarmer")}
+                  </button>
 
                 </form>
 
@@ -401,7 +445,6 @@ const Farmers = () => {
 
           {/* FARMERS GRID */}
 
-        <div className="h-0.5 bg-gray-400 my-2 w-full"></div>
           <div
             className="
               grid
@@ -417,91 +460,115 @@ const Farmers = () => {
               <div
                 key={farmer._id}
                 className="
-                  bg-white/15
-                  backdrop-blur-lg
+                  bg-white/80
+                  backdrop-blur-xl
                   border
-                  border-white/20
-                  rounded-3xl
+                  border-emerald-900/10
+                  rounded-lg
                   p-6
-                  shadow-xl
-                  hover:scale-105
-                  transition
-                  duration-300
+                  shadow-sm
+                  transition-all
+                  hover:-translate-y-1
+                  hover:shadow-xl
                 "
               >
 
-                <h2 className="text-2xl font-bold text-white py-2">
-                  {farmer.name}
-                </h2>
+                <div className="flex items-start gap-4">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-xl font-black text-emerald-800">
+                    {farmer.name?.charAt(0)?.toUpperCase() || "F"}
+                  </div>
 
-                <p className="text-gray-200 mt-3">
-                   {farmer.phone || t("noPhone")}
-                </p>
+                  <div className="min-w-0">
+                    <h2 className="truncate text-2xl font-black text-slate-950">
+                      {farmer.name}
+                    </h2>
 
-                <p className="text-gray-200 mt-2">
-                   {farmer.village || t("noVillage")}
-                </p>
+                    <p className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                      <FaPhone className="text-emerald-700" />
+                      {farmer.phone || t("noPhone")}
+                    </p>
 
-               <button
-                onClick={() =>
-                    navigate(
-                    `/farmers/${farmer._id}`
-                    )
-                }
-                className="
-                    mt-5
-                    w-full
-                    bg-yellow-500
-                    hover:bg-yellow-600
-                    text-black
-                    font-semibold
-                    p-3
-                    rounded-xl
-                    cursor-pointer
-                "
-                >{t("viewDetails")}</button>
+                    <p className="mt-2 flex items-center gap-2 text-sm text-slate-600">
+                      <FaMapMarkerAlt className="text-emerald-700" />
+                      {farmer.village || t("noVillage")}
+                    </p>
+                  </div>
+                </div>
 
-                <button
-                disabled={!!deletingId || updating || submitting}
-                onClick={() =>
-                    openEditModal(farmer)
-                }
-                className="
-                    mt-2
-                    w-full
-                    bg-yellow-500
-                    hover:bg-yellow-600
-                    text-black
-                    font-semibold
-                    p-3
-                    rounded-xl
-                    cursor-pointer
-                    disabled:opacity-60
-                    disabled:cursor-not-allowed
-                "
-                >{t("editFarmer")}</button>
-
-                <button
-                    disabled={!!deletingId || updating || submitting}
+                <div className="mt-6 grid gap-2">
+                  <button
+                    type="button"
                     onClick={() =>
-                        deleteFarmerHandler(
-                        farmer._id
-                        )
+                      navigate(
+                        `/farmers/${farmer._id}`
+                      )
                     }
-                    className="
-                        mt-2
-                        w-full
-                        bg-red-600
-                        hover:bg-red-700
-                        text-white
-                        font-semibold
+                    className={primaryButtonClassName}
+                  >
+                    <FaEye />
+                    {t("viewDetails")}
+                  </button>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      disabled={!!deletingId || updating || submitting}
+                      onClick={() =>
+                        openEditModal(farmer)
+                      }
+                      className="
+                        inline-flex
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-lg
+                        border
+                        border-emerald-900/10
+                        bg-emerald-50
                         p-3
-                        rounded-xl
+                        font-semibold
+                        text-emerald-800
+                        transition-all
+                        hover:bg-emerald-100
                         cursor-pointer
                         disabled:opacity-60
                         disabled:cursor-not-allowed
-                    "
-                    >{deletingId === farmer._id ? t("loading") : t("deleteFarmer")}</button>
+                      "
+                    >
+                      <FaEdit />
+                      {t("edit")}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={!!deletingId || updating || submitting}
+                      onClick={() =>
+                        deleteFarmerHandler(
+                          farmer._id
+                        )
+                      }
+                      className="
+                        inline-flex
+                        items-center
+                        justify-center
+                        gap-2
+                        rounded-lg
+                        bg-red-50
+                        p-3
+                        font-semibold
+                        text-red-700
+                        transition-all
+                        hover:bg-red-100
+                        cursor-pointer
+                        disabled:opacity-60
+                        disabled:cursor-not-allowed
+                      "
+                    >
+                      <FaTrash />
+                      {deletingId === farmer._id ? t("loading") : t("delete")}
+                    </button>
+                  </div>
+                </div>
 
               </div>
 
@@ -514,7 +581,8 @@ const Farmers = () => {
             className={`
                 fixed
                 inset-0
-                bg-black/50
+                bg-slate-950/50
+                backdrop-blur-sm
                 flex
                 justify-center
                 items-center
@@ -534,11 +602,14 @@ const Farmers = () => {
 
             <div
                 className={`
-                bg-white
-                rounded-3xl
+                bg-white/95
+                border
+                border-emerald-900/10
+                rounded-lg
                 p-6
                 w-full
                 max-w-lg
+                shadow-xl
                 transition-all
                 duration-300
                 ease-in-out
@@ -551,7 +622,15 @@ const Farmers = () => {
                 `}
             >
 
-                <h2 className="text-3xl font-bold text-green-800 mb-6 py-2">{t("editFarmer")}</h2>
+                <div className="mb-6 flex items-center gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
+                    <FaEdit />
+                  </div>
+                  <div>
+                    <h2 className="text-3xl font-black text-slate-950">{t("editFarmer")}</h2>
+                    <p className="text-sm text-slate-500">{selectedFarmer?.name}</p>
+                  </div>
+                </div>
 
                 <form
                 onSubmit={
@@ -571,12 +650,7 @@ const Farmers = () => {
                         name: e.target.value,
                     })
                     }
-                    className="
-                    w-full
-                    border
-                    p-4
-                    rounded-2xl
-                    "
+                    className={inputClassName}
                     placeholder={t("farmerName")}
                 />
 
@@ -592,12 +666,7 @@ const Farmers = () => {
                         e.target.value,
                     })
                     }
-                    className="
-                    w-full
-                    border
-                    p-4
-                    rounded-2xl
-                    "
+                    className={inputClassName}
                     placeholder={t("phone")}
                 />
 
@@ -613,30 +682,16 @@ const Farmers = () => {
                         e.target.value,
                     })
                     }
-                    className="
-                    w-full
-                    border
-                    p-4
-                    rounded-2xl
-                    "
+                    className={inputClassName}
                     placeholder={t("village")}
                 />
 
-                <div className="flex gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row">
 
                     <button
                     type="submit"
                     disabled={updating}
-                    className="
-                        flex-1
-                        bg-green-700
-                        hover:bg-green-800
-                        disabled:opacity-60
-                        disabled:cursor-not-allowed
-                        text-white
-                        p-4
-                        rounded-2xl
-                    "
+                    className={`flex-1 ${primaryButtonClassName}`}
                     >{updating ? t("saving") : t("update")}</button>
 
                     <button
@@ -647,12 +702,17 @@ const Farmers = () => {
                     }
                     className="
                         flex-1
-                        bg-gray-300
-                        hover:bg-gray-400
+                        border
+                        border-slate-200
+                        bg-white
+                        hover:bg-slate-50
                         disabled:opacity-60
                         disabled:cursor-not-allowed
-                        p-4
-                        rounded-2xl
+                        p-3
+                        rounded-lg
+                        font-semibold
+                        text-slate-700
+                        cursor-pointer
                     "
                     >{t("cancel")}</button>
 
@@ -665,10 +725,6 @@ const Farmers = () => {
             </div> 
 
 
-
-        </div>
-
-      </div>
 
     </div>
   );

@@ -74,93 +74,92 @@ const Register = () => {
         <div
         className="
           min-h-screen
-          bg-cover
-          bg-center
-          bg-no-repeat
           flex
           justify-center
           items-center
           px-4
+          bg-[#f8f9ff]
+          relative
+          overflow-hidden
         "
-        style={{
-            backgroundImage:
-            "url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop')",
-        }}
         >
-      <div className="absolute inset-0 bg-black/40"></div>
+      <div className="absolute right-[-12rem] top-[-12rem] h-96 w-96 rounded-full bg-emerald-300/25 blur-3xl"></div>
+      <div className="absolute bottom-[-10rem] left-[-10rem] h-80 w-80 rounded-full bg-blue-100/80 blur-3xl"></div>
 
             <div
         className="
             relative
             w-full
             max-w-[420px]
-            bg-white/15
-            backdrop-blur-lg
+            bg-white/80
+            backdrop-blur-xl
             border
-            border-white/20
-            rounded-3xl
-            shadow-2xl
+            border-emerald-900/10
+            rounded-lg
+            shadow-xl
             p-6
-            sm:p-8
+            sm:py-6
+            sm:px-8
+            mt-2
         "
         >
-        <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white py-2">{t("appName")}</h1>
+        <div className="text-center mb-6">
+          <h1 className="text-3xl sm:text-4xl font-black text-emerald-800 py-2">{t("appName")}</h1>
 
-          <p className="text-gray-200 mt-2 text-sm sm:text-base">{t("createFarmerAccount")}</p>
+          <p className="text-slate-600 mt-1 text-sm sm:text-base">{t("createFarmerAccount")}</p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-5"
+          className="space-y-4"
         >
           <div>
-            <label className="text-white text-sm block mb-3 font-semibold">{t("fullName")}</label>
+            <label className="text-slate-700 text-sm block mb-2 font-semibold">{t("fullName")}</label>
 
             <input
               type="text"
               name="name"
               placeholder={t("enterYourName")}
-              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full p-3 rounded-lg bg-white/90 border border-emerald-900/10 outline-none text-slate-900 focus:ring-2 focus:ring-emerald-700/20 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-3 font-semibold">{t("phoneNumber")}</label>
+            <label className="text-slate-700 text-sm block mb-2 font-semibold">{t("phoneNumber")}</label>
 
             <input
               type="text"
               name="phone"
               placeholder={t("enterPhoneNumber")}
-              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full p-3 rounded-lg bg-white/90 border border-emerald-900/10 outline-none text-slate-900 focus:ring-2 focus:ring-emerald-700/20 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-3 font-semibold">{t("sixDigitPin")}</label>
+            <label className="text-slate-700 text-sm block mb-2 font-semibold">{t("sixDigitPin")}</label>
 
             <input
               type="password"
               name="pin"
               placeholder={t("enterPin")}
-              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full p-3 rounded-lg bg-white/90 border border-emerald-900/10 outline-none text-slate-900 focus:ring-2 focus:ring-emerald-700/20 transition-all"
               onChange={handleChange}
               required
             />
           </div>
 
           <div>
-            <label className="text-white text-sm block mb-3 font-semibold">{t("confirmPin")}</label>
+            <label className="text-slate-700 text-sm block mb-2 font-semibold">{t("confirmPin")}</label>
 
             <input
               type="password"
               name="confirmPin"
               placeholder={t("confirmPin")}
-              className="w-full p-3 rounded-xl bg-white/90 outline-none text-black focus:ring-2 focus:ring-green-500 transition-all"
+              className="w-full p-3 rounded-lg bg-white/90 border border-emerald-900/10 outline-none text-slate-900 focus:ring-2 focus:ring-emerald-700/20 transition-all"
               onChange={handleChange}
               required
             />
@@ -171,8 +170,8 @@ const Register = () => {
             disabled={loading}
             className="
             w-full
-            bg-linear-to-r from-green-500 to-green-800
-            hover:from-green-600 hover:to-green-900
+            bg-emerald-800
+            hover:bg-emerald-700
             disabled:opacity-60
             disabled:cursor-not-allowed
             transition-all
@@ -180,7 +179,7 @@ const Register = () => {
             text-white
             font-semibold
             p-3
-            rounded-xl
+            rounded-lg
             text-base
             cursor-pointer
             mt-6
@@ -190,12 +189,12 @@ const Register = () => {
           </button>
         </form>
 
-        <p className="text-center text-gray-200 mt-6 text-sm sm:text-base">
+        <p className="text-center text-slate-600 mt-6 text-sm sm:text-base">
           Already have an account?{" "}
 
           <Link
             to="/login"
-            className="text-yellow-300 font-semibold hover:text-yellow-400 transition-all"
+            className="text-emerald-800 font-semibold hover:text-emerald-700 transition-all"
           >{t("login")}</Link>
         </p>
       </div>

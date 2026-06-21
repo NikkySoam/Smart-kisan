@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
 
@@ -12,12 +13,14 @@ import toast from "react-hot-toast";
 import {
   FaCity,
   FaSave,
+  FaSignOutAlt,
   FaTint,
   FaUser,
 } from "react-icons/fa";
 
 const Settings = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const token =
     localStorage.getItem("token");
 
@@ -136,6 +139,19 @@ const fetchSettings =
     Authorization: `Bearer ${token}`,
   };
 
+  const logoutHandler = () => {
+    const confirmLogout =
+      window.confirm(t("logoutConfirm"));
+
+    if (!confirmLogout) return;
+
+    localStorage.removeItem(
+      "token"
+    );
+
+    navigate("/");
+  };
+
   const updateProfile = async (
     e: React.FormEvent
   ) => {
@@ -231,50 +247,98 @@ const fetchSettings =
     }
   };
 
+  const inputClassName = `
+    w-full
+    rounded-lg
+    border
+    border-emerald-900/10
+    bg-white/80
+    px-4
+    py-3.5
+    text-slate-900
+    outline-none
+    transition-all
+    placeholder:text-slate-400
+    focus:border-emerald-700
+    focus:ring-4
+    focus:ring-emerald-700/10
+  `;
+
+  const cardClassName = `
+    rounded-lg
+    border
+    border-emerald-900/10
+    bg-white/75
+    p-6
+    shadow-sm
+    backdrop-blur-xl
+    sm:p-8
+  `;
+
+  const primaryButtonClassName = `
+    inline-flex
+    items-center
+    justify-center
+    gap-3
+    rounded-lg
+    bg-emerald-800
+    px-5
+    py-3.5
+    font-semibold
+    text-white
+    shadow-sm
+    transition-all
+    hover:bg-emerald-700
+    disabled:cursor-not-allowed
+    disabled:opacity-60
+    cursor-pointer
+  `;
+
   return (
-    <div className="py-2 px-4 sm:p-4">
+    <div className="px-3 py-4 sm:px-5 lg:px-8">
 
       {/* HEADER */}
 
       <div
         className="
+          mx-auto
+          max-w-6xl
           flex
           flex-col
-          sm:flex-row
-          justify-between
-          sm:items-center
           gap-4
-          mb-8
+          mb-6
         "
       >
         <div>
+          <span className="inline-flex rounded-full bg-emerald-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-emerald-800">
+            {t("account")}
+          </span>
+
           <h1
             className="
-              text-2xl
-              sm:text-3xl
-              font-bold
-              bg-linear-to-r
-              from-green-500
-              to-green-800
-              bg-clip-text
-              text-transparent
-              py-2
+              mt-4
+              text-3xl
+              font-black
+              leading-tight
+              text-slate-950
+              sm:text-5xl
             "
           >
             {t("settings")}
           </h1>
 
-          <p className="text-gray-500 mt-1">{t("manageProfile")}</p>
+          <p className="mt-3 max-w-2xl text-slate-600">{t("manageProfile")}</p>
         </div>
       </div>
 
       <div
         className="
+          mx-auto
           max-w-6xl
           grid
           grid-cols-1
           xl:grid-cols-3
-          gap-5
+          gap-6
           mb-10
         "
       >
@@ -282,53 +346,101 @@ const fetchSettings =
         <div
           className="
             xl:col-span-3
-            bg-linear-to-r
-            from-green-500
-            to-green-800
-            rounded-3xl
+            overflow-hidden
+            rounded-lg
+            bg-[radial-gradient(circle_at_top_right,_rgba(104,219,169,0.35),_transparent_36%),linear-gradient(135deg,_#006948,_#002114)]
             p-6
-            sm:p-8
             text-white
-            shadow-lg
+            shadow-xl
+            sm:p-8
           "
         >
 
-          <div className="flex items-center gap-5">
+          <div
+            className="
+              flex
+              flex-col
+              gap-6
+              sm:flex-row
+              sm:items-center
+              sm:justify-between
+            "
+          >
 
-            <div
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+
+              <div
+                className="
+                  h-20
+                  w-20
+                  shrink-0
+                  rounded-lg
+                  bg-white
+                  flex
+                  items-center
+                  justify-center
+                  text-3xl
+                  font-black
+                  text-emerald-800
+                  shadow-lg
+                "
+              >
+                {formData.name
+                  ?.charAt(0)
+                  ?.toUpperCase() || "F"}
+              </div>
+
+              <div>
+
+                <p className="text-sm font-semibold uppercase tracking-wide text-emerald-100">{t("accountOverview")}</p>
+
+                <h2 className="mt-1 py-1 text-3xl font-black">
+                  {formData.name ||
+                    t("farmer")}
+                </h2>
+
+                <p className="text-emerald-100">
+                  {formData.phone ||
+                    t("noPhoneNumber")}
+                </p>
+
+                <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                  <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
+                    {t("waterRate")}: {formData.waterRate || "-"}
+                  </span>
+                  <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5">
+                    {t("weatherCity")}: {formData.city || "-"}
+                  </span>
+                </div>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              onClick={logoutHandler}
               className="
-                w-20
-                h-20
-                rounded-3xl
-                bg-white
-                text-green-800
                 flex
                 items-center
                 justify-center
-                text-3xl
-                font-bold
+                gap-3
+                rounded-lg
+                border
+                border-white/15
+                bg-white/10
+                px-5
+                py-3.5
+                font-semibold
+                text-white
+                transition-all
+                hover:bg-red-600
+                cursor-pointer
               "
             >
-              {formData.name
-                ?.charAt(0)
-                ?.toUpperCase() || "F"}
-            </div>
-
-            <div>
-
-              <p className="text-green-100 text-sm">{t("accountOverview")}</p>
-
-              <h2 className="text-3xl font-bold mt-1 py-2">
-                {formData.name ||
-                  t("farmer")}
-              </h2>
-
-              <p className="text-green-100 mt-1">
-                {formData.phone ||
-                  t("noPhoneNumber")}
-              </p>
-
-            </div>
+              <FaSignOutAlt />
+              {t("logout")}
+            </button>
 
           </div>
 
@@ -336,26 +448,19 @@ const fetchSettings =
 
         <form
           onSubmit={updateProfile}
-          className="
-            xl:col-span-2
-            bg-white
-            rounded-3xl
-            shadow-lg
-            p-6
-            sm:p-8
-          "
+          className={`xl:col-span-2 ${cardClassName}`}
         >
 
           <div className="flex items-center gap-4 mb-6">
 
-            <div className="bg-green-100 text-green-700 p-4 rounded-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
               <FaUser />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900 py-2">{t("profileDetails")}</h2>
+              <h2 className="text-2xl font-bold text-slate-950 py-1">{t("profileDetails")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">{t("namePhoneUpdate")}</p>
+              <p className="text-slate-500 text-sm">{t("namePhoneUpdate")}</p>
             </div>
 
           </div>
@@ -363,43 +468,27 @@ const fetchSettings =
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
             <div>
-              <label className="block mb-2 text-gray-700 font-medium">{t("fullName")}</label>
+              <label className="block mb-2 text-sm font-semibold text-slate-700">{t("fullName")}</label>
 
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="
-                  w-full
-                  border
-                  border-gray-300
-                  p-4
-                  rounded-2xl
-                  outline-none
-                  focus:border-green-700
-                "
+                className={inputClassName}
                 placeholder={t("enterFullName")}
               />
             </div>
 
             <div>
-              <label className="block mb-2 text-gray-700 font-medium">{t("phoneNumber")}</label>
+              <label className="block mb-2 text-sm font-semibold text-slate-700">{t("phoneNumber")}</label>
 
               <input
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="
-                  w-full
-                  border
-                  border-gray-300
-                  p-4
-                  rounded-2xl
-                  outline-none
-                  focus:border-green-700
-                "
+                className={inputClassName}
                 placeholder={t("enterPhoneNumber")}
               />
             </div>
@@ -409,25 +498,7 @@ const fetchSettings =
           <button
             type="submit"
             disabled={profileLoading}
-            className="
-              mt-6
-              bg-linear-to-r
-              from-green-500
-              to-green-800
-              hover:from-green-600
-              hover:to-green-900
-              disabled:opacity-60
-              disabled:cursor-not-allowed
-              text-white
-              px-6
-              py-4
-              rounded-2xl
-              font-semibold
-              flex
-              items-center
-              gap-3
-              cursor-pointer
-            "
+            className={`mt-6 ${primaryButtonClassName}`}
           >
             <FaSave />
             {profileLoading
@@ -439,64 +510,38 @@ const fetchSettings =
 
         <form
           onSubmit={updateWaterRate}
-          className="
-            bg-white
-            rounded-3xl
-            shadow-lg
-            p-6
-            sm:p-8
-          "
+          className={cardClassName}
         >
 
           <div className="flex items-center gap-4 mb-6">
 
-            <div className="bg-green-100 text-green-700 p-4 rounded-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
               <FaTint />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900 py-2">{t("waterRate")}</h2>
+              <h2 className="text-2xl font-bold text-slate-950 py-1">{t("waterRate")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">{t("appliedFutureEntries")}</p>
+              <p className="text-slate-500 text-sm">{t("appliedFutureEntries")}</p>
             </div>
 
           </div>
 
-          <label className="block mb-2 text-gray-700 font-medium">{t("ratePerHour")}</label>
+          <label className="block mb-2 text-sm font-semibold text-slate-700">{t("ratePerHour")}</label>
 
           <input
             type="number"
             name="waterRate"
             value={formData.waterRate}
             onChange={handleChange}
-            className="
-              w-full
-              border
-              border-gray-300
-              p-4
-              rounded-2xl
-              outline-none
-              focus:border-green-700
-            "
+            className={inputClassName}
             placeholder={t("enterWaterRate")}
           />
 
           <button
             type="submit"
             disabled={waterRateLoading}
-            className="
-              mt-6
-              w-full
-              bg-green-700
-              hover:bg-green-800
-              disabled:opacity-60
-              disabled:cursor-not-allowed
-              text-white
-              p-4
-              rounded-2xl
-              font-semibold
-              cursor-pointer
-            "
+            className={`mt-6 w-full ${primaryButtonClassName}`}
           >
             {waterRateLoading
               ? t("saving")
@@ -507,26 +552,19 @@ const fetchSettings =
 
         <form
           onSubmit={updateCity}
-          className="
-            xl:col-span-3
-            bg-white
-            rounded-3xl
-            shadow-lg
-            p-6
-            sm:p-8
-          "
+          className={`xl:col-span-3 ${cardClassName}`}
         >
 
           <div className="flex items-center gap-4 mb-6">
 
-            <div className="bg-green-100 text-green-700 p-4 rounded-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-emerald-800">
               <FaCity />
             </div>
 
             <div>
-              <h2 className="text-2xl font-bold text-green-900 py-2">{t("weatherCity")}</h2>
+              <h2 className="text-2xl font-bold text-slate-950 py-1">{t("weatherCity")}</h2>
 
-              <p className="text-gray-500 text-sm mt-1">{t("dashboardWeatherCard")}</p>
+              <p className="text-slate-500 text-sm">{t("dashboardWeatherCard")}</p>
             </div>
 
           </div>
@@ -538,33 +576,14 @@ const fetchSettings =
               name="city"
               value={formData.city}
               onChange={handleChange}
-              className="
-                w-full
-                border
-                border-gray-300
-                p-4
-                rounded-2xl
-                outline-none
-                focus:border-green-700
-              "
+                className={inputClassName}
               placeholder={t("enterCity")}
             />
 
             <button
               type="submit"
               disabled={cityLoading}
-              className="
-                bg-green-700
-                hover:bg-green-800
-                disabled:opacity-60
-                disabled:cursor-not-allowed
-                text-white
-                px-8
-                py-4
-                rounded-2xl
-                font-semibold
-                cursor-pointer
-              "
+              className={primaryButtonClassName}
             >
               {cityLoading
                 ? t("saving")

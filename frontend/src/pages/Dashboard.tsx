@@ -2,7 +2,12 @@ import { useTranslation } from "react-i18next";
 import WeatherCard from "../components/WeatherCard";
 import AnalyticsChart from "../components/AnalyticsChart";
 
-import { FaLeaf, FaTint, FaStethoscope } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaLeaf,
+  FaStethoscope,
+  FaTint,
+} from "react-icons/fa";
 
 import { useNavigate } from "react-router-dom";
 
@@ -11,283 +16,123 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
+  const modules = [
+    {
+      title: t("cropDoctor"),
+      description: t("cropDoctorDescription"),
+      path: "/crop-doctor",
+      icon: <FaStethoscope />,
+      image: "/ai-bg.jpeg",
+      label: "AI",
+    },
+    {
+      title: t("tubewellWater"),
+      description: t("tubewellWaterDescription"),
+      path: "/water-management",
+      icon: <FaTint />,
+      image: "/tubewell.jpg",
+      label: t("water"),
+    },
+    {
+      title: t("apnaKhet"),
+      description: t("apnaKhetDescription"),
+      path: "/fields",
+      icon: <FaLeaf />,
+      image: "/field.jpg",
+      label: t("fields"),
+    },
+  ];
+
   return (
-    <div className="py-2 px-4 sm:p-4">
-      {/* HEADER */}
+    <div className="mx-auto max-w-7xl px-3 py-4 sm:px-5 lg:px-8">
+      <section className="mb-8 overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top_right,_rgba(104,219,169,0.35),_transparent_36%),linear-gradient(135deg,_#006948,_#002114)] p-6 text-white shadow-xl sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-wide text-emerald-100">
+              {t("appName")}
+            </span>
 
-      <div
-        className=" 
-          flex
-          flex-col
-          sm:flex-row
-          justify-between
-          sm:items-center
-          gap-4
-          mb-8" >
-        <div>
-          <h1
-            className="
-              text-2xl
-              sm:text-3xl
-              font-bold
-              bg-linear-to-r
-              from-green-500
-              to-green-800
-              bg-clip-text
-              text-transparent
-              py-2
-            "
-          >
-            {t("dashboard")}
-          </h1>
+            <h1 className="mt-5 max-w-3xl text-3xl font-black leading-tight sm:text-5xl">
+              {t("dashboard")}
+            </h1>
 
-          <p className="text-gray-500 mt-1">{t("welcomeSmartKisan")}</p>
-        </div>
-      </div>
+            <p className="mt-3 max-w-2xl text-emerald-50">
+              {t("welcomeSmartKisan")}
+            </p>
+          </div>
 
-      {/* STATS CARDS */}
-
-      <div
-        className="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          lg:grid-cols-3
-          gap-5
-          mb-10
-        "
-      >
-        {/* CROP DOCTOR */}
-        <div
-          onClick={() => navigate("/crop-doctor")}
-          className="
-            relative
-            overflow-hidden
-            rounded-3xl
-            shadow-lg
-            cursor-pointer
-            group
-            min-h-[260px]
-            bg-cover
-            bg-center
-            hover:scale-[1.02]
-            transition-all
-        "
-          style={{
-            backgroundImage: "url(/ai-bg.jpeg)",
-          }}
-        >
-          {/* OVERLAY */}
-
-          <div
-            className="
-            absolute
-            inset-0
-            bg-black/45
-            group-hover:bg-black/35
-            transition-all
-            "
-          ></div>
-
-          {/* CONTENT */}
-
-          <div
-            className="
-            relative
-            z-10
-            h-full
-            p-6
-            flex
-            flex-col
-            justify-between
-            text-white
-            "
-          >
-            {/* ICON */}
-
-            <div
-              className="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur-md
-                flex
-                items-center
-                justify-center
-            "
-            >
-              <FaStethoscope className="text-3xl" />
-            </div>
-
-            {/* TEXT */}
-
-            <div>
-              <h2 className="text-4xl font-bold py-2">{t("cropDoctor")}</h2>
-
-              <p className="mt-3 text-gray-200">{t("cropDoctorDescription")}</p>
-            </div>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            {modules.map((module) => (
+              <div
+                key={module.path}
+                className="rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md"
+              >
+                <p className="text-lg font-black">{module.label}</p>
+                <p className="text-xs text-emerald-100">Module</p>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* APNA KHET */}
-
-        <div
-          onClick={() => navigate("/fields")}
-          className="
-            relative
-            overflow-hidden
-            rounded-3xl
-            shadow-lg
-            cursor-pointer
-            group
-            min-h-[260px]
-            bg-cover
-            bg-center
-            hover:scale-[1.02]
-            transition-all
-        "
-          style={{
-            backgroundImage: "url(/field.jpg)",
-          }}
-        >
-          {/* OVERLAY */}
-
-          <div
+      <section className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+        {modules.map((module) => (
+          <button
+            key={module.path}
+            type="button"
+            onClick={() => navigate(module.path)}
             className="
-            absolute
-            inset-0
-            bg-black/45
-            group-hover:bg-black/35
-            transition-all
-            "
-          ></div>
-
-          {/* CONTENT */}
-
-          <div
-            className="
-            relative
-            z-10
-            h-full
-            p-6
-            flex
-            flex-col
-            justify-between
-            text-white
+              group
+              overflow-hidden
+              rounded-lg
+              border
+              border-emerald-900/10
+              bg-white/75
+              text-left
+              shadow-sm
+              backdrop-blur-xl
+              transition-all
+              hover:-translate-y-1
+              hover:shadow-xl
+              cursor-pointer
             "
           >
-            {/* TOP */}
-
-            <div
-              className="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur-md
-                flex
-                items-center
-                justify-center
-            "
-            >
-              <FaLeaf className="text-3xl" />
+            <div className="relative h-44 overflow-hidden">
+              <img
+                src={module.image}
+                alt=""
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/70 via-slate-950/20 to-transparent" />
+              <div className="absolute left-5 top-5 flex h-12 w-12 items-center justify-center rounded-lg border border-white/20 bg-white/15 text-xl text-white backdrop-blur-md">
+                {module.icon}
+              </div>
             </div>
 
-            {/* BOTTOM */}
+            <div className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-950">
+                    {module.title}
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {module.description}
+                  </p>
+                </div>
 
-            <div>
-              <h2 className="text-4xl font-bold py-2">{t("apnaKhet")}</h2>
-
-              <p className="mt-3 text-gray-200">{t("apnaKhetDescription")}</p>
+                <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-800 transition group-hover:bg-emerald-800 group-hover:text-white">
+                  <FaArrowRight className="text-sm" />
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
+          </button>
+        ))}
+      </section>
 
-        {/* WATER MANAGEMENT */}
-
-        <div
-          onClick={() => navigate("/water-management")}
-          className="
-            relative
-            overflow-hidden
-            rounded-3xl
-            shadow-lg
-            cursor-pointer
-            group
-            min-h-[260px]
-            bg-cover
-            bg-center
-            hover:scale-[1.02]
-            transition-all
-        "
-          style={{
-            backgroundImage: "url(/tubewell.jpg)",
-          }}
-        >
-          {/* OVERLAY */}
-
-          <div
-            className="
-            absolute
-            inset-0
-            bg-black/45
-            group-hover:bg-black/35
-            transition-all
-            "
-          ></div>
-
-          {/* CONTENT */}
-
-          <div
-            className="
-            relative
-            z-10
-            h-full
-            p-6
-            flex
-            flex-col
-            justify-between
-            text-white
-            "
-          >
-            {/* ICON */}
-
-            <div
-              className="
-                w-16
-                h-16
-                rounded-2xl
-                bg-white/20
-                backdrop-blur-md
-                flex
-                items-center
-                justify-center
-            "
-            >
-              <FaTint className="text-3xl" />
-            </div>
-
-            {/* TEXT */}
-
-            <div>
-              <h2 className="text-4xl font-bold py-2">{t("tubewellWater")}</h2>
-
-              <p className="mt-3 text-gray-200">
-                {t("tubewellWaterDescription")}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <WeatherCard />
-      </div>
-
-      <div className="mt-8">
         <AnalyticsChart />
-      </div>
+      </section>
     </div>
   );
 };

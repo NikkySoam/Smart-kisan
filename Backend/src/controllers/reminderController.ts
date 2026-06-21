@@ -91,48 +91,20 @@ export const checkReminders =
 
           if (waterDiff >= 7) {
 
-            // CHECK EXISTING
+            const alreadyReminded =
+              field.lastWaterReminderFor?.toString() ===
+              lastWater._id.toString();
 
-            // CHECK LAST 24 HOURS
-
-            const yesterday =       // 24 hrs before
-              new Date(
-                Date.now() -
-                  24 *
-                    60 *
-                    60 *
-                    1000
-              );
-
-            const existing =
-              await Notification.findOne({
-                user: req.user._id,
-
-                title:
-                  "Water Reminder",
-
-                type: "water",
-
-                message: {
-                  $regex: field.name,
-                  $options: "i",
-                },
-
-                createdAt: {
-                  $gte: yesterday,
-                },
-              });
-
-
-            if (!existing) {
-              await Notification.findOneAndUpdate(
-                {
+            if (!alreadyReminded) {
+              const existing =
+                await Notification.findOne({
                   user: req.user._id,
 
                   title:
                     "Water Reminder",
 
-                  type: "water",
+                  type:
+                    "water",
 
                   message: {
                     $regex: field.name,
@@ -140,31 +112,35 @@ export const checkReminders =
                   },
 
                   createdAt: {
-                    $gte: yesterday,
+                    $gte: lastWater.date,
                   },
-                },
+                });
 
-                {
-                  $setOnInsert: {
-                    user:
-                      req.user._id,
+              if (existing) {
+                field.lastWaterReminderFor =
+                  lastWater._id;
 
-                    title:
-                      "Water Reminder",
+                await field.save();
+              } else {
+                await Notification.create({
+                  user:
+                    req.user._id,
 
-                    message:
-                      `Water reminder for ${field.name}. No water added since ${waterDiff} days.`,
+                  title:
+                    "Water Reminder",
 
-                    type:
-                      "water",
-                  },
-                },
+                  message:
+                    `Water reminder for ${field.name}. No water added since ${waterDiff} days.`,
 
-                {
-                  upsert: true,
-                  new: true,
-                }
-              );
+                  type:
+                    "water",
+                });
+
+                field.lastWaterReminderFor =
+                  lastWater._id;
+
+                await field.save();
+              }
             }
           }
         }
@@ -194,79 +170,57 @@ export const checkReminders =
             25
           ) {
 
-            const yesterday =   // 24hrs before
-              new Date(
-                Date.now() -
-                  24 *
-                    60 *
-                    60 *
-                    1000
-              );
+            const alreadyReminded =
+              field.lastFertilizerReminderFor?.toString() ===
+              lastFertilizer._id.toString();
 
-            const existing =
-              await Notification.findOne({
-                user: req.user._id,
+            if (!alreadyReminded) {
+              const existing =
+                await Notification.findOne({
+                  user: req.user._id,
 
-                title:
-                  "Fertilizer Reminder",
+                  title:
+                    "Fertilizer Reminder",
 
-                type:
-                  "fertilizer",
+                  type:
+                    "fertilizer",
 
-                message: {
-                  $regex: field.name,
-                  $options: "i",
-                },
-
-                createdAt: {
-                  $gte: yesterday,
-                },
-              });
-
-            if (!existing) {
-
-                await Notification.findOneAndUpdate(
-                  {
-                    user: req.user._id,
-
-                    title:
-                      "Fertilizer Reminder",
-
-                    type:
-                      "fertilizer",
-
-                    message: {
-                      $regex: field.name,
-                      $options: "i",
-                    },
-
-                    createdAt: {
-                      $gte: yesterday,
-                    },
+                  message: {
+                    $regex: field.name,
+                    $options: "i",
                   },
 
-                  {
-                    $setOnInsert: {
-                      user:
-                        req.user._id,
-
-                      title:
-                        "Fertilizer Reminder",
-
-                      message:
-                        `Fertilizer reminder for ${field.name}. No fertilizer added since ${fertilizerDiff} days.`,
-
-                      type:
-                        "fertilizer",
-                    },
+                  createdAt: {
+                    $gte: lastFertilizer.date,
                   },
+                });
 
-                  {
-                    upsert: true,
-                    new: true,
-                  }
-                );
+              if (existing) {
+                field.lastFertilizerReminderFor =
+                  lastFertilizer._id;
+
+                await field.save();
+              } else {
+                await Notification.create({
+                  user:
+                    req.user._id,
+
+                  title:
+                    "Fertilizer Reminder",
+
+                  message:
+                    `Fertilizer reminder for ${field.name}. No fertilizer added since ${fertilizerDiff} days.`,
+
+                  type:
+                    "fertilizer",
+                });
+
+                field.lastFertilizerReminderFor =
+                  lastFertilizer._id;
+
+                await field.save();
               }
+            }
           }
         }
       }

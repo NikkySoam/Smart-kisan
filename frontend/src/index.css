@@ -1,9 +1,58 @@
 @import "tailwindcss";
 
+@theme {
+  --color-green-50: #eff4ff;
+  --color-green-100: #d3e4fe;
+  --color-green-200: #adedd3;
+  --color-green-300: #95d3ba;
+  --color-green-400: #68dba9;
+  --color-green-500: #00855d;
+  --color-green-600: #006c4a;
+  --color-green-700: #006948;
+  --color-green-800: #005137;
+  --color-green-900: #002114;
+  --color-green-950: #00170e;
+  --color-emerald-50: #eff4ff;
+  --color-emerald-100: #d3e4fe;
+  --color-emerald-200: #adedd3;
+  --color-emerald-300: #95d3ba;
+  --color-emerald-400: #68dba9;
+  --color-emerald-500: #00855d;
+  --color-emerald-600: #006c4a;
+  --color-emerald-700: #006948;
+  --color-emerald-800: #005137;
+  --color-emerald-900: #002114;
+  --color-emerald-950: #00170e;
+  --color-blue-50: #eff4ff;
+  --color-blue-100: #dce9ff;
+  --color-blue-200: #adedd3;
+  --color-blue-300: #95d3ba;
+  --color-blue-400: #68dba9;
+  --color-blue-500: #00855d;
+  --color-blue-600: #006c4a;
+  --color-blue-700: #006948;
+  --color-blue-800: #005137;
+  --color-blue-900: #002114;
+  --color-blue-950: #00170e;
+  --color-purple-50: #eff4ff;
+  --color-purple-100: #d3e4fe;
+  --color-purple-200: #adedd3;
+  --color-purple-300: #95d3ba;
+  --color-purple-400: #68dba9;
+  --color-purple-500: #00855d;
+  --color-purple-600: #005137;
+  --color-purple-700: #002114;
+  --color-purple-800: #00170e;
+  --color-purple-900: #00170e;
+  --color-purple-950: #00170e;
+}
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: #f8f9ff;
+  color: #0b1c30;
 }
 
 
@@ -36,6 +85,65 @@ svg {
 .app-content,
 .page-container {
   padding: 1rem;
+}
+
+.app-content {
+  min-height: calc(100vh - 64px);
+  background:
+    radial-gradient(circle at top right, rgba(104, 219, 169, 0.18), transparent 34rem),
+    radial-gradient(circle at bottom left, rgba(211, 228, 254, 0.75), transparent 28rem),
+    #f8f9ff;
+  color: #0b1c30;
+}
+
+.app-content :where(.rounded-3xl) {
+  border-radius: 0.75rem;
+}
+
+.app-content :where(.rounded-2xl) {
+  border-radius: 0.625rem;
+}
+
+.app-content :where(.bg-white) {
+  background-color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 105, 72, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.app-content :where(.shadow, .shadow-lg, .shadow-xl, .shadow-2xl) {
+  box-shadow: 0 18px 42px rgba(11, 28, 48, 0.08);
+}
+
+.app-content :where(input, select, textarea) {
+  border-color: rgba(0, 105, 72, 0.14);
+  background-color: rgba(255, 255, 255, 0.86);
+  color: #0b1c30;
+}
+
+.app-content :where(input, select, textarea):focus {
+  border-color: #006948;
+  box-shadow: 0 0 0 4px rgba(0, 105, 72, 0.1);
+}
+
+.app-content table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.app-content thead tr {
+  background: linear-gradient(135deg, #006948, #002114) !important;
+}
+
+.app-content tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.app-content tbody tr:hover {
+  background-color: rgba(239, 244, 255, 0.72);
+}
+
+.app-content :where(.text-gray-500) {
+  color: #64748b;
 }
 
 /* Form controls sizing for mobile */

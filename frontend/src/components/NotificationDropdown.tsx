@@ -161,14 +161,14 @@ const NotificationDropdown = () => {
           justify-center
           rounded-full
           border
-          border-white/20
-          bg-white/10
-          text-white
+          border-emerald-900/10
+          bg-emerald-50
+          text-emerald-800
           transition
-          hover:bg-white/20
+          hover:bg-emerald-100
           focus:outline-none
           focus:ring-2
-          focus:ring-white/70
+          focus:ring-emerald-700/20
         "
       >
         <FaBell className="text-lg" />
@@ -186,7 +186,7 @@ const NotificationDropdown = () => {
               justify-center
               rounded-full
               border-2
-              border-green-700
+              border-white
               bg-red-500
               px-1
               text-[10px]

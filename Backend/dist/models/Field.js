@@ -59,6 +59,16 @@ const fieldSchema = new mongoose_1.Schema({
         type: String,
         default: "",
     },
+    lastWaterReminderFor: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "FieldWater",
+        default: null,
+    },
+    lastFertilizerReminderFor: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Fertilizer",
+        default: null,
+    },
     user: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",

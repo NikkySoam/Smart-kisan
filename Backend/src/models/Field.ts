@@ -8,6 +8,8 @@ export interface IField
   crop: string;
   imageUrl: string;
   cloudinaryPublicId: string;
+  lastWaterReminderFor?: mongoose.Types.ObjectId;
+  lastFertilizerReminderFor?: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
 }
 
@@ -41,6 +43,16 @@ const fieldSchema =
       cloudinaryPublicId: {
         type: String,
         default: "",
+      },
+      lastWaterReminderFor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FieldWater",
+        default: null,
+      },
+      lastFertilizerReminderFor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Fertilizer",
+        default: null,
       },
       user: {
         type: mongoose.Schema.Types.ObjectId,
