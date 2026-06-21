@@ -14,6 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteField = exports.updateField = exports.getFieldDetails = exports.getFields = exports.addField = void 0;
 const Field_1 = __importDefault(require("../models/Field"));
+const uploadToCloudinary_1 = require("../utils/uploadToCloudinary");
+const cloudinary_1 = __importDefault(require("../config/cloudinary"));
 const FieldWater_1 = __importDefault(require("../models/FieldWater"));
 const Fertilizer_1 = __importDefault(require("../models/Fertilizer"));
 const Labour_1 = __importDefault(require("../models/Labour"));
@@ -23,11 +25,21 @@ const User_1 = __importDefault(require("../models/User"));
 const addField = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { name, area, location, crop, } = req.body;
+        const file = req.file;
+        let imageUrl = "";
+        let cloudinaryPublicId = "";
+        if (file) {
+            const uploadResult = yield (0, uploadToCloudinary_1.uploadToCloudinary)(file.buffer, "fields");
+            imageUrl = uploadResult.secure_url || "";
+            cloudinaryPublicId = uploadResult.public_id || "";
+        }
         const field = yield Field_1.default.create({
             name,
-            area,
+            area: Number(area),
             location,
             crop,
+            imageUrl,
+            cloudinaryPublicId,
             user: req.user._id,
         });
         res.status(201).json({
@@ -140,6 +152,7 @@ const updateField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const { id } = req.params;
         const { name, area, location, crop, } = req.body;
+        const file = req.file;
         const field = yield Field_1.default.findOne({
             _id: id,
             user: req.user._id,
@@ -150,8 +163,17 @@ const updateField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "Field not found",
             });
         }
+        if (file) {
+            if (field.cloudinaryPublicId) {
+                yield cloudinary_1.default.uploader.destroy(field.cloudinaryPublicId);
+            }
+            const uploadResult = yield (0, uploadToCloudinary_1.uploadToCloudinary)(file.buffer, "fields");
+            field.imageUrl = uploadResult.secure_url || "";
+            field.cloudinaryPublicId =
+                uploadResult.public_id || "";
+        }
         field.name = name;
-        field.area = area;
+        field.area = Number(area);
         field.location =
             location;
         field.crop = crop;

@@ -36,8 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const fieldWaterSchema = new mongoose_1.Schema({
     field: {
-        type: mongoose_1.default.Schema.Types
-            .ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "Field",
         required: true,
     },
@@ -50,8 +49,7 @@ const fieldWaterSchema = new mongoose_1.Schema({
         required: true,
     },
     user: {
-        type: mongoose_1.default.Schema.Types
-            .ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },

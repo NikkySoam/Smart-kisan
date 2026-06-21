@@ -65,7 +65,7 @@ exports.getFarmers = getFarmers;
 const updateFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { name, phone, village, } = req.body;
+        const { name, phone, village } = req.body;
         const farmer = yield Farmer_1.default.findOne({
             _id: id,
             user: req.user._id,
@@ -76,13 +76,7 @@ const updateFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 message: "Farmer not found",
             });
         }
-        const updatedFarmer = yield Farmer_1.default.findByIdAndUpdate(id, {
-            name,
-            phone,
-            village,
-        }, {
-            new: true,
-        });
+        const updatedFarmer = yield Farmer_1.default.findByIdAndUpdate(id, { name, phone, village }, { new: true });
         res.status(200).json({
             success: true,
             message: "Farmer updated successfully",
@@ -113,9 +107,7 @@ const deleteFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         }
         // DELETE RELATED WATER ENTRIES
-        yield Water_1.default.deleteMany({
-            farmer: id,
-        });
+        yield Water_1.default.deleteMany({ farmer: id });
         // DELETE FARMER
         yield Farmer_1.default.findByIdAndDelete(id);
         res.status(200).json({

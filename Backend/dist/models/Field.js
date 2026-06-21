@@ -49,11 +49,18 @@ const fieldSchema = new mongoose_1.Schema({
     },
     crop: {
         type: String,
+        required: true,
+    },
+    imageUrl: {
+        type: String,
+        default: "",
+    },
+    cloudinaryPublicId: {
+        type: String,
         default: "",
     },
     user: {
-        type: mongoose_1.default.Schema.Types
-            .ObjectId,
+        type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },

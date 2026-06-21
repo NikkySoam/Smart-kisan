@@ -19,18 +19,13 @@ const Water_1 = __importDefault(require("../models/Water"));
 const getDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // TOTAL FARMERS
-        const totalFarmers = yield Farmer_1.default.countDocuments({
-            user: req.user._id,
-        });
+        const totalFarmers = yield Farmer_1.default.countDocuments({ user: req.user._id });
         // WATER ENTRIES
-        const waterEntries = yield Water_1.default.find({
-            user: req.user._id,
-        });
+        const waterEntries = yield Water_1.default.find({ user: req.user._id });
         // TOTAL HOURS
         const totalHours = waterEntries.reduce((acc, item) => acc + item.hours, 0);
         // TOTAL EARNINGS
-        const totalEarnings = waterEntries.reduce((acc, item) => acc +
-            item.totalAmount, 0);
+        const totalEarnings = waterEntries.reduce((acc, item) => acc + item.totalAmount, 0);
         // TOTAL ENTRIES
         const totalEntries = waterEntries.length;
         // WATER RATE

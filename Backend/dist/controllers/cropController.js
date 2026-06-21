@@ -17,7 +17,7 @@ const Crop_1 = __importDefault(require("../models/Crop"));
 // ADD CROP
 const addCrop = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, season, area, } = req.body;
+        const { name, season, area } = req.body;
         const crop = yield Crop_1.default.create({
             name,
             season,

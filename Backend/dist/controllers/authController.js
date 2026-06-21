@@ -19,7 +19,7 @@ const generateToken_1 = __importDefault(require("../utils/generateToken"));
 // REGISTER
 const registerController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, phone, pin, confirmPin, } = req.body;
+        const { name, phone, pin, confirmPin } = req.body;
         if (!pin || !confirmPin) {
             return res.status(400).json({
                 success: false,
@@ -67,7 +67,6 @@ const registerController = (req, res) => __awaiter(void 0, void 0, void 0, funct
         });
     }
     catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: "Registration Failed",
@@ -80,9 +79,7 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
     try {
         const { phone, pin } = req.body;
         // FIND USER
-        const user = yield User_1.default.findOne({
-            phone,
-        });
+        const user = yield User_1.default.findOne({ phone, });
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -106,7 +103,6 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
     catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: "Login Failed",

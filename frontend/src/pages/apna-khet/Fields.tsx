@@ -496,7 +496,7 @@ const Fields = () => {
       >
 
         {filteredFields.map(
-          (field, index) => (
+          (field) => (
 
             <div
               key={field._id}

@@ -135,6 +135,7 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             const cloudinaryPublicId = uploadResult.public_id;
             // STORE IN DATABASE
             const userId = req.user._id;
+            console.log("1", analysisResult);
             if (analysisResult) {
                 yield cropScanModel_1.default.create({
                     user: userId,
@@ -149,8 +150,10 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             }
         }
         catch (parseError) {
+            console.error(parseError);
             analysisResult = null;
         }
+        console.log("2");
         res.status(200).json({
             success: true,
             data: analysisResult,

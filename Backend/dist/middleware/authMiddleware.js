@@ -17,8 +17,7 @@ const User_1 = __importDefault(require("../models/User"));
 const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let token;
-        if (req.headers.authorization &&
-            req.headers.authorization.startsWith("Bearer")) {
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
             token =
                 req.headers.authorization.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);

@@ -18,7 +18,7 @@ const Field_1 = __importDefault(require("../models/Field"));
 // ADD EQUIPMENT
 const addEquipment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { field, equipmentName, amount, date, } = req.body;
+        const { field, equipmentName, amount, date } = req.body;
         const fieldExists = yield Field_1.default.findOne({
             _id: field,
             user: req.user._id,
@@ -82,7 +82,7 @@ exports.getEquipmentByField = getEquipmentByField;
 const updateEquipment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { equipmentName, amount, date, } = req.body;
+        const { equipmentName, amount, date } = req.body;
         const equipment = yield Equipment_1.default.findOne({
             _id: id,
             user: req.user._id,
@@ -93,12 +93,9 @@ const updateEquipment = (req, res) => __awaiter(void 0, void 0, void 0, function
                 message: "Equipment not found",
             });
         }
-        equipment.equipmentName =
-            equipmentName;
-        equipment.amount =
-            amount;
-        equipment.date =
-            date;
+        equipment.equipmentName = equipmentName;
+        equipment.amount = amount;
+        equipment.date = date;
         yield equipment.save();
         res.status(200).json({
             success: true,
