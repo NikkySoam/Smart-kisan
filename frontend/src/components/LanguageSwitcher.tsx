@@ -72,6 +72,7 @@ const LanguageSwitcher =
             h-6
             md:h-8
             w-9
+            p-1
             md:w-11
             rounded-full
             bg-emerald-800

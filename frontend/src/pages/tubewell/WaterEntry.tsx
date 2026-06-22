@@ -348,15 +348,14 @@ const WaterEntry = () => {
         bg-cover
         bg-center
         bg-no-repeat
-        p-4
-        sm:p-8
+        sm:p-4
       "
     //   style={{
     //     backgroundImage:
     //       "url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1974&auto=format&fit=crop')",
     //   }}
     >
-      <div className="min-h-screen bg-black/40 rounded-3xl p-4 sm:p-8">
+      <div className="min-h-screen bg-black/40 rounded-3xl p-2 sm:p-8">
 
         <div className="max-w-7xl mx-auto">
 
@@ -503,13 +502,13 @@ const WaterEntry = () => {
               border
               border-white/20
               rounded-3xl
-              p-5
+              p-1
               sm:p-8
               shadow-xl
             "
           >
 
-            <h2 className="text-2xl font-bold text-white mb-6 py-2">{t("waterHistory")}</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 p-2">{t("waterHistory")}</h2>
 
             <div className="overflow-x-auto">
 

@@ -45,36 +45,7 @@ const Dashboard = () => {
 
   return (
     <div className="mx-auto max-w-7xl px-3 py-4 sm:px-5 lg:px-8">
-      <section className="mb-8 overflow-hidden rounded-lg bg-[radial-gradient(circle_at_top_right,_rgba(104,219,169,0.35),_transparent_36%),linear-gradient(135deg,_#006948,_#002114)] p-6 text-white shadow-xl sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-wide text-emerald-100">
-              {t("appName")}
-            </span>
-
-            <h1 className="mt-5 max-w-3xl text-3xl font-black leading-tight sm:text-5xl">
-              {t("dashboard")}
-            </h1>
-
-            <p className="mt-3 max-w-2xl text-emerald-50">
-              {t("welcomeSmartKisan")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 text-center">
-            {modules.map((module) => (
-              <div
-                key={module.path}
-                className="rounded-lg border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md"
-              >
-                <p className="text-lg font-black">{module.label}</p>
-                <p className="text-xs text-emerald-100">Module</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+      
       <section className="mb-10 grid grid-cols-1 gap-5 md:grid-cols-3">
         {modules.map((module) => (
           <button
