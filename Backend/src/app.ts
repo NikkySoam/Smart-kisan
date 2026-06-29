@@ -8,9 +8,19 @@ const app = express();
 
 app.use(express.json());
 
+
+
+const allowedOrigins = process.env.CLIENT_URL?.split(",");
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins?.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
   })
 );

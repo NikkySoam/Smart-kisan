@@ -8,7 +8,7 @@ import cloudinary from "../config/cloudinary";
 
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY!,
+  apiKey: process.env.GEMINI_API_KEY!, 
 });
 
 
@@ -119,9 +119,8 @@ export const detectCropIssue = async ( req: Request, res: Response) => {
           ],
 
           config: {
-            responseMimeType: "application/json",
-            
-        }
+            responseMimeType: "application/json",     
+            }
         });
         
         
