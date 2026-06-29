@@ -2,6 +2,7 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
@@ -9,8 +10,16 @@ const helmet_1 = __importDefault(require("helmet"));
 const morgan_1 = __importDefault(require("morgan"));
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+const allowedOrigins = (_a = process.env.CLIENT_URL) === null || _a === void 0 ? void 0 : _a.split(",");
 app.use((0, cors_1.default)({
-    origin: process.env.CLIENT_URL,
+    origin: function (origin, callback) {
+        if (!origin || (allowedOrigins === null || allowedOrigins === void 0 ? void 0 : allowedOrigins.includes(origin))) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error(`Origin ${origin} not allowed by CORS`));
+        }
+    },
     credentials: true,
 }));
 app.use((0, helmet_1.default)());
