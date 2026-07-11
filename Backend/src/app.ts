@@ -44,6 +44,8 @@ import equipmentRoutes from "./routes/equipmentRoutes";
 import notificationRoutes from "./routes/notificationRoutes";
 import reminderRoutes from "./routes/reminderRoutes";
 import aiRoutes from "./routes/aiRoutes";
+import irrigationAdvisorRoutes from "./routes/irrigationAdvisorRoutes";
+import cropSalesRoutes from "./routes/cropSalesRoutes";
 
 
 
@@ -61,6 +63,8 @@ app.use("/api/equipment",equipmentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/reminders",reminderRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/irrigation", irrigationAdvisorRoutes);
+app.use("/api/crop-sales", cropSalesRoutes);
 
 app.get("/health", (req, res) => {
   res.status(200).json({

@@ -34,51 +34,39 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const fieldSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    area: {
-        type: Number,
-        default: 0
-    },
-    location: {
-        type: String,
-        default: "",
-    },
-    crop: {
-        type: String,
-        required: true,
-    },
-    imageUrl: {
-        type: String,
-        default: "",
-    },
-    cloudinaryPublicId: {
-        type: String,
-        default: "",
-    },
-    lastWaterReminderFor: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "FieldWater",
-        default: null,
-    },
-    lastFertilizerReminderFor: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Fertilizer",
-        default: null,
-    },
-    cropSellingPrice: {
-        type: Number,
-        default: 0,
-    },
+const irrigationAdviceSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
+    field: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Field",
+        required: true,
+    },
+    crop: {
+        type: String,
+        required: true,
+    },
+    weatherSnapshot: {
+        temp: { type: Number, required: true },
+        humidity: { type: Number, required: true },
+        condition: { type: String, required: true },
+        windSpeed: { type: Number, required: true },
+    },
+    aiResult: {
+        needsWater: { type: Boolean, required: true },
+        urgency: { type: String, required: true },
+        recommendedWithinHours: { type: Number, required: true },
+        waterRequirement: { type: String, required: true },
+        reason: { type: String, required: true },
+        recommendation: { type: String, required: true },
+        tips: [{ type: String }],
+    },
 }, {
     timestamps: true,
 });
-exports.default = mongoose_1.default.model("Field", fieldSchema);
+// Indexes to speed up queries by field and creation date
+irrigationAdviceSchema.index({ field: 1, createdAt: -1 });
+exports.default = mongoose_1.default.model("IrrigationAdvice", irrigationAdviceSchema);

@@ -14,8 +14,8 @@ import Fertilizer from "../models/Fertilizer";
 import Labour from "../models/Labour";
 
 import Equipment from "../models/Equipment";
-
 import User from "../models/User";
+import CropSaleReceipt from "../models/CropSaleReceipt";
 
 
 // ADD FIELD
@@ -33,7 +33,7 @@ export const addField =
         crop,
       } = req.body;
 
-      const file = req.file as Express.Multer.File | undefined;
+      const file = (req as any).file;
       let imageUrl = "";
       let cloudinaryPublicId = "";
 
@@ -159,6 +159,11 @@ export const getFieldDetails =
           user: req.user._id,
         });
 
+      const receipts = await CropSaleReceipt.find({
+        field: id,
+        user: req.user._id,
+      });
+
       // TOTALS
 
       // USER WATER RATE
@@ -209,6 +214,9 @@ export const getFieldDetails =
             labourTotal +
             equipmentTotal;
 
+        const totalSelling = receipts.reduce((acc, item) => acc + item.totalAmount, 0);
+        const totalQuantitySold = receipts.reduce((acc, item) => acc + item.quantity, 0);
+
       res.status(200).json({
         success: true,
 
@@ -220,6 +228,8 @@ export const getFieldDetails =
             labour: labourTotal,
             equipment: equipmentTotal,
             totalExpense,
+            totalSelling,
+            totalQuantitySold
             },
       });
 
@@ -252,9 +262,10 @@ export const updateField =
         area,
         location,
         crop,
+        cropSellingPrice,
       } = req.body;
 
-      const file = req.file as Express.Multer.File | undefined;
+      const file = (req as any).file;
 
       const field =
         await Field.findOne({
@@ -289,9 +300,11 @@ export const updateField =
 
       field.name = name;
       field.area = Number(area);
-      field.location =
-        location;
+      field.location = location;
       field.crop = crop;
+      if (cropSellingPrice !== undefined) {
+        field.cropSellingPrice = Number(cropSellingPrice);
+      }
 
       await field.save();
 

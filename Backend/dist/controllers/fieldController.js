@@ -21,6 +21,7 @@ const Fertilizer_1 = __importDefault(require("../models/Fertilizer"));
 const Labour_1 = __importDefault(require("../models/Labour"));
 const Equipment_1 = __importDefault(require("../models/Equipment"));
 const User_1 = __importDefault(require("../models/User"));
+const CropSaleReceipt_1 = __importDefault(require("../models/CropSaleReceipt"));
 // ADD FIELD
 const addField = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -110,6 +111,10 @@ const getFieldDetails = (req, res) => __awaiter(void 0, void 0, void 0, function
             field: id,
             user: req.user._id,
         });
+        const receipts = yield CropSaleReceipt_1.default.find({
+            field: id,
+            user: req.user._id,
+        });
         // TOTALS
         // USER WATER RATE
         const user = yield User_1.default.findById(req.user._id);
@@ -126,6 +131,8 @@ const getFieldDetails = (req, res) => __awaiter(void 0, void 0, void 0, function
             fertilizerTotal +
             labourTotal +
             equipmentTotal;
+        const totalSelling = receipts.reduce((acc, item) => acc + item.totalAmount, 0);
+        const totalQuantitySold = receipts.reduce((acc, item) => acc + item.quantity, 0);
         res.status(200).json({
             success: true,
             field,
@@ -135,6 +142,8 @@ const getFieldDetails = (req, res) => __awaiter(void 0, void 0, void 0, function
                 labour: labourTotal,
                 equipment: equipmentTotal,
                 totalExpense,
+                totalSelling,
+                totalQuantitySold
             },
         });
     }
@@ -151,7 +160,7 @@ exports.getFieldDetails = getFieldDetails;
 const updateField = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { name, area, location, crop, } = req.body;
+        const { name, area, location, crop, cropSellingPrice, } = req.body;
         const file = req.file;
         const field = yield Field_1.default.findOne({
             _id: id,
@@ -174,9 +183,11 @@ const updateField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         }
         field.name = name;
         field.area = Number(area);
-        field.location =
-            location;
+        field.location = location;
         field.crop = crop;
+        if (cropSellingPrice !== undefined) {
+            field.cropSellingPrice = Number(cropSellingPrice);
+        }
         yield field.save();
         res.status(200).json({
             success: true,

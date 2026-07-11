@@ -38,6 +38,8 @@ const equipmentRoutes_1 = __importDefault(require("./routes/equipmentRoutes"));
 const notificationRoutes_1 = __importDefault(require("./routes/notificationRoutes"));
 const reminderRoutes_1 = __importDefault(require("./routes/reminderRoutes"));
 const aiRoutes_1 = __importDefault(require("./routes/aiRoutes"));
+const irrigationAdvisorRoutes_1 = __importDefault(require("./routes/irrigationAdvisorRoutes"));
+const cropSalesRoutes_1 = __importDefault(require("./routes/cropSalesRoutes"));
 app.use("/api/auth", authRoutes_1.default);
 app.use("/api/farmers", farmerRoutes_1.default);
 app.use("/api/water", waterRoutes_1.default);
@@ -52,6 +54,8 @@ app.use("/api/equipment", equipmentRoutes_1.default);
 app.use("/api/notifications", notificationRoutes_1.default);
 app.use("/api/reminders", reminderRoutes_1.default);
 app.use("/api/ai", aiRoutes_1.default);
+app.use("/api/irrigation", irrigationAdvisorRoutes_1.default);
+app.use("/api/crop-sales", cropSalesRoutes_1.default);
 app.get("/health", (req, res) => {
     res.status(200).json({
         success: true,

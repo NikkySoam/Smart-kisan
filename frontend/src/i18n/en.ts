@@ -35,7 +35,7 @@ const en = {
     updateField: "Update Field",
     fieldName: "Field Name",
     currentCrop: "Current Crop",
-    areaAcre: "Area (Acre)",
+    areametersq: "Area (meter sq)",
     location: "Location",
     manageFieldsExpenses: "Manage all your fields and expenses",
     searchFields: "Search fields, crops, location...",

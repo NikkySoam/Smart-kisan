@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 
 import { cacheFields } from "../../utils/cacheFields";
 import { getCachedFields } from "../../utils/getCachedFields";
+import AIIrrigationAdvisorModal from "../../components/AIIrrigationAdvisorModal";
 
 
 import {
@@ -36,7 +37,7 @@ interface Field {
   location: string;
 
   crop: string;
-
+  cropSellingPrice?: number;
   imageUrl?: string;
 }
 
@@ -46,10 +47,10 @@ interface Analytics {
   fertilizer: number;
 
   labour: number;
-
   equipment: number;
-
   totalExpense: number;
+  totalSelling?: number;
+  totalQuantitySold?: number;
 }
 
 
@@ -84,6 +85,9 @@ const Fields = () => {
   const [showModal, setShowModal] =
     useState(false);
 
+  const [aiModalField, setAiModalField] =
+    useState<{id: string, name: string} | null>(null);
+
   const [isEditing, setIsEditing] =
   useState(false);
 
@@ -92,6 +96,9 @@ const Fields = () => {
 
   const [imageFile, setImageFile] =
     useState<File | null>(null);
+
+  const [cropPriceEditId, setCropPriceEditId] = useState("");
+  const [cropPriceInput, setCropPriceInput] = useState("");
 
   const [imagePreview, setImagePreview] =
     useState("");
@@ -164,6 +171,30 @@ const Fields = () => {
         setLoading(false);
       }
     };
+
+  const updateCropPrice = async (fieldId: string, currentField: Field) => {
+    try {
+      const body = new FormData();
+      body.append("name", currentField.name);
+      body.append("area", currentField.area.toString());
+      body.append("location", currentField.location);
+      body.append("crop", currentField.crop);
+      body.append("cropSellingPrice", cropPriceInput);
+      
+      const res = await API.put(`/fields/${fieldId}`, body, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (res.data.success) {
+        toast.success(t("fieldUpdated") || "Price updated");
+        setCropPriceEditId("");
+        fetchFields(); // refresh to get new values
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(t("error") || "Error updating price");
+    }
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -550,9 +581,47 @@ const Fields = () => {
                     {field.name}
                   </h2>
 
-                  <p className="mt-2 text-lg">
-                    {field.crop}
-                  </p>
+                  <div className="mt-2 text-lg flex items-center gap-2">
+                    <span>{field.crop}</span>
+                    {cropPriceEditId === field._id ? (
+                      <div className="flex items-center gap-1 bg-white/20 px-2 py-1 rounded-lg">
+                        <span className="text-sm">₹</span>
+                        <input
+                          type="number"
+                          autoFocus
+                          value={cropPriceInput}
+                          onChange={(e) => setCropPriceInput(e.target.value)}
+                          className="w-16 bg-transparent text-white outline-none text-sm"
+                          placeholder="Price"
+                        />
+                        <button
+                          onClick={() => updateCropPrice(field._id, field)}
+                          className="text-green-300 hover:text-green-200"
+                        >
+                          ✓
+                        </button>
+                        <button
+                          onClick={() => setCropPriceEditId("")}
+                          className="text-red-300 hover:text-red-200 text-xs ml-1"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm bg-black/30 px-2 py-0.5 rounded-md">₹{field.cropSellingPrice || 0}/Q</span>
+                        <button
+                          onClick={() => {
+                            setCropPriceEditId(field._id);
+                            setCropPriceInput(field.cropSellingPrice?.toString() || "");
+                          }}
+                          className="text-gray-300 hover:text-white cursor-pointer"
+                        >
+                          <FaEdit size={14} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                   <p className="mt-1 text-sm text-gray-200">
                     {field.location}
@@ -694,7 +763,10 @@ const Fields = () => {
                     "
                   >
 
-                    <FaTint className="text-blue-600 text-2xl mb-4" />
+                    <div className="flex justify-between items-end">
+                      <FaTint className="text-blue-600 text-2xl mb-2" />
+                      <p className="text-lg font-bold text-blue-900 mt-1">₹{analytics[field._id]?.water || 0}</p>
+                    </div>
 
                     <p className="font-semibold text-blue-900">{t("water")}</p>
 
@@ -721,7 +793,10 @@ const Fields = () => {
                     "
                   >
 
-                    <FaSeedling className="text-green-600 text-2xl mb-4" />
+                    <div className="flex justify-between items-end">
+                      <FaSeedling className="text-green-600 text-2xl mb-2" />
+                      <p className="text-lg font-bold text-green-900 mt-1">₹{analytics[field._id]?.fertilizer || 0}</p>
+                    </div>
 
                     <p className="font-semibold text-green-900">{t("fertilizer")}</p>
 
@@ -748,7 +823,10 @@ const Fields = () => {
                     "
                   >
 
-                    <FaTools className="text-yellow-600 text-2xl mb-4" />
+                    <div className="flex justify-between items-end">
+                      <FaTools className="text-yellow-600 text-2xl mb-2" />
+                      <p className="text-lg font-bold text-yellow-900 mt-1">₹{analytics[field._id]?.labour || 0}</p>
+                    </div>
 
                     <p className="font-semibold text-yellow-900">{t("labour")}</p>
 
@@ -775,7 +853,10 @@ const Fields = () => {
                     "
                   >
 
-                    <FaTractor className="text-gray-700 text-2xl mb-4" />
+                    <div className="flex justify-between items-end">
+                      <FaTractor className="text-gray-700 text-2xl mb-2" />
+                      <p className="text-lg font-bold text-gray-900 mt-1">₹{analytics[field._id]?.equipment || 0}</p>
+                    </div>
 
                     <p className="font-semibold text-gray-900">{t("equipment")}</p>
 
@@ -783,89 +864,68 @@ const Fields = () => {
 
                 </div>
 
-                {/* TOTAL EXPENSE */}
+                {/* PROFIT SUMMARY */}
 
                 <div
                   className="
                     mt-3
                     rounded-3xl
-                    bg-linear-to-r
-                    from-green-500
-                    to-green-800
-                    p-3
-                    text-white
-                    shadow-lg
+                    bg-white
+                    border border-gray-100
+                    p-4
+                    shadow-sm
                   "
                 >
 
-                  <p className="text-gray-100">{t("totalExpense")}</p>
+                  <div className="flex justify-between items-center text-sm font-medium text-gray-500 mb-1">
+                    <span>Expense</span>
+                    <span>₹{analytics[field._id]?.totalExpense || 0}</span>
+                  </div>
 
-                  <h2 className="text-4xl font-bold mt-1 py-1">
+                  <div className="flex justify-between items-center text-sm font-medium text-gray-500 mb-2">
+                    <span>Selling</span>
+                    <span>₹{analytics[field._id]?.totalSelling || 0}</span>
+                  </div>
 
-                    ₹
-                    {
-                      analytics[
-                        field._id
-                      ]?.totalExpense || 0
-                    }
-
-                  </h2>
-
-                  {/* BREAKDOWN */}
-
-                  <div
-                    className="
-                      mt-1
-                      grid
-                      grid-cols-2
-                      gap-1
-                      text-sm
-                    "
-                  >
-
-                    <div>
-                      Water: ₹
-                      {
-                        analytics[
-                          field._id
-                        ]?.water || 0
+                  <div className="pt-2 border-t border-gray-100 flex justify-between items-center">
+                    <span className="font-bold text-gray-800">Profit / Loss</span>
+                    
+                    {(() => {
+                      const profit = (analytics[field._id]?.totalSelling || 0) - (analytics[field._id]?.totalExpense || 0);
+                      const hasSale = (analytics[field._id]?.totalSelling || 0) > 0;
+                      
+                      if (!hasSale) {
+                        return <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-lg text-sm font-bold">No Sale Yet</span>;
                       }
-                    </div>
-
-                    <div>
-                      Fertilizer: ₹
-                      {
-                        analytics[
-                          field._id
-                        ]?.fertilizer || 0
+                      
+                      if (profit >= 0) {
+                        return <span className="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1">🟢 ₹{profit}</span>;
+                      } else {
+                        return <span className="bg-red-100 text-red-800 px-3 py-1 rounded-lg text-sm font-bold flex items-center gap-1">🔴 ₹{Math.abs(profit)}</span>;
                       }
-                    </div>
-
-                    <div>
-                      Labour: ₹
-                      {
-                        analytics[
-                          field._id
-                        ]?.labour || 0
-                      }
-                    </div>
-
-                    <div>
-                      Equipment: ₹
-                      {
-                        analytics[
-                          field._id
-                        ]?.equipment || 0
-                      }
-                    </div>
-
+                    })()}
                   </div>
 
                 </div>
 
-                {/* ACTIONS */}
+                {/* CROP SALE RECEIPTS BUTTON */}
+                <button
+                  onClick={() => navigate(`/crop-sales/${field._id}`)}
+                  className="mt-2 w-full bg-linear-to-r from-emerald-100 to-emerald-200 hover:from-emerald-200 hover:to-emerald-300 border border-emerald-300 text-emerald-900 p-3 rounded-2xl flex justify-center items-center gap-2 font-semibold shadow-sm transition-all cursor-pointer"
+                >
+                  <span className="text-xl">🌾</span> Crop Sale Receipts
+                </button>
 
-            
+                {/* ACTIONS */}
+                <div className="mt-4">
+                  <button
+                    onClick={() => setAiModalField({ id: field._id, name: field.name })}
+                    className="w-full bg-linear-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white p-3 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+                  >
+                    <span className="text-xl">🌱</span> AI सिंचाई सलाह
+                  </button>
+                </div>
+
 
               </div>
 
@@ -964,7 +1024,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder={t("areaAcre")}
+                placeholder={t("areametersq")}
                 className="
                   w-full
                   border
@@ -1125,6 +1185,14 @@ const Fields = () => {
           </div>
 
         </div>
+      )}
+      {/* AI Modal */}
+      {aiModalField && (
+        <AIIrrigationAdvisorModal
+          fieldId={aiModalField.id}
+          fieldName={aiModalField.name}
+          onClose={() => setAiModalField(null)}
+        />
       )}
 
     </div>

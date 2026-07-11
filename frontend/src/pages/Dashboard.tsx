@@ -25,14 +25,7 @@ const Dashboard = () => {
       image: "/ai-bg.jpeg",
       label: "AI",
     },
-    {
-      title: t("tubewellWater"),
-      description: t("tubewellWaterDescription"),
-      path: "/water-management",
-      icon: <FaTint />,
-      image: "/tubewell.jpg",
-      label: t("water"),
-    },
+
     {
       title: t("apnaKhet"),
       description: t("apnaKhetDescription"),
@@ -40,6 +33,14 @@ const Dashboard = () => {
       icon: <FaLeaf />,
       image: "/field.jpg",
       label: t("fields"),
+    },
+        {
+      title: t("tubewellWater"),
+      description: t("tubewellWaterDescription"),
+      path: "/water-management",
+      icon: <FaTint />,
+      image: "/tubewell.jpg",
+      label: t("water"),
     },
   ];
 

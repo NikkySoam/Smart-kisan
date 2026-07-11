@@ -10,6 +10,7 @@ export interface IField
   cloudinaryPublicId: string;
   lastWaterReminderFor?: mongoose.Types.ObjectId;
   lastFertilizerReminderFor?: mongoose.Types.ObjectId;
+  cropSellingPrice: number;
   user: mongoose.Types.ObjectId;
 }
 
@@ -53,6 +54,10 @@ const fieldSchema =
         type: mongoose.Schema.Types.ObjectId,
         ref: "Fertilizer",
         default: null,
+      },
+      cropSellingPrice: {
+        type: Number,
+        default: 0,
       },
       user: {
         type: mongoose.Schema.Types.ObjectId,

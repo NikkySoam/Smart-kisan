@@ -26,6 +26,7 @@ import Equipment from "./pages/apna-khet/Equipment";
 import WaterManagement from "./pages/tubewell/WaterManagement";
 import CropDoctor from "./components/CropDoctor";
 import CropHistory from "./components/CropHistory";
+import CropSales from "./pages/apna-khet/CropSales";
 
 function App() {
   return (
@@ -160,6 +161,11 @@ function App() {
           <Route
             path="/crop-history"
             element={<CropHistory />}
+          />
+
+          <Route
+            path="/crop-sales/:fieldId"
+            element={<CropSales />}
           />
 
         </Route>

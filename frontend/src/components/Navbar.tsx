@@ -52,14 +52,14 @@ const Navbar = () => {
       icon: <FaRobot />,
     },
     {
-      label: t("tubewell"),
-      path: "/water-management",
-      icon: <FaTint />,
-    },
-    {
       label: t("fields"),
       path: "/fields",
       icon: <FaSeedling />,
+    },
+    {
+      label: t("tubewell"),
+      path: "/water-management",
+      icon: <FaTint />,
     },
   ];
 

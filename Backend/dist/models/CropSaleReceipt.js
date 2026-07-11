@@ -34,51 +34,43 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const fieldSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    area: {
-        type: Number,
-        default: 0
-    },
-    location: {
-        type: String,
-        default: "",
-    },
-    crop: {
-        type: String,
-        required: true,
-    },
-    imageUrl: {
-        type: String,
-        default: "",
-    },
-    cloudinaryPublicId: {
-        type: String,
-        default: "",
-    },
-    lastWaterReminderFor: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "FieldWater",
-        default: null,
-    },
-    lastFertilizerReminderFor: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Fertilizer",
-        default: null,
-    },
-    cropSellingPrice: {
-        type: Number,
-        default: 0,
-    },
+const cropSaleReceiptSchema = new mongoose_1.Schema({
     user: {
         type: mongoose_1.default.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
+    field: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: "Field",
+        required: true,
+    },
+    buyerName: {
+        type: String,
+        required: true,
+    },
+    date: {
+        type: Date,
+        required: true,
+        default: Date.now,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+    },
+    pricePerQuintal: {
+        type: Number,
+        required: true,
+    },
+    totalAmount: {
+        type: Number,
+        required: true,
+    },
+    notes: {
+        type: String,
+        default: "",
+    },
 }, {
     timestamps: true,
 });
-exports.default = mongoose_1.default.model("Field", fieldSchema);
+exports.default = mongoose_1.default.model("CropSaleReceipt", cropSaleReceiptSchema);
