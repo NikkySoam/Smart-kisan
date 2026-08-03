@@ -61,7 +61,7 @@ const Farmers = () => {
         useState(false);
 
         const [selectedFarmer, setSelectedFarmer] =
-        useState(null);
+        useState<Farmer | null>(null);
 
         const [editFormData, setEditFormData] =
         useState({
@@ -234,7 +234,7 @@ const Farmers = () => {
 
             try {
             await API.put(
-                `/farmers/${selectedFarmer._id}`,
+                `/farmers/${selectedFarmer?._id}`,
                 editFormData,
                 {
                 headers: {

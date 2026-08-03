@@ -131,7 +131,7 @@ svg {
 }
 
 .app-content thead tr {
-  background: linear-gradient(135deg, #006948, #002114) !important;
+  /* Removed background gradient */
 }
 
 .app-content tbody tr {

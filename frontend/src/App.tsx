@@ -11,7 +11,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Farmers from "./pages/tubewell/Farmers";
-import WaterEntry from "./pages/tubewell/WaterEntry";
 import MainLayout from "./layouts/MainLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import AuthRedirect from "./routes/AuthRedirect";
@@ -87,15 +86,6 @@ function App() {
           <Route
             path="/farmers"
             element={<Farmers />}
-          />
-
-          {/* TUBEWELL WATER ENTRY */}
-
-          <Route
-            path="/water"
-            element={
-              <WaterEntry />
-            }
           />
 
             {/* USER SETTINGS */}
