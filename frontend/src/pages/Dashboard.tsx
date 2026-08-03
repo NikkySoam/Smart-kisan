@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import WeatherCard from "../components/WeatherCard";
-import AnalyticsChart from "../components/AnalyticsChart";
+
 
 import {
   FaArrowRight,
@@ -101,9 +101,9 @@ const Dashboard = () => {
         ))}
       </section>
 
-      <section className="grid gap-8 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+      <section className="w-full">
         <WeatherCard />
-        <AnalyticsChart />
+       
       </section>
     </div>
   );

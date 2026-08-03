@@ -21,23 +21,23 @@ const Navbar = () => {
   const location = useLocation();
 
   const isActive = (path: string) => {
+    const matchPaths = (paths: string[]) => {
+      return paths.some(p => location.pathname === p || location.pathname.startsWith(`${p}/`));
+    };
+
     if (path === "/fields") {
-      return [
-        "/fields",
-        "/field-water",
-        "/fertilizers",
-        "/labour",
-        "/equipment",
-      ].some((fieldPath) =>
-        location.pathname.startsWith(fieldPath)
-      );
+      return matchPaths(["/fields", "/field-water", "/fertilizers", "/labour", "/equipment", "/crop-sales"]);
     }
-
+    
+    if (path === "/water-management") {
+      return matchPaths(["/water-management", "/farmers", "/water", "/reports"]);
+    }
+    
     if (path === "/crop-doctor") {
-      return location.pathname.startsWith("/crop-doctor");
+      return matchPaths(["/crop-doctor", "/crop-history"]);
     }
 
-    return location.pathname === path;
+    return matchPaths([path]);
   };
 
   const navLinks = [

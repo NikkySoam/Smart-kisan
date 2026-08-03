@@ -35,6 +35,9 @@ const Farmers = () => {
   const [farmers, setFarmers] =
     useState<Farmer[]>([]);
 
+  const [entries, setEntries] =
+    useState<any[]>([]);
+
   const [showForm, setShowForm] =
     useState(false);
 
@@ -58,7 +61,7 @@ const Farmers = () => {
         useState(false);
 
         const [selectedFarmer, setSelectedFarmer] =
-        useState<any>(null);
+        useState(null);
 
         const [editFormData, setEditFormData] =
         useState({
@@ -88,8 +91,21 @@ const Farmers = () => {
     }
   };
 
+  // FETCH WATER ENTRIES
+  const fetchEntries = async () => {
+    try {
+      const res = await API.get("/water", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEntries(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchFarmers();
+    fetchEntries();
   }, []);
 
   // HANDLE CHANGE
@@ -239,6 +255,7 @@ const Farmers = () => {
             toast.error(
                 t("farmerUpdateFailed")
             );
+
             } finally {
         setUpdating(false);
         }
@@ -455,7 +472,12 @@ const Farmers = () => {
             "
           >
 
-            {farmers.map((farmer) => (
+            {farmers.map((farmer) => {
+              const farmerEntries = entries.filter((item) => item.farmer?._id === farmer._id);
+              const totalHours = farmerEntries.reduce((acc, item) => acc + item.hours, 0);
+              const totalAmount = farmerEntries.reduce((acc, item) => acc + item.totalAmount, 0);
+
+              return (
 
               <div
                 key={farmer._id}
@@ -492,6 +514,15 @@ const Farmers = () => {
                       <FaMapMarkerAlt className="text-emerald-700" />
                       {farmer.village || t("noVillage")}
                     </p>
+
+                    <div className="mt-4 flex items-center gap-3 text-sm font-semibold">
+                      <span className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                        💧 {totalHours} hrs
+                      </span>
+                      <span className="flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">
+                        💰 ₹{totalAmount}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -571,8 +602,8 @@ const Farmers = () => {
                 </div>
 
               </div>
-
-            ))}
+              );
+            })}
 
           </div>
 

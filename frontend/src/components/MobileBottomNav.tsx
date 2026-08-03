@@ -70,12 +70,19 @@ const MobileBottomNav = () => {
         "
       >
         {navItems.map((item) => {
-          const active =
-            location.pathname === item.path ||
-            location.pathname.startsWith(
-              item.path
-            );
+          const matchPaths = (paths: string[]) => {
+            return paths.some(p => location.pathname === p || location.pathname.startsWith(`${p}/`));
+          };
 
+          let active = matchPaths([item.path]);
+          
+          if (item.path === "/fields") {
+            active = matchPaths(["/fields", "/field-water", "/fertilizers", "/labour", "/equipment", "/crop-sales"]);
+          } else if (item.path === "/water-management") {
+            active = matchPaths(["/water-management", "/farmers", "/water", "/reports"]);
+          } else if (item.path === "/crop-doctor") {
+            active = matchPaths(["/crop-doctor", "/crop-history"]);
+          }
           return (
             <Link
               key={item.path}

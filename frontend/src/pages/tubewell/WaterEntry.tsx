@@ -363,7 +363,7 @@ const WaterEntry = () => {
 
           <div className="mb-8">
 
-            <h1 className="text-2xl sm:text-5xl font-bold text-white py-2">{t("waterManagement")}</h1>
+            <h1 className="text-2xl sm:text-5xl font-bold text-white py-2">{t("waterEntries")}</h1>
 
             <p className="text-gray-200 mt-2">{t("manageWaterEntriesFarmerWise")}</p>
 
@@ -654,109 +654,7 @@ const WaterEntry = () => {
 
           </div>
 
-          {/* FARMER SUMMARY */}
 
-          <div className="mt-10">
-
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6 py-2">{t("farmerWiseSummary")}</h2>
-
-            <div
-              className="
-                grid
-                grid-cols-1
-                sm:grid-cols-2
-                lg:grid-cols-3
-                gap-6
-              "
-            >
-
-              {farmers.map(
-                (farmer) => {
-                  const farmerEntries =
-                    entries.filter(
-                      (item) =>
-                        item.farmer
-                          ?._id ===
-                        farmer._id
-                    );
-
-                  const totalHours =
-                    farmerEntries.reduce(
-                      (
-                        acc,
-                        item
-                      ) =>
-                        acc +
-                        item.hours,
-                      0
-                    );
-
-                  const totalAmount =
-                    farmerEntries.reduce(
-                      (
-                        acc,
-                        item
-                      ) =>
-                        acc +
-                        item.totalAmount,
-                      0
-                    );
-
-                  return (
-                    <div
-                      key={
-                        farmer._id
-                      }
-                      className="
-                        bg-white/15
-                        backdrop-blur-lg
-                        border
-                        border-white/20
-                        rounded-3xl
-                        p-6
-                        shadow-xl
-                      "
-                    >
-                      <h3 className="text-2xl font-bold text-white py-2">
-                        {
-                          farmer.name
-                        }
-                      </h3>
-
-                      <p className="mt-4 text-gray-200">
-                        {t("totalHours")}:
-
-                        <span className="font-bold ml-2 text-white">
-                          {
-                            totalHours
-                          }
-                        </span>
-                      </p>
-
-                      <p className="mt-3 text-gray-200">
-                        {t("totalAmount")}:
-
-                        <span
-                          className="
-                            font-bold
-                            ml-2
-                            text-yellow-300
-                          "
-                        >
-                          ₹
-                          {
-                            totalAmount
-                          }
-                        </span>
-                      </p>
-                    </div>
-                  );
-                }
-              )}
-
-            </div>
-
-          </div>
 
 
           <div
