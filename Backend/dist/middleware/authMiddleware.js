@@ -21,7 +21,13 @@ const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             token =
                 req.headers.authorization.split(" ")[1];
             const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-            req.user = yield User_1.default.findById(decoded.id);
+            const user = yield User_1.default.findById(decoded.id);
+            if (!user) {
+                return res.status(401).json({
+                    message: "Not Authorized",
+                });
+            }
+            req.user = user;
             next();
         }
         else {
@@ -30,7 +36,7 @@ const protect = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             });
         }
     }
-    catch (error) {
+    catch (_a) {
         return res.status(401).json({
             message: "Token Failed",
         });

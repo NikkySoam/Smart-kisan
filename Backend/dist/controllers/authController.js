@@ -66,7 +66,7 @@ const registerController = (req, res) => __awaiter(void 0, void 0, void 0, funct
             user,
         });
     }
-    catch (error) {
+    catch (_a) {
         res.status(500).json({
             success: false,
             message: "Registration Failed",
@@ -102,7 +102,7 @@ const loginController = (req, res) => __awaiter(void 0, void 0, void 0, function
             user,
         });
     }
-    catch (error) {
+    catch (_a) {
         res.status(500).json({
             success: false,
             message: "Login Failed",

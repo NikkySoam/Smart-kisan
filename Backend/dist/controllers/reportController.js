@@ -44,8 +44,7 @@ const getMonthlyReport = (req, res) => __awaiter(void 0, void 0, void 0, functio
         // TOTAL HOURS
         const totalHours = entries.reduce((acc, item) => acc + item.hours, 0);
         // TOTAL EARNINGS
-        const totalEarnings = entries.reduce((acc, item) => acc +
-            item.totalAmount, 0);
+        const totalEarnings = entries.reduce((acc, item) => acc + item.totalAmount, 0);
         res.status(200).json({
             success: true,
             totalEntries: entries.length,

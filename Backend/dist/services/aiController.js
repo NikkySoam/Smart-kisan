@@ -21,7 +21,7 @@ const ai = new genai_1.GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
 });
 const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     try {
         if (!req.file) {
             return res.status(400).json({
@@ -134,7 +134,7 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
             const imageUrl = uploadResult.secure_url;
             const cloudinaryPublicId = uploadResult.public_id;
             // STORE IN DATABASE
-            const userId = req.user._id;
+            const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b._id;
             console.log("1", analysisResult);
             if (analysisResult) {
                 yield cropScanModel_1.default.create({
@@ -170,8 +170,9 @@ const detectCropIssue = (req, res) => __awaiter(void 0, void 0, void 0, function
 exports.detectCropIssue = detectCropIssue;
 // GET CROP ANALYSIS HISTORY
 const getCropHistory = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const userId = req.user._id;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
         const scans = yield cropScanModel_1.default.find({
             user: userId,
         })
@@ -183,7 +184,7 @@ const getCropHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
             data: scans,
         });
     }
-    catch (error) {
+    catch (_b) {
         res.status(500).json({
             success: false,
             message: "Unable to fetch crop history",
@@ -193,8 +194,9 @@ const getCropHistory = (req, res) => __awaiter(void 0, void 0, void 0, function*
 exports.getCropHistory = getCropHistory;
 // DELETE HISTORY CARD
 const deleteCropScan = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const userId = req.user._id;
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a._id;
         const scan = yield cropScanModel_1.default.findOne({
             _id: req.params.id,
             user: userId,
@@ -212,7 +214,7 @@ const deleteCropScan = (req, res) => __awaiter(void 0, void 0, void 0, function*
             message: "Scan deleted successfully",
         });
     }
-    catch (error) {
+    catch (_b) {
         res.status(500).json({
             success: false,
             message: "Delete failed",

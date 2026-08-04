@@ -21,7 +21,7 @@ const getDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // TOTAL FARMERS
         const totalFarmers = yield Farmer_1.default.countDocuments({ user: req.user._id });
         // WATER ENTRIES
-        const waterEntries = yield Water_1.default.find({ user: req.user._id });
+        const waterEntries = yield Water_1.default.find({ user: req.user._id }).lean();
         // TOTAL HOURS
         const totalHours = waterEntries.reduce((acc, item) => acc + item.hours, 0);
         // TOTAL EARNINGS

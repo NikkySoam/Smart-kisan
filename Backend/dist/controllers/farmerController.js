@@ -46,7 +46,7 @@ const getFarmers = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             user: req.user._id,
         }).sort({
             createdAt: -1,
-        });
+        }).lean();
         res.status(200).json({
             success: true,
             data: farmers,
