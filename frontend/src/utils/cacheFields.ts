@@ -1,8 +1,8 @@
 import { dbPromise } from "./offlineDB";
 
 export interface CachedFieldsData {
-  fields: any[];
-  analytics: Record<string, any>;
+  fields: unknown[];
+  analytics: Record<string, unknown>;
 }
 
 export const cacheFields = async (

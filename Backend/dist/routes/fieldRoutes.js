@@ -13,6 +13,7 @@ const upload = (0, multer_1.default)({
 });
 router.post("/", authMiddleware_1.default, upload.single("image"), fieldController_1.addField);
 router.get("/", authMiddleware_1.default, fieldController_1.getFields);
+router.get("/insights", authMiddleware_1.default, fieldController_1.getFieldInsights);
 router.get("/:id", authMiddleware_1.default, fieldController_1.getFieldDetails);
 router.put("/:id", authMiddleware_1.default, upload.single("image"), fieldController_1.updateField);
 router.delete("/:id", authMiddleware_1.default, fieldController_1.deleteField);

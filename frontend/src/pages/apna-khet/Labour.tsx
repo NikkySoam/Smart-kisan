@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -9,7 +8,8 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-
+import { queryClient } from "../../api/queryClient";
+import { useLabour } from "../../hooks/queries/useLabourQuery";
 import toast from "react-hot-toast";
 
 import {
@@ -41,14 +41,9 @@ const Labour = () => {
   const token =
     localStorage.getItem("token");
 
-  const [entries, setEntries] =
-    useState<LabourEntry[]>([]);
-
-  const [totalAmount, setTotalAmount] =
-    useState(0);
-
-  const [loading, setLoading] =
-    useState(true);
+  const { data: labourData, isLoading: loading } = useLabour(fieldId);
+  const entries = labourData?.entries || [];
+  const totalAmount = labourData?.totalCost || 0;
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -72,37 +67,7 @@ const Labour = () => {
   const [isEditing, setIsEditing] =
     useState(false);
 
-  // FETCH LABOUR
-
-  const fetchEntries =
-    async () => {
-      try {
-
-        const res = await API.get(
-          `/labour/field/${fieldId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setEntries(res.data.data);
-
-        setTotalAmount(
-          res.data.totalAmount
-        );
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  useEffect(() => {
-    fetchEntries();
-  }, []);
+  // React Query handles fetching automatically
 
   // HANDLE CHANGE
 
@@ -174,7 +139,9 @@ const Labour = () => {
         date: "",
       });
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['labour', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -213,7 +180,9 @@ const Labour = () => {
         t("labourDeleted")
       );
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['labour', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -444,7 +413,7 @@ const Labour = () => {
             <tbody>
 
               {entries.map(
-                (entry) => (
+                (entry: any) => (
 
                   <tr
                     key={entry._id}

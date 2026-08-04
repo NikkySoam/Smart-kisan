@@ -2,7 +2,7 @@ import { dbPromise } from "./offlineDB";
 
 export const cacheFarmers =
   async (
-    farmers: any[]
+    farmers: unknown[]
   ) => {
 
     const db =

@@ -1,7 +1,7 @@
 import { dbPromise } from "./offlineDB";
 
 export const saveOfflineWater =
-  async (data: any) => {
+  async (data: Record<string, unknown>) => {
     const db =
       await dbPromise;
 

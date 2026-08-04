@@ -1,13 +1,20 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import UserModel, { User as IUser } from "../models/User";
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Express {
+    interface Request {
+      user: IUser;
+    }
+  }
+}
 
 interface JwtPayload { id: string }
 
-
-export interface AuthRequest extends Request {
-  user?: any;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface AuthRequest extends Request {}
 
 const protect = async (
   req: AuthRequest,
@@ -30,17 +37,24 @@ const protect = async (
         process.env.JWT_SECRET as string
       ) as JwtPayload;
 
-      req.user = await User.findById( decoded.id);
+      const user = await UserModel.findById( decoded.id);
+      
+      if (!user) {
+        return res.status(401).json({
+          message: "Not Authorized",
+        });
+      }
+
+      req.user = user;
 
       next();
-
     } else {
       return res.status(401).json({
         message: "Not Authorized",
       });
     }
 
-  } catch (error) {
+  } catch {
     return res.status(401).json({
       message: "Token Failed",
     });

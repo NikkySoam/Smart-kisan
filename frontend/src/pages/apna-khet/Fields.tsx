@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -9,13 +8,12 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-
+import { queryClient } from "../../api/queryClient";
+import { useFieldsWithAnalytics } from "../../hooks/queries/useFieldQuery";
 import toast from "react-hot-toast";
 
-import { cacheFields } from "../../utils/cacheFields";
-import { getCachedFields } from "../../utils/getCachedFields";
 import AIIrrigationAdvisorModal from "../../components/AIIrrigationAdvisorModal";
-
+import FieldInsightsModal from "./FieldInsightsModal";
 
 import {
   FaTint,
@@ -62,16 +60,10 @@ const Fields = () => {
   const token =
     localStorage.getItem("token");
 
-  const [fields, setFields] =
-    useState<Field[]>([]);
-
-  const [analytics, setAnalytics] =
-    useState<
-      Record<string, Analytics>
-    >({});
-
-  const [loading, setLoading] =
-    useState(true);
+  const { data, isLoading: loadingFields } = useFieldsWithAnalytics();
+  const fields = (data?.fields as Field[]) || [];
+  const analytics = (data?.analytics as Record<string, Analytics>) || {};
+  const loading = loadingFields;
 
   const [submitting, setSubmitting] =
   useState(false);
@@ -87,6 +79,8 @@ const Fields = () => {
 
   const [aiModalField, setAiModalField] =
     useState<{id: string, name: string} | null>(null);
+
+  const [showInsightsModal, setShowInsightsModal] = useState(false);
 
   const [isEditing, setIsEditing] =
   useState(false);
@@ -111,66 +105,7 @@ const Fields = () => {
       crop: "",
     });
 
-  // FETCH FIELDS
-
-  const fetchFields =
-    async () => {
-      try {
-
-        const res = await API.get(
-          "/fields",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setFields(res.data.data);
-
-        // FETCH ANALYTICS
-
-        const analyticsData:
-          Record<
-            string,
-            Analytics
-          > = {};
-
-        for (const field of res.data
-          .data) {
-
-          const details =
-            await API.get(
-              `/fields/${field._id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-          analyticsData[
-            field._id
-          ] =
-            details.data.totals;
-        }
-
-        setAnalytics(
-          analyticsData
-        );
-
-        // CACHE DATA
-        await cacheFields({
-          fields: res.data.data,
-          analytics: analyticsData,
-        });
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // React Query handles fetching automatically
 
   const updateCropPrice = async (fieldId: string, currentField: Field) => {
     try {
@@ -181,35 +116,21 @@ const Fields = () => {
       body.append("crop", currentField.crop);
       body.append("cropSellingPrice", cropPriceInput);
       
-      const res = await API.put(`/fields/${fieldId}`, body, {
+      await API.put(`/fields/${fieldId}`, body, {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      if (res.data.success) {
         toast.success(t("fieldUpdated") || "Price updated");
         setCropPriceEditId("");
-        fetchFields(); // refresh to get new values
-      }
+        queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+        queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
     } catch (error) {
       console.error(error);
       toast.error(t("error") || "Error updating price");
     }
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      // Load cached data first
-      const cached = await getCachedFields();
-      if (cached) {
-        setFields(cached.fields);
-        setAnalytics(cached.analytics);
-        setLoading(false);
-      }
-      // Fetch fresh data
-      fetchFields();
-    };
-    loadData();
-  }, []);
+  // React Query automatically loads cached data
 
   // HANDLE CHANGE
 
@@ -310,7 +231,8 @@ const Fields = () => {
     setImageFile(null);
     setImagePreview("");
 
-    await fetchFields();
+    queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+    queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
   } catch (error) {
     toast.error(
@@ -350,7 +272,8 @@ const Fields = () => {
       t("fieldDeleted")
     );
 
-    await fetchFields();
+    queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+    queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
   } catch (error) {
     toast.error(
@@ -456,32 +379,57 @@ const Fields = () => {
 
         </div>
 
-        {/* ADD BUTTON */}
+        {/* BUTTONS */}
 
-        <button
-          onClick={() =>
-            setShowModal(true)
-          }
-          className="
-            bg-linear-to-r
-            from-green-500
-            to-green-800
-            hover:from-green-600
-            hover:to-green-900
-            text-white
-            p-3
-            rounded-2xl
-            flex
-            items-center
-            gap-3
-            font-semibold
-            shadow-lg
-            cursor-pointer
-            transition-all
-          "
-        >
-
-          <FaPlus />{t("addNewField")}</button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={() => setShowInsightsModal(true)}
+            className="
+              bg-slate-100
+              hover:bg-slate-200
+              text-slate-700
+              p-3
+              rounded-2xl
+              flex
+              items-center
+              justify-center
+              gap-3
+              font-semibold
+              shadow-sm
+              cursor-pointer
+              transition-all
+              border
+              border-slate-200
+            "
+          >
+            {t("fieldInsightsBtn")}
+          </button>
+          <button
+            onClick={() =>
+              setShowModal(true)
+            }
+            className="
+              bg-linear-to-r
+              from-green-500
+              to-green-800
+              hover:from-green-600
+              hover:to-green-900
+              text-white
+              p-3
+              rounded-2xl
+              flex
+              items-center
+              justify-center
+              gap-3
+              font-semibold
+              shadow-lg
+              cursor-pointer
+              transition-all
+            "
+          >
+            <FaPlus />{t("addNewField")}
+          </button>
+        </div>
 
       </div>
 
@@ -1194,6 +1142,12 @@ const Fields = () => {
           onClose={() => setAiModalField(null)}
         />
       )}
+
+      {/* Field Insights Modal */}
+      <FieldInsightsModal 
+        isOpen={showInsightsModal} 
+        onClose={() => setShowInsightsModal(false)} 
+      />
 
     </div>
   );

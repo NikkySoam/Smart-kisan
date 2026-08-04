@@ -1,7 +1,7 @@
 import { dbPromise } from "./offlineDB";
 
 export const cacheSettings =
-  async (settings: any) => {
+  async (settings: Record<string, unknown>) => {
 
     const db =
       await dbPromise;

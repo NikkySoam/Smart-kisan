@@ -21,7 +21,7 @@ export const getMonthlyReport =
 
       // FILTER OBJECT
 
-      const filter: any = {
+      const filter: Record<string, unknown> = {
         user: req.user._id,
       };
 
@@ -69,9 +69,8 @@ export const getMonthlyReport =
         entries.reduce(
           (
             acc: number,
-            item: any
-          ) =>
-            acc + item.hours,
+            item: { hours: number }
+          ) => acc + item.hours,
           0
         );
 
@@ -81,10 +80,8 @@ export const getMonthlyReport =
         entries.reduce(
           (
             acc: number,
-            item: any
-          ) =>
-            acc +
-            item.totalAmount,
+            item: { totalAmount: number }
+          ) => acc + item.totalAmount,
           0
         );
 

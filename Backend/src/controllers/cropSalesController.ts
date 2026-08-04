@@ -3,7 +3,7 @@ import { AuthRequest } from "../middleware/authMiddleware";
 import CropSaleReceipt from "../models/CropSaleReceipt";
 import Field from "../models/Field";
 
-export const getReceipts = async (req: AuthRequest, res: Response): Promise<any> => {
+export const getReceipts = async (req: AuthRequest, res: Response) => {
   try {
     const fieldId = req.params.fieldId as string;
     const userId = req.user._id;
@@ -27,7 +27,7 @@ export const getReceipts = async (req: AuthRequest, res: Response): Promise<any>
   }
 };
 
-export const createReceipt = async (req: AuthRequest, res: Response): Promise<any> => {
+export const createReceipt = async (req: AuthRequest, res: Response) => {
   try {
     const fieldId = req.params.fieldId as string;
     const userId = req.user._id;
@@ -63,7 +63,7 @@ export const createReceipt = async (req: AuthRequest, res: Response): Promise<an
   }
 };
 
-export const updateReceipt = async (req: AuthRequest, res: Response): Promise<any> => {
+export const updateReceipt = async (req: AuthRequest, res: Response) => {
   try {
     const receiptId = req.params.receiptId as string;
     const userId = req.user._id;
@@ -89,7 +89,7 @@ export const updateReceipt = async (req: AuthRequest, res: Response): Promise<an
   }
 };
 
-export const deleteReceipt = async (req: AuthRequest, res: Response): Promise<any> => {
+export const deleteReceipt = async (req: AuthRequest, res: Response) => {
   try {
     const receiptId = req.params.receiptId as string;
     const userId = req.user._id;

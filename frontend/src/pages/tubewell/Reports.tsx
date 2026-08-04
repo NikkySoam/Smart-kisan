@@ -61,66 +61,39 @@ const Reports = () => {
       farmer: "",
     });
 
-  // FETCH FARMERS
-
-  const fetchFarmers = async () => {
-    try {
-      const res = await API.get(
-        "/farmers",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setFarmers(res.data.data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // FETCH REPORTS
-
-  const fetchReports = async () => {
-    try {
-      const res = await API.get(
-        "/reports/monthly",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-
-          params: filters,
-        }
-      );
-
-      setEntries(res.data.data);
-
-      setStats({
-        totalEntries:
-          res.data.totalEntries,
-
-        totalHours:
-          res.data.totalHours,
-
-        totalEarnings:
-          res.data.totalEarnings,
-      });
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const res = await API.get("/farmers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setFarmers(res.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchFarmers();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const res = await API.get("/reports/monthly", {
+          headers: { Authorization: `Bearer ${token}` },
+          params: filters,
+        });
+        setEntries(res.data.data);
+        setStats({
+          totalEntries: res.data.totalEntries,
+          totalHours: res.data.totalHours,
+          totalEarnings: res.data.totalEarnings,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
     fetchReports();
-  }, [filters]);
+  }, [filters, token]);
 
   return (
     <div className="p-4 sm:p-8">

@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthRequest } from "../middleware/authMiddleware";
 import { GoogleGenAI } from "@google/genai";
 
 import CropScan from "../models/cropScanModel";
@@ -12,7 +13,7 @@ const ai = new GoogleGenAI({
 });
 
 
-export const detectCropIssue = async ( req: Request, res: Response) => {
+export const detectCropIssue = async ( req: AuthRequest, res: Response) => {
 
     try {
       if (!req.file) {
@@ -142,7 +143,7 @@ export const detectCropIssue = async ( req: Request, res: Response) => {
       const cloudinaryPublicId = uploadResult.public_id;
     
       // STORE IN DATABASE
-      const userId = (req as any).user._id;
+      const userId = req.user?._id;
 
         console.log("1",analysisResult);
 
@@ -187,13 +188,12 @@ export const detectCropIssue = async ( req: Request, res: Response) => {
 
 export const getCropHistory =
   async (
-    req: Request,
+    req: AuthRequest,
     res: Response
   ) => {
     try {
 
-      const userId =
-        (req as any).user._id;
+      const userId = req.user?._id;
 
       const scans =
         await CropScan.find({
@@ -208,7 +208,7 @@ export const getCropHistory =
         data: scans,
       });
 
-    } catch (error) {
+    } catch {
 
       res.status(500).json({
         success: false,
@@ -223,14 +223,13 @@ export const getCropHistory =
   // DELETE HISTORY CARD
   export const deleteCropScan =
   async (
-    req: Request,
+    req: AuthRequest,
     res: Response
   ) => {
 
     try {
 
-      const userId =
-        (req as any).user._id;
+      const userId = req.user?._id;
 
       const scan =
         await CropScan.findOne({
@@ -260,7 +259,7 @@ export const getCropHistory =
           "Scan deleted successfully",
       });
 
-    } catch (error) {
+    } catch {
 
       res.status(500).json({
         success: false,

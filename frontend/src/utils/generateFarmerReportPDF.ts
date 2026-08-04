@@ -84,7 +84,7 @@ const generateFarmerReportPDF = (data: FarmerReportData) => {
   });
 
   // Footer Totals
-  // @ts-ignore
+  // @ts-expect-error jsPDF autotable missing types
   const finalY = doc.lastAutoTable.finalY + 10;
   
   doc.setFontSize(12);

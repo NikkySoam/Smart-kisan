@@ -9,7 +9,6 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-import { useNavigate } from "react-router-dom";
 import generateBill from "../../utils/generateBill";
 
 interface Entry {
@@ -29,7 +28,6 @@ interface Entry {
 const FarmerDetails = () => {
   const { t } = useTranslation();
 
-  const navigate = useNavigate();
   const { id } = useParams();
 
   const token =
@@ -53,54 +51,54 @@ const FarmerDetails = () => {
 
   // FETCH DATA
 
-  const fetchFarmerDetails =
-    async () => {
-      try {
-        const res = await API.get(
-          `/water/farmer/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setEntries(res.data.data);
-
-        setStats({
-          totalHours:
-            res.data.totalHours,
-
-          totalAmount:
-            res.data.totalAmount,
-        });
-
-        // FETCH WATER RATE
-        const settingsRes =
-            await API.get(
-                "/settings",
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                }
-            );
-
-            setWaterRate(
-            settingsRes.data.data
-                .waterRate
-            );
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
   useEffect(() => {
+    const fetchFarmerDetails =
+      async () => {
+        try {
+          const res = await API.get(
+            `/water/farmer/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setEntries(res.data.data);
+
+          setStats({
+            totalHours:
+              res.data.totalHours,
+
+            totalAmount:
+              res.data.totalAmount,
+          });
+
+          // FETCH WATER RATE
+          const settingsRes =
+              await API.get(
+                  "/settings",
+                  {
+                  headers: {
+                      Authorization: `Bearer ${token}`,
+                  },
+                  }
+              );
+
+              setWaterRate(
+              settingsRes.data.data
+                  .waterRate
+              );
+
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
     fetchFarmerDetails();
-  }, []);
+  }, [id, token]);
 
   // LOADING
 
@@ -131,27 +129,38 @@ const FarmerDetails = () => {
 
         <p className="text-gray-600 mt-2">{t("farmerWaterDetails")}</p>
         </div>
-        <button
-                onClick={() =>
-                    navigate(
-                    `/water`
-                    )
-                }
-                className="
-                    bg-linear-to-r from-green-500 to-green-800 
-                    hover:from-green-600 hover:to-green-900
-                    text-white
-                    px-6
-                    py-1
-                    md:py-3
-                    sm:py-2
-                    rounded-2xl
-                    font-semibold
-                    shadow-lg
-                    cursor-pointer
-                "
-                >{t("addWater")}</button>
+        <div className="mb-6">
 
+        <button
+            onClick={() =>
+            generateBill({
+                farmerName,
+
+                entries,
+
+                totalHours:
+                stats.totalHours,
+
+                totalAmount:
+                stats.totalAmount,
+
+                waterRate,
+            })
+            }
+            className="
+            bg-linear-to-r from-green-500 to-green-800 
+            hover:from-green-600 hover:to-green-900
+            text-white
+            px-6
+            py-3
+            rounded-2xl
+            font-semibold
+            transition-all
+            cursor-pointer
+            "
+        >{t("previewPdfBill")}</button>
+
+        </div>
       </div>
 
       {/* STATS */}
@@ -200,38 +209,7 @@ const FarmerDetails = () => {
 
             {/* GENERATE BILL */}
 
-      <div className="mb-6">
-
-        <button
-            onClick={() =>
-            generateBill({
-                farmerName,
-
-                entries,
-
-                totalHours:
-                stats.totalHours,
-
-                totalAmount:
-                stats.totalAmount,
-
-                waterRate,
-            })
-            }
-            className="
-            bg-linear-to-r from-green-500 to-green-800 
-            hover:from-green-600 hover:to-green-900
-            text-white
-            px-6
-            py-3
-            rounded-2xl
-            font-semibold
-            transition-all
-            cursor-pointer
-            "
-        >{t("previewPdfBill")}</button>
-
-        </div>
+      
 
       {/* HISTORY TABLE */}
 

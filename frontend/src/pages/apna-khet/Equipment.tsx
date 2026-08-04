@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -9,7 +8,8 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-
+import { queryClient } from "../../api/queryClient";
+import { useEquipment } from "../../hooks/queries/useEquipmentQuery";
 import toast from "react-hot-toast";
 
 import {
@@ -41,14 +41,9 @@ const Equipment = () => {
   const token =
     localStorage.getItem("token");
 
-  const [entries, setEntries] =
-    useState<EquipmentEntry[]>([]);
-
-  const [totalAmount, setTotalAmount] =
-    useState(0);
-
-  const [loading, setLoading] =
-    useState(true);
+  const { data: equipData, isLoading: loading } = useEquipment(fieldId);
+  const entries = equipData?.entries || [];
+  const totalAmount = equipData?.totalCost || 0;
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -72,37 +67,7 @@ const Equipment = () => {
   const [isEditing, setIsEditing] =
     useState(false);
 
-  // FETCH DATA
-
-  const fetchEntries =
-    async () => {
-      try {
-
-        const res = await API.get(
-          `/equipment/field/${fieldId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setEntries(res.data.data);
-
-        setTotalAmount(
-          res.data.totalAmount
-        );
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  useEffect(() => {
-    fetchEntries();
-  }, []);
+  // React Query handles fetching automatically
 
   // HANDLE CHANGE
 
@@ -174,7 +139,9 @@ const Equipment = () => {
         date: "",
       });
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['equipment', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -213,7 +180,9 @@ const Equipment = () => {
         t("equipmentDeleted")
       );
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['equipment', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -434,7 +403,7 @@ const Equipment = () => {
             <tbody>
 
               {entries.map(
-                (entry) => (
+                (entry: any) => (
 
                   <tr
                     key={entry._id}

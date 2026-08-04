@@ -11,19 +11,19 @@ export const getDashboardStats = async ( req: AuthRequest, res: Response ) => {
       const totalFarmers = await Farmer.countDocuments({ user: req.user._id });
 
       // WATER ENTRIES
-      const waterEntries = await Water.find({user: req.user._id });
+      const waterEntries = await Water.find({user: req.user._id }).lean();
 
       // TOTAL HOURS
       const totalHours = waterEntries.reduce(
           (
             acc: number,
-            item: any
+            item: { hours: number }
           ) => acc + item.hours,
           0
         );
 
       // TOTAL EARNINGS
-      const totalEarnings = waterEntries.reduce((acc: number, item: any) => acc + item.totalAmount,0 );
+      const totalEarnings = waterEntries.reduce((acc: number, item: { totalAmount: number }) => acc + item.totalAmount,0 );
 
       // TOTAL ENTRIES
       const totalEntries = waterEntries.length;

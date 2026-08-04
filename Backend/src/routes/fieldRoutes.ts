@@ -8,7 +8,8 @@ import {
   getFields,
   getFieldDetails,
   updateField,
-  deleteField
+  deleteField,
+  getFieldInsights
 } from "../controllers/fieldController";
 
 const router = express.Router();
@@ -28,6 +29,12 @@ router.get(
   "/",
   protect,
   getFields
+);
+
+router.get(
+  "/insights",
+  protect,
+  getFieldInsights
 );
 
 router.get(

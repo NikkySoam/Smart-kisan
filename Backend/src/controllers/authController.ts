@@ -70,7 +70,7 @@ export const registerController = async ( req: Request,res: Response) => {
       user,
     });
 
-  } catch (error) {
+  } catch {
 
     res.status(500).json({
       success: false,
@@ -118,7 +118,7 @@ export const loginController = async (req: Request,res: Response) => {
       user,
     });
 
-  } catch (error) {
+  } catch {
 
     res.status(500).json({
       success: false,

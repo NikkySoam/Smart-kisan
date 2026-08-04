@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -9,7 +8,8 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-
+import { queryClient } from "../../api/queryClient";
+import { useFieldWater } from "../../hooks/queries/useFieldWaterQuery";
 import toast from "react-hot-toast";
 
 
@@ -41,17 +41,9 @@ const FieldWater = () => {
   const token =
     localStorage.getItem("token");
 
-  const [entries, setEntries] =
-    useState<Entry[]>([]);
-
-  const [totalHours, setTotalHours] =
-    useState(0);
-
-  const [showModal, setShowModal] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(true);
+  const { data: fieldWaterData, isLoading: loading } = useFieldWater(fieldId);
+  const entries = fieldWaterData?.entries || [];
+  const totalHours = fieldWaterData?.totalHours || 0;
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -71,37 +63,10 @@ const FieldWater = () => {
   const [isEditing, setIsEditing] =
   useState(false);
 
-  // FETCH ENTRIES
+  const [showModal, setShowModal] =
+  useState(false);
 
-  const fetchEntries =
-    async () => {
-      try {
-
-        const res = await API.get(
-          `/field-water/field/${fieldId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setEntries(res.data.data);
-
-        setTotalHours(
-          res.data.totalHours
-        );
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-  useEffect(() => {
-    fetchEntries();
-  }, []);
+  // React Query handles fetching automatically
 
   // HANDLE CHANGE
 
@@ -179,7 +144,9 @@ const FieldWater = () => {
         date: "",
         });
 
-        await fetchEntries();
+        queryClient.invalidateQueries({ queryKey: ['fieldWater', fieldId] });
+        queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+        queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
         toast.error(
@@ -220,7 +187,9 @@ const FieldWater = () => {
         t("entryDeleted")
         );
 
-        await fetchEntries();
+        queryClient.invalidateQueries({ queryKey: ['fieldWater', fieldId] });
+        queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+        queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
         toast.error(
@@ -412,7 +381,7 @@ const FieldWater = () => {
             <tbody>
 
               {entries.map(
-                (entry) => (
+                (entry: Entry) => (
 
                   <tr
                     key={entry._id}

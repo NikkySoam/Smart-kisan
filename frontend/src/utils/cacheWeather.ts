@@ -2,7 +2,7 @@ import { dbPromise } from "./offlineDB";
 
 export const cacheWeather =
   async (
-    weather: any
+    weather: Record<string, unknown>
   ) => {
 
     const db =

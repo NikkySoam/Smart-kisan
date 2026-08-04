@@ -44,7 +44,7 @@ export const getFarmers = async (req: AuthRequest, res: Response) => {
           user: req.user._id,
         }).sort({
           createdAt: -1,
-        });
+        }).lean();
 
       res.status(200).json({
         success: true,

@@ -2,7 +2,8 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useRef, useState } from "react";
 
 import API from "../api/axios";
-
+import { queryClient } from "../api/queryClient";
+import { useNotifications } from "../hooks/queries/useNotificationQuery";
 import { FaBell, FaCheck, FaRegBell } from "react-icons/fa";
 
 interface Notification {
@@ -28,24 +29,12 @@ const NotificationDropdown = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const { data: notificationsData } = useNotifications();
+  const notifications = notificationsData || [];
+  
   const [readingId, setReadingId] = useState("");
 
-  const fetchNotifications = async () => {
-    
-    try {
-      const res = await API.get("/notifications", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setNotifications(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  // React Query handles fetching automatically
   const checkReminders =
   async () => {
     try {
@@ -65,22 +54,12 @@ const NotificationDropdown = () => {
   };
 
   useEffect(() => {
-
-  const initialize =
-    async () => {
-
+    const initialize = async () => {
       // CHECK REMINDERS
-
       await checkReminders();
-
-      // FETCH NOTIFICATIONS
-
-      await fetchNotifications();
     };
-
-  initialize();
-
-}, []);
+    initialize();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -123,16 +102,7 @@ const NotificationDropdown = () => {
         }
       );
 
-      setNotifications((prev) =>
-        prev.map((notification) =>
-          notification._id === id
-            ? {
-                ...notification,
-                isRead: true,
-              }
-            : notification
-        )
-      );
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     } catch (error) {
       console.log(error);
     } finally {
@@ -141,7 +111,7 @@ const NotificationDropdown = () => {
   };
 
   const unreadCount = notifications.filter(
-    (notification) => !notification.isRead
+    (notification: Notification) => !notification.isRead
   ).length;
 
   return (
@@ -252,7 +222,7 @@ const NotificationDropdown = () => {
                 <p className="mt-1 text-sm text-gray-500">{t("notificationHelp")}</p>
               </div>
             ) : (
-              notifications.map((notification) => (
+              notifications.map((notification: Notification) => (
                 <div
                   key={notification._id}
                   className={`

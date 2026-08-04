@@ -149,7 +149,7 @@ export const getFarmerWaterHistory =
 
       const totalHours =
         entries.reduce(
-          (acc: number, item: any) =>
+          (acc: number, item: { hours: number }) =>
             acc + item.hours,
           0
         );
@@ -158,7 +158,7 @@ export const getFarmerWaterHistory =
 
       const totalAmount =
         entries.reduce(
-          (acc: number, item: any) =>
+          (acc: number, item: { totalAmount: number }) =>
             acc + item.totalAmount,
           0
         );

@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +13,10 @@ import {
   FaTrash,
   FaUser,
 } from "react-icons/fa";
-
 import API from "../../api/axios";
+import { queryClient } from "../../api/queryClient";
+import { useFarmers } from "../../hooks/queries/useFarmersQuery";
+import { useWaterEntries } from "../../hooks/queries/useWaterQuery";
 import toast from "react-hot-toast";
 
 interface Farmer {
@@ -22,6 +24,14 @@ interface Farmer {
   name: string;
   phone?: string;
   village?: string;
+}
+
+interface Entry {
+  _id: string;
+  hours: number;
+  totalAmount: number;
+  date: string;
+  farmer?: Farmer;
 }
 
 const Farmers = () => {
@@ -32,11 +42,8 @@ const Farmers = () => {
   const token =
     localStorage.getItem("token");
 
-  const [farmers, setFarmers] =
-    useState<Farmer[]>([]);
-
-  const [entries, setEntries] =
-    useState<any[]>([]);
+  const { data: farmers = [] } = useFarmers();
+  const { data: entries = [] } = useWaterEntries();
 
   const [showForm, setShowForm] =
     useState(false);
@@ -70,44 +77,7 @@ const Farmers = () => {
             village: "",
         });
 
-  // FETCH FARMERS
-
-  const fetchFarmers = async () => {
-    try {
-
-      const res = await API.get(
-        "/farmers",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setFarmers(res.data.data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // FETCH WATER ENTRIES
-  const fetchEntries = async () => {
-    try {
-      const res = await API.get("/water", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEntries(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchFarmers();
-    fetchEntries();
-  }, []);
-
+  // React Query handles fetching automatically
   // HANDLE CHANGE
 
   const handleChange = (
@@ -154,7 +124,8 @@ const Farmers = () => {
 
       setShowForm(false);
 
-      await fetchFarmers();
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
 
     } catch (error) {
 
@@ -194,7 +165,9 @@ const Farmers = () => {
             t("farmerDeleted")
         );
 
-        await fetchFarmers();
+        queryClient.invalidateQueries({ queryKey: ['farmers'] });
+        queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
 
         } catch (error) {
         toast.error(
@@ -249,7 +222,9 @@ const Farmers = () => {
 
             setEditModal(false);
 
-            await fetchFarmers();
+            queryClient.invalidateQueries({ queryKey: ['farmers'] });
+            queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+            queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
 
             } catch (error) {
             toast.error(
@@ -472,10 +447,10 @@ const Farmers = () => {
             "
           >
 
-            {farmers.map((farmer) => {
-              const farmerEntries = entries.filter((item) => item.farmer?._id === farmer._id);
-              const totalHours = farmerEntries.reduce((acc, item) => acc + item.hours, 0);
-              const totalAmount = farmerEntries.reduce((acc, item) => acc + item.totalAmount, 0);
+            {farmers.map((farmer: Farmer) => {
+              const farmerEntries = entries.filter((item: Entry) => item.farmer?._id === farmer._id);
+              const totalHours = farmerEntries.reduce((acc: number, item: Entry) => acc + item.hours, 0);
+              const totalAmount = farmerEntries.reduce((acc: number, item: Entry) => acc + item.totalAmount, 0);
 
               return (
 

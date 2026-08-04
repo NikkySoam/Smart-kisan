@@ -3,10 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import API from "../api/axios";
-
-import {cacheSettings} from "../utils/cacheSettings";
-
-import { getCachedSettings } from "../utils/getCachedSettings";
+import { queryClient } from "../api/queryClient";
+import { useSettings } from "../hooks/queries/useSettingsQuery";
 
 import toast from "react-hot-toast";
 
@@ -31,78 +29,16 @@ const Settings = () => {
       phone: ""
     });
 
-const fetchSettings =
-  async () => {
-
-    try {
-
-      const res =
-        await API.get(
-          "/settings",
-          {
-            headers: {
-              Authorization:
-                `Bearer ${token}`,
-            },
-          }
-        );
-
-      const settings =
-        res.data.data;
-
-      setFormData({
-        name:
-          settings.name || "",
-        phone:
-          settings.phone || ""
-      });
-
-      await cacheSettings(
-        settings
-      );
-
-    } catch {
-
-      const cached =
-        await getCachedSettings();
-
-      if (cached) {
-
-        setFormData({
-          name:
-            cached.name || "",
-          phone:
-            cached.phone || ""
-        });
-
-      }
-    }
-};
+  const { data: settings } = useSettings();
 
   useEffect(() => {
-
-  const loadData =
-    async () => {
-
-      const cached =
-        await getCachedSettings();
-
-      if (cached) {
-
-        setFormData({
-          name:
-            cached.name || "",
-          phone:
-            cached.phone || ""
-        });
-      }
-
-      fetchSettings();
-    };
-
-  loadData();
-
-}, []);
+    if (settings) {
+      setFormData({
+        name: settings.name || "",
+        phone: settings.phone || ""
+      });
+    }
+  }, [settings]);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -152,6 +88,8 @@ const fetchSettings =
       toast.success(
         t("profileUpdated")
       );
+
+      queryClient.invalidateQueries({ queryKey: ['settings'] });
 
     } catch (error) {
       toast.error(

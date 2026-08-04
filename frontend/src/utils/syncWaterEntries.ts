@@ -44,7 +44,7 @@ export const syncWaterEntries =
           entry.id
         );
 
-      } catch (error) {
+      } catch {
 
         console.log(
           "Sync failed"

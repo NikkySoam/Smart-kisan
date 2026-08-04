@@ -1,16 +1,14 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { cacheWaterStats } from "../../utils/cacheWaterStats";
-import { getCachedWaterStats } from "../../utils/getCachedWaterStats";
-import { cacheFarmers } from "../../utils/cacheFarmers";
-import { getCachedFarmers } from "../../utils/getCachedFarmers";
-import { saveOfflineWater } from "../../utils/saveOfflineWater";
-
 import AnalyticsChart from "../../components/AnalyticsChart";
 import API from "../../api/axios";
+import { queryClient } from "../../api/queryClient";
+import { useDashboardStats } from "../../hooks/queries/useDashboardQuery";
+import { useFarmers } from "../../hooks/queries/useFarmersQuery";
+import { useWaterEntries } from "../../hooks/queries/useWaterQuery";
 
 import {
   FaTint,
@@ -71,21 +69,22 @@ const WaterManagement = () => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
-  // LOADING STATES
-  const [loadingStats, setLoadingStats] = useState(true);
-  const [loadingEntries, setLoadingEntries] = useState(true);
+  // --- DATA FETCHING (REACT QUERY) ---
+  const { data: statsData, isLoading: loadingStats } = useDashboardStats();
+  const { data: farmersData } = useFarmers();
+  const { data: entriesData, isLoading: loadingEntries } = useWaterEntries();
 
-  // DATA STATES
-  const [stats, setStats] = useState<Stats>({
+  // Fallbacks if undefined
+  const stats: Stats = statsData || {
     totalFarmers: 0,
     totalEntries: 0,
     totalHours: 0,
     totalEarnings: 0,
     waterRate: 0,
     topConsumer: null,
-  });
-  const [farmers, setFarmers] = useState<Farmer[]>([]);
-  const [entries, setEntries] = useState<WaterEntry[]>([]);
+  };
+  const farmers: Farmer[] = farmersData || [];
+  const entries: WaterEntry[] = entriesData || [];
 
   // RATE EDIT STATE
   const [isEditingRate, setIsEditingRate] = useState(false);
@@ -102,7 +101,7 @@ const WaterManagement = () => {
 
   // EDIT ENTRY STATE
   const [editModal, setEditModal] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<any>(null);
+  const [selectedEntry, setSelectedEntry] = useState<WaterEntry | null>(null);
   const [updating, setUpdating] = useState(false);
   const [deletingId, setDeletingId] = useState("");
   const [editFormData, setEditFormData] = useState({
@@ -121,6 +120,11 @@ const WaterManagement = () => {
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [summarySearch, setSummarySearch] = useState("");
 
+  // ADD FARMER STATE
+  const [addFarmerModal, setAddFarmerModal] = useState(false);
+  const [addingFarmer, setAddingFarmer] = useState(false);
+  const [newFarmerData, setNewFarmerData] = useState({ name: "", phone: "", village: "" });
+
   // EDIT FARMER STATE
   const [editFarmerModal, setEditFarmerModal] = useState(false);
   const [selectedFarmerId, setSelectedFarmerId] = useState<string | null>(null);
@@ -129,58 +133,7 @@ const WaterManagement = () => {
     name: "",
     phone: ""
   });
-  // --- DATA FETCHING ---
-  const fetchStats = async () => {
-    try {
-      const res = await API.get("/dashboard/stats", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setStats(res.data.data);
-      await cacheWaterStats(res.data.data);
-    } catch {
-      const cached = await getCachedWaterStats();
-      if (cached) setStats(cached);
-    } finally {
-      setLoadingStats(false);
-    }
-  };
-
-  const fetchFarmers = async () => {
-    if (!navigator.onLine) {
-      const cached = await getCachedFarmers();
-      setFarmers(cached);
-      return;
-    }
-    try {
-      const res = await API.get("/farmers", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setFarmers(res.data.data);
-      await cacheFarmers(res.data.data);
-    } catch {
-      const cached = await getCachedFarmers();
-      setFarmers(cached);
-    }
-  };
-
-  const fetchEntries = async () => {
-    try {
-      const res = await API.get("/water", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEntries(res.data.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingEntries(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
-    fetchFarmers();
-    fetchEntries();
-  }, []);
+  // Remove manual fetch functions and useEffect, React Query handles this
 
   // --- HANDLERS ---
   const handleUpdateRate = async () => {
@@ -197,10 +150,9 @@ const WaterManagement = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success(t("waterRateUpdated") || "Water rate updated successfully");
-      setStats((prev) => ({ ...prev, waterRate: rateNum }));
-      cacheWaterStats({ ...stats, waterRate: rateNum });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
       setIsEditingRate(false);
-    } catch (error) {
+    } catch {
       toast.error(t("waterRateUpdateFailed") || "Failed to update water rate");
     } finally {
       setRateLoading(false);
@@ -212,20 +164,17 @@ const WaterManagement = () => {
     if (submitting) return;
     setSubmitting(true);
     try {
-      if (!navigator.onLine) {
-        await saveOfflineWater(formData);
-        toast.success("Saved Offline");
-        setFormData({ farmer: "", hours: "", date: new Date().toISOString().split("T")[0] });
-        return;
-      }
       await API.post("/water", formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(t("waterEntryAdded"));
       setFormData({ farmer: "", hours: "", date: new Date().toISOString().split("T")[0] });
-      await fetchEntries();
-      await fetchStats(); // Refresh dashboard stats
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['fields'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
+    } catch {
       toast.error(t("entryAddFailed"));
     } finally {
       setSubmitting(false);
@@ -241,9 +190,12 @@ const WaterManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success(t("entryDeleted"));
-      await fetchEntries();
-      await fetchStats();
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['fields'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
+    } catch {
       toast.error(t("entryDeleteFailed"));
     } finally {
       setDeletingId("");
@@ -252,7 +204,7 @@ const WaterManagement = () => {
 
   const updateEntryHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (updating) return;
+    if (updating || !selectedEntry) return;
     setUpdating(true);
     try {
       await API.put(`/water/${selectedEntry._id}`, editFormData, {
@@ -260,9 +212,12 @@ const WaterManagement = () => {
       });
       toast.success(t("entryUpdated"));
       setEditModal(false);
-      await fetchEntries();
-      await fetchStats();
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['fields'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
+    } catch {
       toast.error(t("entryUpdateFailed"));
     } finally {
       setUpdating(false);
@@ -276,11 +231,37 @@ const WaterManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       toast.success("Farmer and associated entries deleted");
-      await fetchFarmers();
-      await fetchEntries();
-      await fetchStats();
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['waterEntries'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['fields'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
+    } catch {
       toast.error("Failed to delete farmer");
+    }
+  };
+
+  const handleAddFarmer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (addingFarmer) return;
+    setAddingFarmer(true);
+    try {
+      const res = await API.post("/farmers", newFarmerData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success(t("farmerAdded", "Farmer added successfully"));
+      setAddFarmerModal(false);
+      setNewFarmerData({ name: "", phone: "", village: "" });
+      const newFarmerId = res.data?.data?._id || res.data?.data?.id;
+      if (newFarmerId) {
+        setFormData(prev => ({ ...prev, farmer: newFarmerId }));
+      }
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+    } catch {
+      toast.error(t("farmerAddFailed", "Failed to add farmer"));
+    } finally {
+      setAddingFarmer(false);
     }
   };
 
@@ -294,16 +275,16 @@ const WaterManagement = () => {
       });
       toast.success("Farmer updated successfully");
       setEditFarmerModal(false);
-      await fetchFarmers();
-      await fetchStats();
-    } catch (error) {
+      queryClient.invalidateQueries({ queryKey: ['farmers'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardStats'] });
+    } catch {
       toast.error("Failed to update farmer");
     } finally {
       setUpdatingFarmer(false);
     }
   };
 
-  const openEditFarmerModal = (farmer: any) => {
+  const openEditFarmerModal = (farmer: Farmer) => {
     setSelectedFarmerId(farmer._id);
     setEditFarmerData({
       name: farmer.name,
@@ -312,11 +293,11 @@ const WaterManagement = () => {
     setEditFarmerModal(true);
   };
 
-  const openEditModal = (entry: any) => {
+  const openEditModal = (entry: WaterEntry) => {
     setSelectedEntry(entry);
     setEditFormData({
         farmer: entry.farmer._id,
-        hours: entry.hours,
+        hours: entry.hours.toString(),
         date: entry.date.split("T")[0],
     });
     setEditModal(true);
@@ -538,7 +519,10 @@ const WaterManagement = () => {
             </h2>
             <form onSubmit={handleAddSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-emerald-900 mb-2">{t("farmer")}</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-semibold text-emerald-900">{t("farmer")}</label>
+                  <button type="button" onClick={() => setAddFarmerModal(true)} className="text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded cursor-pointer transition-colors">+ {t("addFarmer", "Add New")}</button>
+                </div>
                 <select
                   name="farmer"
                   value={formData.farmer}
@@ -926,6 +910,63 @@ const WaterManagement = () => {
                   className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors disabled:opacity-70 cursor-pointer"
                 >
                   {updatingFarmer ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD FARMER MODAL */}
+      {addFarmerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-emerald-950/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-2xl font-black text-emerald-950 mb-6 flex items-center gap-2">
+              <FaPlus className="text-emerald-500" /> {t("addFarmer", "Add Farmer")}
+            </h2>
+            <form onSubmit={handleAddFarmer} className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-emerald-900 mb-1">{t("farmerName", "Name")}</label>
+                <input
+                  type="text"
+                  value={newFarmerData.name}
+                  onChange={(e) => setNewFarmerData({ ...newFarmerData, name: e.target.value })}
+                  className={inputClass}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-emerald-900 mb-1">{t("phoneNumber", "Phone Number")} ({t("optional", "Optional")})</label>
+                <input
+                  type="text"
+                  value={newFarmerData.phone}
+                  onChange={(e) => setNewFarmerData({ ...newFarmerData, phone: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-emerald-900 mb-1">{t("village", "Village")} ({t("optional", "Optional")})</label>
+                <input
+                  type="text"
+                  value={newFarmerData.village}
+                  onChange={(e) => setNewFarmerData({ ...newFarmerData, village: e.target.value })}
+                  className={inputClass}
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setAddFarmerModal(false)}
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors cursor-pointer"
+                >
+                  {t("cancel", "Cancel")}
+                </button>
+                <button
+                  type="submit"
+                  disabled={addingFarmer}
+                  className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors disabled:opacity-70 cursor-pointer"
+                >
+                  {addingFarmer ? t("saving", "Saving...") : t("addFarmer", "Add Farmer")}
                 </button>
               </div>
             </form>

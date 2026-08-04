@@ -2,7 +2,7 @@ import { dbPromise } from "./offlineDB";
 
 export const cacheWaterEntries =
   async (
-    entries: any[]
+    entries: unknown[]
   ) => {
 
     const db =

@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import API from "../api/axios";
+import { queryClient } from "../api/queryClient";
+import { useAIHistory } from "../hooks/queries/useAIQuery";
 
 import toast from "react-hot-toast";
+import DiseaseInsights from "./DiseaseInsights";
 
 interface CropScanInterface {
   _id: string;
@@ -15,26 +18,13 @@ interface CropScanInterface {
 }
 
 const CropHistory = () => {
-  const [scans, setScans] = useState<CropScanInterface[]>([]);
+  const { data: scansData } = useAIHistory();
+  const scans = scansData || [];
+
   const [selectedScan, setSelectedScan] =
     useState<CropScanInterface | null>(null);
 
-  const fetchHistory = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.get("/ai/history", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setScans(res.data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  // React Query handles fetching automatically
 
   const deleteScan = async ( id: string ) => {
     try {
@@ -61,12 +51,7 @@ const CropHistory = () => {
         "Scan deleted"
       );
 
-      setScans(
-        scans.filter(
-          (scan) =>
-            scan._id !== id
-        )
-      );
+      queryClient.invalidateQueries({ queryKey: ['aiHistory'] });
 
     } catch {
 
@@ -77,9 +62,7 @@ const CropHistory = () => {
     }
   };
 
-  useEffect(() => {
-    fetchHistory();
-  }, []);
+  // React Query automatically loads cached data
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
@@ -98,6 +81,8 @@ const CropHistory = () => {
         🌾 Crop Scan History
       </h1>
 
+      <DiseaseInsights scans={scans} />
+
       {scans.length === 0 ? (
         <div className="bg-white rounded-3xl border border-slate-200 p-10 text-center shadow-sm">
           <p className="text-gray-500">
@@ -115,7 +100,7 @@ const CropHistory = () => {
             gap-5
           "
         >
-          {scans.map((scan) => (
+          {scans.map((scan: CropScanInterface) => (
             <div
               key={scan._id}
               className="

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteField = exports.updateField = exports.getFieldDetails = exports.getFields = exports.addField = void 0;
+exports.getFieldInsights = exports.deleteField = exports.updateField = exports.getFieldDetails = exports.getFields = exports.addField = void 0;
 const Field_1 = __importDefault(require("../models/Field"));
 const uploadToCloudinary_1 = require("../utils/uploadToCloudinary");
 const cloudinary_1 = __importDefault(require("../config/cloudinary"));
@@ -232,3 +232,120 @@ const deleteField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.deleteField = deleteField;
+// GET FIELD INSIGHTS
+const getFieldInsights = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield User_1.default.findById(req.user._id);
+        const waterRate = (user === null || user === void 0 ? void 0 : user.waterRate) || 0;
+        const pipeline = [
+            { $match: { user: req.user._id } },
+            {
+                $lookup: {
+                    from: "fieldwaters",
+                    localField: "_id",
+                    foreignField: "field",
+                    as: "waterEntries"
+                }
+            },
+            {
+                $lookup: {
+                    from: "fertilizers",
+                    localField: "_id",
+                    foreignField: "field",
+                    as: "fertilizers"
+                }
+            },
+            {
+                $lookup: {
+                    from: "labour",
+                    localField: "_id",
+                    foreignField: "field",
+                    as: "labours"
+                }
+            },
+            {
+                $lookup: {
+                    from: "equipment",
+                    localField: "_id",
+                    foreignField: "field",
+                    as: "equipments"
+                }
+            },
+            {
+                $lookup: {
+                    from: "cropsalereceipts",
+                    localField: "_id",
+                    foreignField: "field",
+                    as: "receipts"
+                }
+            },
+            {
+                $addFields: {
+                    waterHours: { $sum: "$waterEntries.hours" },
+                    fertilizerExpense: { $sum: "$fertilizers.cost" },
+                    labourExpense: { $sum: "$labours.amount" },
+                    equipmentExpense: { $sum: "$equipments.amount" },
+                    totalRevenue: { $sum: "$receipts.totalAmount" }
+                }
+            },
+            {
+                $addFields: {
+                    waterExpense: { $multiply: ["$waterHours", waterRate] }
+                }
+            },
+            {
+                $addFields: {
+                    totalExpense: {
+                        $add: ["$waterExpense", "$fertilizerExpense", "$labourExpense", "$equipmentExpense"]
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    netProfit: { $subtract: ["$totalRevenue", "$totalExpense"] },
+                    profitPerArea: {
+                        $cond: {
+                            if: { $gt: ["$area", 0] },
+                            then: {
+                                $divide: [
+                                    { $subtract: ["$totalRevenue", "$totalExpense"] },
+                                    "$area"
+                                ]
+                            },
+                            else: 0
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    name: 1,
+                    crop: 1,
+                    area: 1,
+                    waterExpense: 1,
+                    fertilizerExpense: 1,
+                    labourExpense: 1,
+                    equipmentExpense: 1,
+                    totalExpense: 1,
+                    totalRevenue: 1,
+                    netProfit: 1,
+                    profitPerArea: 1,
+                    createdAt: 1
+                }
+            }
+        ];
+        const aggregatedFields = yield Field_1.default.aggregate(pipeline);
+        res.status(200).json({
+            success: true,
+            data: aggregatedFields,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch field insights",
+        });
+    }
+});
+exports.getFieldInsights = getFieldInsights;

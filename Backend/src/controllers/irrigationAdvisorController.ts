@@ -12,7 +12,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 // In frontend they use: VITE_WEATHER_API_KEY=13c165bcb92ce8183706d0098b3a8fe7
 const WEATHER_API_KEY = "13c165bcb92ce8183706d0098b3a8fe7"; 
 
-export const getIrrigationAdvice = async (req: AuthRequest, res: Response): Promise<any> => {
+export const getIrrigationAdvice = async (req: AuthRequest, res: Response) => {
   try {
     const { fieldId } = req.params;
     const forceRefresh = req.query.refresh === "true";

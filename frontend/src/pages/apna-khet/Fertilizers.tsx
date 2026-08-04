@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import {
-  useEffect,
   useState,
 } from "react";
 
@@ -9,7 +8,9 @@ import {
 } from "react-router-dom";
 
 import API from "../../api/axios";
-
+import { queryClient } from "../../api/queryClient";
+import { useFertilizers } from "../../hooks/queries/useFertilizerQuery";
+import { useFieldDetails } from "../../hooks/queries/useFieldQuery";
 import toast from "react-hot-toast";
 
 import {
@@ -43,17 +44,12 @@ const Fertilizers = () => {
   const token =
     localStorage.getItem("token");
 
-  const [entries, setEntries] =
-    useState<Fertilizer[]>([]);
+  const { data: fertData, isLoading: loading } = useFertilizers(fieldId);
+  const { data: fieldDetails } = useFieldDetails(fieldId);
 
-  const [totalCost, setTotalCost] =
-    useState(0);
-
-  const [showModal, setShowModal] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(true);
+  const entries = fertData?.entries || [];
+  const totalCost = fertData?.totalCost || 0;
+  const fieldName = fieldDetails?.field?.name || t("field");
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -61,8 +57,8 @@ const Fertilizers = () => {
   const [deletingId, setDeletingId] =
     useState("");
 
-  const [fieldName, setFieldName] =
-  useState(t("field"));
+  const [showModal, setShowModal] =
+    useState(false);
 
   const [formData, setFormData] =
     useState({
@@ -78,58 +74,7 @@ const Fertilizers = () => {
   const [isEditing, setIsEditing] =
     useState(false);
 
-  // FETCH DATA
-
-  const fetchEntries =
-    async () => {
-      try {
-
-        const res = await API.get(
-          `/fertilizers/field/${fieldId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setEntries(res.data.data);
-
-        setTotalCost(
-          res.data.totalCost
-        );
-
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchFieldDetails = async () => {
-        try {
-            const res = await API.get(
-            `/fields/${fieldId}`,
-            {
-                headers: {
-                Authorization: `Bearer ${token}`,
-                },
-            }
-            );
-
-            setFieldName(
-            res.data.field.name || t("field")
-            );
-        } catch (error) {
-            console.log(error);
-        }
-        };
-
-  useEffect(() => {
-  fetchFieldDetails();
-  fetchEntries();
-}, [fieldId]);
+  // React Query handles fetching automatically
 
   // HANDLE CHANGE
 
@@ -202,7 +147,9 @@ const Fertilizers = () => {
         date: "",
       });
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['fertilizers', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -241,7 +188,9 @@ const Fertilizers = () => {
         t("fertilizerDeleted")
       );
 
-      await fetchEntries();
+      queryClient.invalidateQueries({ queryKey: ['fertilizers', fieldId] });
+      queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
+      queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
     } catch (error) {
       toast.error(
@@ -452,7 +401,7 @@ const Fertilizers = () => {
             <tbody>
 
               {entries.map(
-                (entry) => (
+                (entry: any) => (
 
                   <tr
                     key={entry._id}
