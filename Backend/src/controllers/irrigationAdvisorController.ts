@@ -8,9 +8,8 @@ import createNotification from "../utils/createNotification";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// Using a generic weather API. You can replace with your preferred provider like OpenWeatherMap
-// In frontend they use: VITE_WEATHER_API_KEY=13c165bcb92ce8183706d0098b3a8fe7
-const WEATHER_API_KEY = "13c165bcb92ce8183706d0098b3a8fe7"; 
+
+const WEATHER_API_KEY = process.env.WEATHER_API; 
 
 export const getIrrigationAdvice = async (req: AuthRequest, res: Response) => {
   try {
