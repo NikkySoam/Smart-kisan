@@ -7,7 +7,9 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app_1 = __importDefault(require("./app"));
 const db_1 = __importDefault(require("./config/db"));
+const redis_1 = require("./config/redis");
 (0, db_1.default)();
+(0, redis_1.connectRedis)();
 const PORT = process.env.PORT || 5000;
 app_1.default.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

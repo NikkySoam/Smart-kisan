@@ -3,6 +3,7 @@ import { Response } from "express";
 import Farmer from "../models/Farmer";
 import Water from "../models/Water";
 import { AuthRequest } from "../middleware/authMiddleware";
+import { deleteCache, deleteCachePattern } from "../utils/redisCache";
 
 
 // ADD FARMER
@@ -17,6 +18,9 @@ export const addFarmer = async ( req: AuthRequest, res: Response) => {
           village,
           user: req.user._id,
         });
+
+      await deleteCache(`dashboard:${req.user._id}`);
+      await deleteCachePattern(`report:${req.user._id}:*`);
 
       res.status(201).json({
         success: true,
@@ -93,6 +97,9 @@ export const updateFarmer = async ( req: AuthRequest, res: Response ) => {
           { new: true }
         );
 
+      await deleteCache(`dashboard:${req.user._id}`);
+      await deleteCachePattern(`report:${req.user._id}:*`);
+
       res.status(200).json({
         success: true,
         message:
@@ -146,6 +153,9 @@ export const deleteFarmer =
       await Farmer.findByIdAndDelete(
         id
       );
+
+      await deleteCache(`dashboard:${req.user._id}`);
+      await deleteCachePattern(`report:${req.user._id}:*`);
 
       res.status(200).json({
         success: true,

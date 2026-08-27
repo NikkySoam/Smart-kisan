@@ -14,10 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMonthlyReport = void 0;
 const Water_1 = __importDefault(require("../models/Water"));
+const redisCache_1 = require("../utils/redisCache");
 // MONTHLY REPORT
 const getMonthlyReport = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { month, year, farmer, } = req.query;
+        const cacheKey = `report:${req.user._id}:m=${month || ""}:y=${year || ""}:f=${farmer || ""}`;
+        const cachedData = yield (0, redisCache_1.getCache)(cacheKey);
+        if (cachedData) {
+            return res.status(200).json(cachedData);
+        }
         // FILTER OBJECT
         const filter = {
             user: req.user._id,
@@ -45,13 +51,15 @@ const getMonthlyReport = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const totalHours = entries.reduce((acc, item) => acc + item.hours, 0);
         // TOTAL EARNINGS
         const totalEarnings = entries.reduce((acc, item) => acc + item.totalAmount, 0);
-        res.status(200).json({
+        const responsePayload = {
             success: true,
             totalEntries: entries.length,
             totalHours,
             totalEarnings,
             data: entries,
-        });
+        };
+        yield (0, redisCache_1.setCache)(cacheKey, responsePayload, 300);
+        res.status(200).json(responsePayload);
     }
     catch (error) {
         console.log(error);

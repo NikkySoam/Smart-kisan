@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateWaterEntry = exports.deleteWaterEntry = exports.getFarmerWaterHistory = exports.getWaterEntries = exports.addWaterEntry = void 0;
 const Water_1 = __importDefault(require("../models/Water"));
 const Farmer_1 = __importDefault(require("../models/Farmer"));
+const redisCache_1 = require("../utils/redisCache");
 // ADD WATER ENTRY
 const addWaterEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -43,6 +44,8 @@ const addWaterEntry = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             totalAmount,
             user: req.user._id,
         });
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(201).json({
             success: true,
             message: "Water entry added successfully",
@@ -141,6 +144,8 @@ const deleteWaterEntry = (req, res) => __awaiter(void 0, void 0, void 0, functio
             });
         }
         yield Water_1.default.findByIdAndDelete(id);
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(200).json({
             success: true,
             message: "Water entry deleted successfully",
@@ -181,6 +186,8 @@ const updateWaterEntry = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }, {
             new: true,
         });
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(200).json({
             success: true,
             message: "Water entry updated successfully",

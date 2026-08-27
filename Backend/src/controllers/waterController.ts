@@ -5,6 +5,7 @@ import Water from "../models/Water";
 import Farmer from "../models/Farmer";
 
 import { AuthRequest } from "../middleware/authMiddleware";
+import { deleteCache, deleteCachePattern } from "../utils/redisCache";
 
 
 // ADD WATER ENTRY
@@ -55,6 +56,9 @@ export const addWaterEntry = async (
       totalAmount,
       user: req.user._id,
     });
+
+    await deleteCache(`dashboard:${req.user._id}`);
+    await deleteCachePattern(`report:${req.user._id}:*`);
 
     res.status(201).json({
       success: true,
@@ -212,6 +216,9 @@ export const deleteWaterEntry =
 
       await Water.findByIdAndDelete(id);
 
+      await deleteCache(`dashboard:${req.user._id}`);
+      await deleteCachePattern(`report:${req.user._id}:*`);
+
       res.status(200).json({
         success: true,
         message:
@@ -278,6 +285,9 @@ export const updateWaterEntry =
             new: true,
           }
         );
+
+      await deleteCache(`dashboard:${req.user._id}`);
+      await deleteCachePattern(`report:${req.user._id}:*`);
 
       res.status(200).json({
         success: true,

@@ -19,9 +19,7 @@ const IrrigationAdvice_1 = __importDefault(require("../models/IrrigationAdvice")
 const genai_1 = require("@google/genai");
 const createNotification_1 = __importDefault(require("../utils/createNotification"));
 const ai = new genai_1.GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-// Using a generic weather API. You can replace with your preferred provider like OpenWeatherMap
-// In frontend they use: VITE_WEATHER_API_KEY=13c165bcb92ce8183706d0098b3a8fe7
-const WEATHER_API_KEY = "13c165bcb92ce8183706d0098b3a8fe7";
+const WEATHER_API_KEY = process.env.WEATHER_API;
 const getIrrigationAdvice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { fieldId } = req.params;

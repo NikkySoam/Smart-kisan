@@ -15,9 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDashboardStats = void 0;
 const Farmer_1 = __importDefault(require("../models/Farmer"));
 const Water_1 = __importDefault(require("../models/Water"));
+const redisCache_1 = require("../utils/redisCache");
 // DASHBOARD STATS
 const getDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const cacheKey = `dashboard:${req.user._id}`;
+        const cachedData = yield (0, redisCache_1.getCache)(cacheKey);
+        if (cachedData) {
+            return res.status(200).json(cachedData);
+        }
         // TOTAL FARMERS
         const totalFarmers = yield Farmer_1.default.countDocuments({ user: req.user._id });
         // WATER ENTRIES
@@ -62,7 +68,7 @@ const getDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 entries: topConsumerAgg[0].totalEntries,
             };
         }
-        res.status(200).json({
+        const responsePayload = {
             success: true,
             data: {
                 totalFarmers,
@@ -72,7 +78,9 @@ const getDashboardStats = (req, res) => __awaiter(void 0, void 0, void 0, functi
                 waterRate,
                 topConsumer,
             },
-        });
+        };
+        yield (0, redisCache_1.setCache)(cacheKey, responsePayload, 60);
+        res.status(200).json(responsePayload);
     }
     catch (error) {
         console.log(error);

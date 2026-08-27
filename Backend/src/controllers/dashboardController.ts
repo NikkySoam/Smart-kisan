@@ -2,11 +2,17 @@ import { Response } from "express";
 import Farmer from "../models/Farmer";
 import Water from "../models/Water";
 import { AuthRequest } from "../middleware/authMiddleware";
-
+import { getCache, setCache } from "../utils/redisCache";
 
 // DASHBOARD STATS
 export const getDashboardStats = async ( req: AuthRequest, res: Response ) => {
     try {
+      const cacheKey = `dashboard:${req.user._id}`;
+      const cachedData = await getCache<Record<string, unknown>>(cacheKey);
+      if (cachedData) {
+        return res.status(200).json(cachedData);
+      }
+
       // TOTAL FARMERS
       const totalFarmers = await Farmer.countDocuments({ user: req.user._id });
 
@@ -65,7 +71,7 @@ export const getDashboardStats = async ( req: AuthRequest, res: Response ) => {
         };
       }
 
-      res.status(200).json({
+      const responsePayload = {
         success: true,
         data: {
           totalFarmers,
@@ -75,7 +81,11 @@ export const getDashboardStats = async ( req: AuthRequest, res: Response ) => {
           waterRate,
           topConsumer,
         },
-      });
+      };
+
+      await setCache(cacheKey, responsePayload, 60);
+
+      res.status(200).json(responsePayload);
 
     } catch (error) {
       console.log(error);

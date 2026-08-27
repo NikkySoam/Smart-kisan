@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteFarmer = exports.updateFarmer = exports.getFarmers = exports.addFarmer = void 0;
 const Farmer_1 = __importDefault(require("../models/Farmer"));
 const Water_1 = __importDefault(require("../models/Water"));
+const redisCache_1 = require("../utils/redisCache");
 // ADD FARMER
 const addFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -25,6 +26,8 @@ const addFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             village,
             user: req.user._id,
         });
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(201).json({
             success: true,
             data: farmer,
@@ -77,6 +80,8 @@ const updateFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         }
         const updatedFarmer = yield Farmer_1.default.findByIdAndUpdate(id, { name, phone, village }, { new: true });
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(200).json({
             success: true,
             message: "Farmer updated successfully",
@@ -110,6 +115,8 @@ const deleteFarmer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         yield Water_1.default.deleteMany({ farmer: id });
         // DELETE FARMER
         yield Farmer_1.default.findByIdAndDelete(id);
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
+        yield (0, redisCache_1.deleteCachePattern)(`report:${req.user._id}:*`);
         res.status(200).json({
             success: true,
             message: "Farmer deleted successfully",

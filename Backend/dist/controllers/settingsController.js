@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateCity = exports.updateProfile = exports.getSettings = exports.updateWaterRate = void 0;
 const User_1 = __importDefault(require("../models/User"));
+const redisCache_1 = require("../utils/redisCache");
 // UPDATE WATER RATE
 const updateWaterRate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -31,6 +32,7 @@ const updateWaterRate = (req, res) => __awaiter(void 0, void 0, void 0, function
         }, {
             new: true,
         });
+        yield (0, redisCache_1.deleteCache)(`dashboard:${req.user._id}`);
         res.status(200).json({
             success: true,
             message: "Water rate updated successfully",
@@ -72,7 +74,7 @@ exports.getSettings = getSettings;
 // UPDATE PROFILE
 const updateProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name, phone, } = req.body;
+        const { name, phone } = req.body;
         // UPDATE USER
         const updatedUser = yield User_1.default.findByIdAndUpdate(req.user._id, {
             name,

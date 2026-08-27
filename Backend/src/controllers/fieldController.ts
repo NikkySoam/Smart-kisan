@@ -6,6 +6,7 @@ import { AuthRequest } from "../middleware/authMiddleware";
 
 import { uploadToCloudinary } from "../utils/uploadToCloudinary";
 import cloudinary from "../config/cloudinary";
+import { getCache, setCache, deleteCache } from "../utils/redisCache";
 
 import FieldWater from "../models/FieldWater";
 
@@ -57,6 +58,8 @@ export const addField =
           user: req.user._id,
         });
 
+      await deleteCache(`fields:${req.user._id}`);
+
       res.status(201).json({
         success: true,
         data: field,
@@ -83,6 +86,12 @@ export const getFields =
     res: Response
   ) => {
     try {
+      const cacheKey = `fields:${req.user._id}`;
+      const cachedData = await getCache<Record<string, unknown>>(cacheKey);
+      if (cachedData) {
+        return res.status(200).json(cachedData);
+      }
+
       const fields =
         await Field.find({
           user: req.user._id,
@@ -90,10 +99,14 @@ export const getFields =
           createdAt: -1,
         }).lean();
 
-      res.status(200).json({
+      const responsePayload = {
         success: true,
         data: fields,
-      });
+      };
+
+      await setCache(cacheKey, responsePayload, 120);
+
+      res.status(200).json(responsePayload);
 
     } catch (error) {
       console.log(error);
@@ -308,6 +321,8 @@ export const updateField =
 
       await field.save();
 
+      await deleteCache(`fields:${req.user._id}`);
+
       res.status(200).json({
         success: true,
         data: field,
@@ -353,6 +368,8 @@ export const deleteField =
       }
 
       await field.deleteOne();
+
+      await deleteCache(`fields:${req.user._id}`);
 
       res.status(200).json({
         success: true,

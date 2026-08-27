@@ -3,6 +3,7 @@ import { Response } from "express";
 import Water from "../models/Water";
 
 import { AuthRequest } from "../middleware/authMiddleware";
+import { getCache, setCache } from "../utils/redisCache";
 
 
 // MONTHLY REPORT
@@ -18,6 +19,12 @@ export const getMonthlyReport =
         year,
         farmer,
       } = req.query;
+
+      const cacheKey = `report:${req.user._id}:m=${month || ""}:y=${year || ""}:f=${farmer || ""}`;
+      const cachedData = await getCache<Record<string, unknown>>(cacheKey);
+      if (cachedData) {
+        return res.status(200).json(cachedData);
+      }
 
       // FILTER OBJECT
 
@@ -85,7 +92,7 @@ export const getMonthlyReport =
           0
         );
 
-      res.status(200).json({
+      const responsePayload = {
         success: true,
 
         totalEntries:
@@ -96,7 +103,11 @@ export const getMonthlyReport =
         totalEarnings,
 
         data: entries,
-      });
+      };
+
+      await setCache(cacheKey, responsePayload, 300);
+
+      res.status(200).json(responsePayload);
 
     } catch (error) {
       console.log(error);

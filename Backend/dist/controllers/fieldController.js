@@ -16,6 +16,7 @@ exports.getFieldInsights = exports.deleteField = exports.updateField = exports.g
 const Field_1 = __importDefault(require("../models/Field"));
 const uploadToCloudinary_1 = require("../utils/uploadToCloudinary");
 const cloudinary_1 = __importDefault(require("../config/cloudinary"));
+const redisCache_1 = require("../utils/redisCache");
 const FieldWater_1 = __importDefault(require("../models/FieldWater"));
 const Fertilizer_1 = __importDefault(require("../models/Fertilizer"));
 const Labour_1 = __importDefault(require("../models/Labour"));
@@ -43,6 +44,7 @@ const addField = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             cloudinaryPublicId,
             user: req.user._id,
         });
+        yield (0, redisCache_1.deleteCache)(`fields:${req.user._id}`);
         res.status(201).json({
             success: true,
             data: field,
@@ -60,15 +62,22 @@ exports.addField = addField;
 // GET FIELDS
 const getFields = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const cacheKey = `fields:${req.user._id}`;
+        const cachedData = yield (0, redisCache_1.getCache)(cacheKey);
+        if (cachedData) {
+            return res.status(200).json(cachedData);
+        }
         const fields = yield Field_1.default.find({
             user: req.user._id,
         }).sort({
             createdAt: -1,
         }).lean();
-        res.status(200).json({
+        const responsePayload = {
             success: true,
             data: fields,
-        });
+        };
+        yield (0, redisCache_1.setCache)(cacheKey, responsePayload, 120);
+        res.status(200).json(responsePayload);
     }
     catch (error) {
         console.log(error);
@@ -189,6 +198,7 @@ const updateField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             field.cropSellingPrice = Number(cropSellingPrice);
         }
         yield field.save();
+        yield (0, redisCache_1.deleteCache)(`fields:${req.user._id}`);
         res.status(200).json({
             success: true,
             data: field,
@@ -218,6 +228,7 @@ const deleteField = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             });
         }
         yield field.deleteOne();
+        yield (0, redisCache_1.deleteCache)(`fields:${req.user._id}`);
         res.status(200).json({
             success: true,
             message: "Field deleted successfully",
