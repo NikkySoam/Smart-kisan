@@ -62,7 +62,10 @@ export const useFieldDetails = (id: string | undefined) => {
       const res = await API.get(`/fields/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      return res.data.data;
+      return res.data.data ?? {
+        field: res.data.field,
+        totals: res.data.totals,
+      };
     },
     enabled: !!token && !!id,
   });

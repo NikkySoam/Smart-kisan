@@ -34,8 +34,9 @@ const fieldSchema =
 
       crop: {
         type: String,
-         required: true,
+        default: "Crop name"
       },
+
       imageUrl: {
         type: String,
         default: "",

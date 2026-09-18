@@ -57,42 +57,30 @@ const Fields = () => {
 
   const navigate = useNavigate();
 
-  const token =
-    localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   const { data, isLoading: loadingFields } = useFieldsWithAnalytics();
   const fields = (data?.fields as Field[]) || [];
   const analytics = (data?.analytics as Record<string, Analytics>) || {};
   const loading = loadingFields;
 
-  const [submitting, setSubmitting] =
-  useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const [deletingId, setDeletingId] =
-  useState("");
+  const [deletingId, setDeletingId] = useState("");
 
-  const [search, setSearch] =
-  useState("");
+  const [search, setSearch] = useState("");
 
-  const [showModal, setShowModal] =
-    useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  const [aiModalField, setAiModalField] =
-    useState<{id: string, name: string} | null>(null);
+  const [aiModalField, setAiModalField] = useState<{id: string, name: string} | null>(null);
 
   const [showInsightsModal, setShowInsightsModal] = useState(false);
 
-  const [isEditing, setIsEditing] =
-  useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
-    const [editId, setEditId] =
-    useState("");
+  const [editId, setEditId] = useState("");
 
-  const [imageFile, setImageFile] =
-    useState<File | null>(null);
-
-  const [cropPriceEditId, setCropPriceEditId] = useState("");
-  const [cropPriceInput, setCropPriceInput] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [imagePreview, setImagePreview] =
     useState("");
@@ -106,29 +94,6 @@ const Fields = () => {
     });
 
   // React Query handles fetching automatically
-
-  const updateCropPrice = async (fieldId: string, currentField: Field) => {
-    try {
-      const body = new FormData();
-      body.append("name", currentField.name);
-      body.append("area", currentField.area.toString());
-      body.append("location", currentField.location);
-      body.append("crop", currentField.crop);
-      body.append("cropSellingPrice", cropPriceInput);
-      
-      await API.put(`/fields/${fieldId}`, body, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      
-        toast.success(t("fieldUpdated") || "Price updated");
-        setCropPriceEditId("");
-        queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
-        queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
-    } catch (error) {
-      console.error(error);
-      toast.error(t("error") || "Error updating price");
-    }
-  };
 
   // React Query automatically loads cached data
 
@@ -180,6 +145,7 @@ const Fields = () => {
       if (imageFile) {
         body.append("image", imageFile);
       }
+
 
       // EDIT
 
@@ -234,7 +200,7 @@ const Fields = () => {
     queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
     queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-  } catch (error) {
+  } catch {
     toast.error(
       t("operationFailed")
     );
@@ -275,7 +241,7 @@ const Fields = () => {
     queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
     queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-  } catch (error) {
+  } catch {
     toast.error(
       t("deleteFailed")
     );
@@ -341,7 +307,7 @@ const Fields = () => {
   );
 
   return (
-    <div className="py-2 px-4 sm:p-4">
+    <div className="py-2 px-4 sm:px-6">
 
       {/* HEADER */}
 
@@ -352,8 +318,8 @@ const Fields = () => {
           sm:flex-row
           justify-between
           sm:items-center
-          gap-4
-          mb-4
+          gap-2
+          mb-2
         "
       >
 
@@ -531,44 +497,6 @@ const Fields = () => {
 
                   <div className="mt-2 text-lg flex items-center gap-2">
                     <span>{field.crop}</span>
-                    {cropPriceEditId === field._id ? (
-                      <div className="flex items-center gap-1 bg-white/20 px-2 py-1 rounded-lg">
-                        <span className="text-sm">₹</span>
-                        <input
-                          type="number"
-                          autoFocus
-                          value={cropPriceInput}
-                          onChange={(e) => setCropPriceInput(e.target.value)}
-                          className="w-16 bg-transparent text-white outline-none text-sm"
-                          placeholder="Price"
-                        />
-                        <button
-                          onClick={() => updateCropPrice(field._id, field)}
-                          className="text-green-300 hover:text-green-200"
-                        >
-                          ✓
-                        </button>
-                        <button
-                          onClick={() => setCropPriceEditId("")}
-                          className="text-red-300 hover:text-red-200 text-xs ml-1"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm bg-black/30 px-2 py-0.5 rounded-md">₹{field.cropSellingPrice || 0}/Q</span>
-                        <button
-                          onClick={() => {
-                            setCropPriceEditId(field._id);
-                            setCropPriceInput(field.cropSellingPrice?.toString() || "");
-                          }}
-                          className="text-gray-300 hover:text-white cursor-pointer"
-                        >
-                          <FaEdit size={14} />
-                        </button>
-                      </div>
-                    )}
                   </div>
 
                   <p className="mt-1 text-sm text-gray-200">
@@ -675,7 +603,7 @@ const Fields = () => {
                       font-bold
                     "
                   >
-                    {field.area} m&sup2;
+                    {field.area} Acre
                   </div>
 
                 </div>
@@ -865,14 +793,14 @@ const Fields = () => {
                 </button>
 
                 {/* ACTIONS */}
-                <div className="mt-4">
+                {/* <div className="mt-4">
                   <button
                     onClick={() => setAiModalField({ id: field._id, name: field.name })}
                     className="w-full bg-linear-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white p-3 rounded-2xl flex justify-center items-center gap-2 font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
                   >
                     <span className="text-xl">🌱</span> AI सिंचाई सलाह
                   </button>
-                </div>
+                </div> */}
 
 
               </div>
@@ -972,7 +900,7 @@ const Fields = () => {
                 onChange={
                   handleChange
                 }
-                placeholder={t("areametersq")}
+                placeholder={t("areaAcre")}
                 className="
                   w-full
                   border

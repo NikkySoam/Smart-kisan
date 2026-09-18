@@ -8,6 +8,15 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { FaArrowLeft, FaPlus, FaTrash, FaEdit, FaChartLine } from "react-icons/fa";
 
+interface Field {
+  _id: string;
+  name: string;
+  area: number;
+  location: string;
+  crop: string;
+  cropSellingPrice?: number;
+}
+
 interface Receipt {
   _id: string;
   buyerName: string;
@@ -30,7 +39,7 @@ const CropSales = () => {
   const receipts = salesData?.receipts || [];
   const totalSelling = salesData?.totalSelling || 0;
   const totalQuantity = salesData?.totalQuantity || 0;
-  const field = fieldDetails?.field || null;
+  const field = (fieldDetails?.field as Field | undefined) || null;
   const loading = loadingSales;
 
   // Form
@@ -40,6 +49,7 @@ const CropSales = () => {
     buyerName: "",
     date: new Date().toISOString().substring(0, 10),
     quantity: "",
+    cropSellingPrice: "",
     notes: ""
   });
 
@@ -47,21 +57,37 @@ const CropSales = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!field?.cropSellingPrice || field.cropSellingPrice <= 0) {
-      toast.error(t("setCropPriceFirst"));
+    if (!field) return;
+
+    const quantity = Number(formData.quantity);
+    const cropSellingPrice = Number(formData.cropSellingPrice);
+
+    if (!formData.cropSellingPrice || cropSellingPrice <= 0) {
+      toast.error(t("invalidCropPrice") || "Enter a valid crop price");
       return;
     }
-    
+
+    if (!quantity || quantity <= 0) {
+      toast.error(t("invalidQuantity") || "Enter a valid quantity");
+      return;
+    }
+
     try {
+      const payload = {
+        ...formData,
+        quantity: quantity.toString(),
+        cropSellingPrice: cropSellingPrice.toString(),
+      };
+
       if (editId) {
-        const res = await API.put(`/crop-sales/${editId}`, formData, {
+        const res = await API.put(`/crop-sales/${editId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success) {
           toast.success(t("receiptUpdated"));
         }
       } else {
-        const res = await API.post(`/crop-sales/${fieldId}`, formData, {
+        const res = await API.post(`/crop-sales/${fieldId}`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data.success) {
@@ -70,6 +96,13 @@ const CropSales = () => {
       }
       setShowModal(false);
       setEditId("");
+      setFormData({
+        buyerName: "",
+        date: new Date().toISOString().substring(0, 10),
+        quantity: "",
+        cropSellingPrice: "",
+        notes: ""
+      });
       queryClient.invalidateQueries({ queryKey: ['cropSales', fieldId] });
       queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
       queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
@@ -102,6 +135,7 @@ const CropSales = () => {
       buyerName: r.buyerName,
       date: new Date(r.date).toISOString().substring(0, 10),
       quantity: r.quantity.toString(),
+      cropSellingPrice: r.pricePerQuintal.toString(),
       notes: r.notes
     });
     setEditId(r._id);
@@ -113,6 +147,7 @@ const CropSales = () => {
       buyerName: "",
       date: new Date().toISOString().substring(0, 10),
       quantity: "",
+      cropSellingPrice: "",
       notes: ""
     });
     setEditId("");
@@ -138,9 +173,9 @@ const CropSales = () => {
             <h1 className="text-2xl font-bold bg-linear-to-r from-green-500 to-green-800 bg-clip-text text-transparent">
               {t("cropSales")}
             </h1>
-            <p className="text-gray-500">{field?.name} - {field?.crop}</p>
-          </div>
+          <p className="text-gray-500">{field?.name} - {field?.crop}</p>
         </div>
+      </div>
         <button
           onClick={openNew}
           className="bg-green-600 hover:bg-green-700 text-white p-3 rounded-full shadow-lg transition-all cursor-pointer"
@@ -148,13 +183,6 @@ const CropSales = () => {
           <FaPlus />
         </button>
       </div>
-
-      {/* Warning if no crop price set */}
-      {(!field?.cropSellingPrice || field.cropSellingPrice <= 0) && (
-        <div className="bg-orange-50 border border-orange-200 text-orange-800 p-4 rounded-2xl mb-6 shadow-sm">
-          <strong>Notice:</strong> {t("noCropPriceNotice", { crop: field?.crop })}
-        </div>
-      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 gap-4 mb-8">
@@ -165,7 +193,7 @@ const CropSales = () => {
           <p className="text-sm font-semibold text-gray-500 mb-1 z-10">{t("totalQuantitySold")}</p>
           <h2 className="text-3xl font-bold text-gray-800 z-10">{totalQuantity} <span className="text-lg font-medium text-gray-500">Q</span></h2>
         </div>
-        <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-4 rounded-3xl shadow-sm border border-emerald-200 flex flex-col items-center justify-center">
+        <div className="bg-linear-to-br from-green-50 to-emerald-100 p-4 rounded-3xl shadow-sm border border-emerald-200 flex flex-col items-center justify-center">
           <p className="text-sm font-semibold text-emerald-800 mb-1">{t("totalSalesAmount")}</p>
           <h2 className="text-3xl font-bold text-emerald-900">₹{totalSelling.toLocaleString()}</h2>
         </div>
@@ -179,7 +207,7 @@ const CropSales = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {receipts.map((r: any) => (
+          {receipts.map((r: Receipt) => (
             <div key={r._id} className="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-1">
               <div className="flex justify-between items-center">
                 <h4 className="font-bold text-gray-800 text-sm truncate">{r.buyerName}</h4>
@@ -193,7 +221,7 @@ const CropSales = () => {
                   {r.notes && (
                     <>
                       <span className="text-gray-300">•</span>
-                      <span className="truncate max-w-[80px] sm:max-w-none">{r.notes}</span>
+                      <span className="truncate max-w-20 sm:max-w-none">{r.notes}</span>
                     </>
                   )}
                 </div>
@@ -243,6 +271,20 @@ const CropSales = () => {
                 />
               </div>
               <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  {t("cropSellingPrice") || "Crop Selling Price"}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  value={formData.cropSellingPrice}
+                  onChange={e => setFormData({...formData, cropSellingPrice: e.target.value})}
+                  placeholder={t("enterCropPrice") || "Enter price per quintal"}
+                  className="w-full bg-gray-50 border border-gray-200 p-3 rounded-2xl outline-none focus:border-green-500"
+                />
+              </div>
+              <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">{t("notesOptional")}</label>
                 <input
                   type="text"
@@ -253,10 +295,10 @@ const CropSales = () => {
                 />
               </div>
               
-              {formData.quantity && field?.cropSellingPrice && (
+              {formData.quantity && (Number(formData.quantity) > 0) && Number(formData.cropSellingPrice) > 0 && (
                 <div className="bg-emerald-50 p-3 rounded-2xl text-emerald-800 text-sm font-medium border border-emerald-100 flex justify-between">
                   <span>{t("calculatedTotal") || "Calculated Total:"}</span>
-                  <span className="font-bold">₹{(Number(formData.quantity) * field.cropSellingPrice).toLocaleString()}</span>
+                  <span className="font-bold">₹{(Number(formData.quantity) * Number(formData.cropSellingPrice)).toLocaleString()}</span>
                 </div>
               )}
 

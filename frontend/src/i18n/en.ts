@@ -35,7 +35,7 @@ const en = {
     updateField: "Update Field",
     fieldName: "Field Name",
     currentCrop: "Current Crop",
-    areametersq: "Area (meter sq)",
+    areaAcre: "Area (acre)",
     location: "Location",
     manageFieldsExpenses: "Manage all your fields and expenses",
     searchFields: "Search fields, crops, location...",
@@ -291,7 +291,12 @@ const en = {
     // Crop Sales Missing
     cropSales: "Crop Sales",
     loadingSalesData: "Loading sales data...",
-    noCropPriceNotice: "You haven't set a selling price for {{crop}}. Please go back to the fields dashboard and set it before adding receipts.",
+    noCropPriceNotice: "You haven't set a selling price for {{crop}}. Set it here before adding receipts.",
+    cropSellingPrice: "Crop Selling Price",
+    enterCropPrice: "Enter price",
+    cropPriceUpdated: "Crop price updated",
+    cropPriceUpdateFailed: "Failed to update crop price",
+    invalidCropPrice: "Enter a valid crop price",
     totalQuantitySold: "Total Quantity Sold",
     totalSalesAmount: "Total Sales Amount",
     salesHistory: "Sales History (Receipts)",
@@ -311,7 +316,7 @@ const en = {
     receiptDeleted: "Receipt deleted",
     failedToDeleteReceipt: "Failed to delete receipt",
     failedToFetchCropSales: "Failed to fetch crop sales data",
-    setCropPriceFirst: "Please set the crop selling price on the field first."
+    setCropPriceFirst: "Please set the crop selling price first."
   },
 };
 

@@ -7,13 +7,13 @@ export const useFieldWater = (fieldId: string | undefined) => {
   return useQuery({
     queryKey: ['fieldWater', fieldId],
     queryFn: async () => {
-      const res = await API.get(`/water/field/${fieldId}`, {
+      const res = await API.get(`/field-water/field/${fieldId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       return {
-        entries: res.data.data,
-        totalCost: res.data.totalCost,
-        totalHours: res.data.totalHours,
+        entries: Array.isArray(res.data.data) ? res.data.data : [],
+        totalCost: Number(res.data.totalCost) || 0,
+        totalHours: Number(res.data.totalHours) || 0,
       };
     },
     enabled: !!token && !!fieldId,

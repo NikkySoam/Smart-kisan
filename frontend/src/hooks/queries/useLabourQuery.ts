@@ -12,7 +12,7 @@ export const useLabour = (fieldId: string | undefined) => {
       });
       return {
         entries: res.data.data,
-        totalCost: res.data.totalCost,
+        totalCost: res.data.totalAmount,
       };
     },
     enabled: !!token && !!fieldId,

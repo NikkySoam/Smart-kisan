@@ -11,8 +11,8 @@ export const useEquipment = (fieldId: string | undefined) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       return {
-        entries: res.data.data,
-        totalCost: res.data.totalCost,
+        entries: Array.isArray(res.data.data) ? res.data.data : [],
+        totalCost: Number(res.data.totalAmount) || 0,
       };
     },
     enabled: !!token && !!fieldId,

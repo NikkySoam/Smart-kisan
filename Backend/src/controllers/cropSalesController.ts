@@ -31,16 +31,16 @@ export const createReceipt = async (req: AuthRequest, res: Response) => {
   try {
     const fieldId = req.params.fieldId as string;
     const userId = req.user._id;
-    const { buyerName, date, quantity, notes } = req.body;
+    const { buyerName, date, quantity, notes, cropSellingPrice } = req.body;
 
     const field = await Field.findOne({ _id: fieldId, user: userId });
     if (!field) {
       return res.status(404).json({ success: false, message: "Field not found" });
     }
 
-    const pricePerQuintal = field.cropSellingPrice || 0;
-    if (pricePerQuintal <= 0) {
-      return res.status(400).json({ success: false, message: "Please set crop selling price first." });
+    const pricePerQuintal = Number(cropSellingPrice ?? field.cropSellingPrice ?? 0);
+    if (!pricePerQuintal || pricePerQuintal <= 0) {
+      return res.status(400).json({ success: false, message: "Please enter a valid crop selling price." });
     }
 
     const totalAmount = Number(quantity) * pricePerQuintal;
@@ -67,17 +67,23 @@ export const updateReceipt = async (req: AuthRequest, res: Response) => {
   try {
     const receiptId = req.params.receiptId as string;
     const userId = req.user._id;
-    const { buyerName, date, quantity, notes } = req.body;
+    const { buyerName, date, quantity, notes, cropSellingPrice } = req.body;
 
     const receipt = await CropSaleReceipt.findOne({ _id: receiptId, user: userId });
     if (!receipt) {
       return res.status(404).json({ success: false, message: "Receipt not found" });
     }
 
+    const pricePerQuintal = Number(cropSellingPrice ?? receipt.pricePerQuintal ?? 0);
+    if (!pricePerQuintal || pricePerQuintal <= 0) {
+      return res.status(400).json({ success: false, message: "Please enter a valid crop selling price." });
+    }
+
     receipt.buyerName = buyerName;
     receipt.date = date;
     receipt.quantity = Number(quantity);
-    receipt.totalAmount = Number(quantity) * receipt.pricePerQuintal;
+    receipt.pricePerQuintal = pricePerQuintal;
+    receipt.totalAmount = Number(quantity) * pricePerQuintal;
     if (notes !== undefined) receipt.notes = notes;
 
     await receipt.save();

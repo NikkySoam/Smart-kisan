@@ -35,15 +35,15 @@ interface EquipmentEntry {
 
 const Equipment = () => {
   const { t } = useTranslation();
-  const { fieldId } =
-    useParams();
+  const { fieldId } = useParams();
 
-  const token =
-    localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   const { data: equipData, isLoading: loading } = useEquipment(fieldId);
-  const entries = equipData?.entries || [];
-  const totalAmount = equipData?.totalCost || 0;
+  const entries = Array.isArray(equipData?.entries)
+    ? equipData.entries
+    : [];
+  const totalAmount = Number(equipData?.totalCost) || 0;
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -143,7 +143,7 @@ const Equipment = () => {
       queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
       queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch {
       toast.error(
         t("operationFailed")
       );
@@ -184,7 +184,7 @@ const Equipment = () => {
       queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
       queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch {
       toast.error(
         t("deleteFailed")
       );
@@ -403,7 +403,7 @@ const Equipment = () => {
             <tbody>
 
               {entries.map(
-                (entry: any) => (
+                (entry: EquipmentEntry) => (
 
                   <tr
                     key={entry._id}

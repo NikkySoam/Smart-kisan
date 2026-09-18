@@ -5,6 +5,21 @@ import { generateFieldInsightsPDF } from '../../utils/generateFieldInsightsPDF';
 
 
 
+interface FieldInsightRecord {
+  _id: string;
+  name: string;
+  crop: string;
+  area: number;
+  totalRevenue: number;
+  totalExpense: number;
+  waterExpense: number;
+  fertilizerExpense: number;
+  labourExpense: number;
+  equipmentExpense: number;
+  netProfit: number;
+  profitPerArea: number;
+}
+
 interface FieldInsightsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,7 +28,7 @@ interface FieldInsightsModalProps {
 const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const { data: insightsData, isLoading } = useFieldInsights();
-  const data = insightsData || [];
+  const data: FieldInsightRecord[] = insightsData || [];
   const loading = isLoading;
   
   // Filters
@@ -21,13 +36,13 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
 
   const cropsList = useMemo(() => {
     const crops = new Set<string>();
-    data.forEach((f: any) => crops.add(f.crop));
+    data.forEach((f: FieldInsightRecord) => crops.add(f.crop));
     return Array.from(crops).sort();
   }, [data]);
 
   const filteredData = useMemo(() => {
     if (selectedCrop === "All") return data;
-    return data.filter((f: any) => f.crop === selectedCrop);
+    return data.filter((f: FieldInsightRecord) => f.crop === selectedCrop);
   }, [data, selectedCrop]);
 
   const analytics = useMemo(() => {
@@ -43,7 +58,7 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
 
     const cropStats: Record<string, {count: number, revenue: number, expenses: number, profit: number}> = {};
 
-    filteredData.forEach((f: any) => {
+    filteredData.forEach((f: FieldInsightRecord) => {
       totalRevenue += f.totalRevenue;
       totalExpenses += f.totalExpense;
       
@@ -72,14 +87,17 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
     }
     
     if (lowestField && lowestField.netProfit < 0) {
-      const maxExp = Math.max(lowestField.labourExpense, lowestField.waterExpense, lowestField.fertilizerExpense, lowestField.equipmentExpense);
-      let expType = "";
-      if (maxExp === lowestField.labourExpense) expType = "labour";
-      else if (maxExp === lowestField.waterExpense) expType = "water";
-      else if (maxExp === lowestField.fertilizerExpense) expType = "fertilizer";
-      else expType = "equipment";
-      
-      recommendations.push(t("lossRec", { name: lowestField.name, expType: t(expType) }));
+      const dominantExpense = [
+        { key: "labour", value: lowestField.labourExpense },
+        { key: "water", value: lowestField.waterExpense },
+        { key: "fertilizer", value: lowestField.fertilizerExpense },
+        { key: "equipment", value: lowestField.equipmentExpense },
+      ].sort((a, b) => b.value - a.value)[0];
+
+      recommendations.push(t("lossRec", {
+        name: lowestField.name,
+        expType: t(dominantExpense.key),
+      }));
     }
 
     if (fertTotal > totalRevenue * 0.4 && totalRevenue > 0) {
@@ -107,7 +125,7 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
 
   return (
     <div className="fixed inset-0 z-50 bg-black/60 p-4 sm:p-6 flex items-center justify-center backdrop-blur-sm">
-      <div className="bg-slate-50 w-full max-w-6xl h-[95vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
+      <div className="bg-slate-50 w-full max-w-6xl h-[95vh] rounded-4xl shadow-2xl flex flex-col overflow-hidden">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 shrink-0">
@@ -186,7 +204,7 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
                 {/* Best / Lowest */}
                 <div className="flex flex-col gap-4">
                   {analytics.bestField && (
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-3xl border border-green-100 shadow-sm flex items-center justify-between">
+                    <div className="bg-linear-to-br from-green-50 to-emerald-50 p-6 rounded-3xl border border-green-100 shadow-sm flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-2xl">🏆</span>
@@ -206,7 +224,7 @@ const FieldInsightsModal: React.FC<FieldInsightsModalProps> = ({ isOpen, onClose
                   )}
 
                   {analytics.lowestField && (
-                    <div className="bg-gradient-to-br from-red-50 to-rose-50 p-6 rounded-3xl border border-red-100 shadow-sm flex items-center justify-between">
+                    <div className="bg-linear-to-br from-red-50 to-rose-50 p-6 rounded-3xl border border-red-100 shadow-sm flex items-center justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-2xl">⚠️</span>

@@ -35,15 +35,16 @@ interface Entry {
 
 const FieldWater = () => {
   const { t } = useTranslation();
-  const { fieldId } =
-    useParams();
+  const { fieldId } = useParams();
 
   const token =
     localStorage.getItem("token");
 
   const { data: fieldWaterData, isLoading: loading } = useFieldWater(fieldId);
-  const entries = fieldWaterData?.entries || [];
-  const totalHours = fieldWaterData?.totalHours || 0;
+  const entries = Array.isArray(fieldWaterData?.entries)
+    ? fieldWaterData.entries
+    : [];
+  const totalHours = Number(fieldWaterData?.totalHours) || 0;
 
   const [submitting, setSubmitting] =
     useState(false);
@@ -148,7 +149,7 @@ const FieldWater = () => {
         queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
         queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch {
         toast.error(
         t("operationFailed")
         );
@@ -191,7 +192,7 @@ const FieldWater = () => {
         queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
         queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch {
         toast.error(
         t("deleteFailed")
         );

@@ -291,7 +291,12 @@ const hi = {
     // Crop Sales Missing
     cropSales: "फसल बिक्री",
     loadingSalesData: "बिक्री डेटा लोड हो रहा है...",
-    noCropPriceNotice: "आपने {{crop}} के लिए बिक्री मूल्य निर्धारित नहीं किया है। कृपया रसीदें जोड़ने से पहले खेत डैशबोर्ड पर वापस जाएं और इसे सेट करें।",
+    noCropPriceNotice: "आपने {{crop}} के लिए बिक्री मूल्य निर्धारित नहीं किया है। रसीदें जोड़ने से पहले इसे यहीं सेट करें।",
+    cropSellingPrice: "फसल बिक्री मूल्य",
+    enterCropPrice: "मूल्य दर्ज करें",
+    cropPriceUpdated: "फसल मूल्य अपडेट हो गया",
+    cropPriceUpdateFailed: "फसल मूल्य अपडेट करने में विफल",
+    invalidCropPrice: "कृपया सही फसल मूल्य दर्ज करें",
     totalQuantitySold: "कुल बिकी हुई मात्रा",
     totalSalesAmount: "कुल बिक्री राशि",
     salesHistory: "बिक्री इतिहास (रसीदें)",
@@ -311,7 +316,7 @@ const hi = {
     receiptDeleted: "रसीद हटा दी गई",
     failedToDeleteReceipt: "रसीद हटाने में विफल",
     failedToFetchCropSales: "फसल बिक्री डेटा प्राप्त करने में विफल",
-    setCropPriceFirst: "कृपया पहले खेत पर फसल बिक्री मूल्य निर्धारित करें।"
+    setCropPriceFirst: "कृपया पहले फसल बिक्री मूल्य निर्धारित करें।"
   },
 };
 

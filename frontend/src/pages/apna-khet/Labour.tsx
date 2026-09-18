@@ -143,7 +143,7 @@ const Labour = () => {
       queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
       queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch {
       toast.error(
         t("operationFailed")
       );
@@ -184,7 +184,7 @@ const Labour = () => {
       queryClient.invalidateQueries({ queryKey: ['fieldsWithAnalytics'] });
       queryClient.invalidateQueries({ queryKey: ['fieldInsights'] });
 
-    } catch (error) {
+    } catch{
       toast.error(
         t("deleteFailed")
       );
@@ -413,7 +413,7 @@ const Labour = () => {
             <tbody>
 
               {entries.map(
-                (entry: any) => (
+                (entry: LabourEntry) => (
 
                   <tr
                     key={entry._id}
