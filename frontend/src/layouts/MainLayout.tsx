@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
+import Chatbot from "../components/Chatbot/Chatbot";
 
 const MainLayout = () => {
   return (
@@ -19,6 +20,8 @@ const MainLayout = () => {
         <div className="flex-1 overflow-y-auto app-content">
           <Outlet />
         </div>
+
+        <Chatbot />
       </main>
     </div>
   );

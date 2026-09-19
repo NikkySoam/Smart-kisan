@@ -316,7 +316,22 @@ const hi = {
     receiptDeleted: "रसीद हटा दी गई",
     failedToDeleteReceipt: "रसीद हटाने में विफल",
     failedToFetchCropSales: "फसल बिक्री डेटा प्राप्त करने में विफल",
-    setCropPriceFirst: "कृपया पहले फसल बिक्री मूल्य निर्धारित करें।"
+    setCropPriceFirst: "कृपया पहले फसल बिक्री मूल्य निर्धारित करें।",
+
+    // Smart Kisan Chatbot
+    chatbotTitle: "स्मार्ट किसान सहायक",
+    chatbotSubtitle: "अपने किसानों, ट्यूबवेल या खेतों के बारे में पूछें",
+    chatbotWelcome: "नमस्ते! मैं आपके स्मार्ट किसान डेटा के बारे में जानकारी दे सकता हूँ। अपने किसानों, ट्यूबवेल पानी, खेत या खेत के पानी के बारे में पूछें।",
+    chatbotPlaceholder: "अपने स्मार्ट किसान डेटा के बारे में पूछें...",
+    chatbotEnterHint: "भेजने के लिए Enter · नई लाइन के लिए Shift + Enter",
+    chatbotThinking: "स्मार्ट किसान सहायक सोच रहा है",
+    chatbotSend: "संदेश भेजें",
+    chatbotClear: "बातचीत साफ करें",
+    chatbotDragHint: "हिलाने के लिए ड्रैग करें · खोलने के लिए क्लिक करें",
+    chatbotError: "माफ़ कीजिए, अभी जवाब नहीं मिल सका।",
+    chatbotQuickFarmers: "मेरे सभी किसान दिखाएं",
+    chatbotQuickTubewell: "मेरे ट्यूबवेल पानी का उपयोग दिखाएं",
+    chatbotQuickFields: "मेरे सभी खेत दिखाएं",
   },
 };
 

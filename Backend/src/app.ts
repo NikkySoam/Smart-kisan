@@ -47,7 +47,11 @@ import aiRoutes from "./routes/aiRoutes";
 import irrigationAdvisorRoutes from "./routes/irrigationAdvisorRoutes";
 import cropSalesRoutes from "./routes/cropSalesRoutes";
 
+import chatbotRoutes from "./routes/chatbotRoutes";
 
+
+
+app.use("/api/chatbot", chatbotRoutes);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/farmers", farmerRoutes);

@@ -316,7 +316,22 @@ const en = {
     receiptDeleted: "Receipt deleted",
     failedToDeleteReceipt: "Failed to delete receipt",
     failedToFetchCropSales: "Failed to fetch crop sales data",
-    setCropPriceFirst: "Please set the crop selling price first."
+    setCropPriceFirst: "Please set the crop selling price first.",
+
+     // Smart Kisan Chatbot
+    chatbotTitle: "Smart Kisan Assistant",
+    chatbotSubtitle: "Ask about your farmers, tubewell or fields",
+    chatbotWelcome: "Hello! I can help you with your Smart Kisan data. Ask about your farmers, tubewell water, fields, or field water.",
+    chatbotPlaceholder: "Ask about your Smart Kisan data...",
+    chatbotEnterHint: "Enter to send · Shift + Enter for a new line",
+    chatbotThinking: "Smart Kisan Assistant is thinking",
+    chatbotSend: "Send message",
+    chatbotClear: "Clear conversation",
+    chatbotDragHint: "Drag to move · Click to open",
+    chatbotError: "Sorry, I couldn't get a response right now.",
+    chatbotQuickFarmers: "Show me all my farmers",
+    chatbotQuickTubewell: "Show my tubewell water usage",
+    chatbotQuickFields: "Show me all my fields",
   },
 };
 
